@@ -1,5 +1,6 @@
 package inc.andsoft.asimidimagic;
 
+import android.content.Intent;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.os.Bundle;
@@ -8,9 +9,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.mobileer.miditools.MidiPortSelector;
+
+import inc.andsoft.asimidimagic.tools.DataWithLabel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +36,13 @@ public class MainActivity extends AppCompatActivity {
 
         Spinner outputSpinner = findViewById(R.id.spinner_output);
         myOutputPortSelector = new MidiPortSelector(myMidiManager, outputSpinner, MidiDeviceInfo.PortInfo.TYPE_INPUT);
+
+        Spinner handlerSpinner = findViewById(R.id.spinner_handler);
+        ArrayAdapter<DataWithLabel<Class>> arrayAdapter = new ArrayAdapter<>(
+                handlerSpinner.getContext(), android.R.layout.simple_spinner_dropdown_item);
+
+        arrayAdapter.add(new DataWithLabel<Class>("ON-OFF Delay", DelayActivity.class));
+        handlerSpinner.setAdapter(arrayAdapter);
     }
 
     @Override
@@ -66,6 +77,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickButton(View view) {
+        Spinner handlerSpinner = findViewById(R.id.spinner_handler);
+        Object selected = handlerSpinner.getSelectedItem();
+
+        if (selected != null) {
+            DataWithLabel<Class> data = (DataWithLabel<Class>)selected;
+            Class activity = data.getData();
+            Intent secondActivity = new Intent(MainActivity.this, activity);
+            secondActivity.putExtra("input", myInputPortSelector.getPortWrapper());
+            secondActivity.putExtra("output", myOutputPortSelector.getPortWrapper());
+
+            startActivity(secondActivity);
+        }
     }
 
 }
