@@ -18,8 +18,10 @@ package com.mobileer.miditools;
 
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiDeviceInfo.PortInfo;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class MidiPortWrapper {
+public class MidiPortWrapper implements Parcelable {
     private MidiDeviceInfo mInfo;
     private int mPortIndex;
     private int mType;
@@ -64,8 +66,6 @@ public class MidiPortWrapper {
     }
 
     /**
-     * @param info
-     * @param portIndex
      * @return
      */
     private PortInfo findPortInfo() {
@@ -119,5 +119,37 @@ public class MidiPortWrapper {
         hashCode = 31 * hashCode + mInfo.hashCode();
         return hashCode;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        // Needs to be kept in sync with code in MidiDeviceInfo.cpp
+        parcel.writeParcelable(mInfo, flags);
+        parcel.writeInt(mPortIndex);
+        parcel.writeInt(mType);
+    }
+
+    public static final Parcelable.Creator<MidiPortWrapper> CREATOR =
+        new Parcelable.Creator<MidiPortWrapper>() {
+
+            @Override
+            public MidiPortWrapper createFromParcel(Parcel in) {
+                MidiDeviceInfo info = in.readParcelable(null);  // use default loader
+                int portIndex = in.readInt();
+                int portType = in.readInt();
+
+                MidiPortWrapper wrapper = new MidiPortWrapper(info, portType, portIndex);
+                return wrapper;
+            }
+
+            @Override
+            public MidiPortWrapper[] newArray(int size) {
+                return new MidiPortWrapper[size];
+            }
+        };
 
 }

@@ -16,7 +16,6 @@
 
 package com.mobileer.miditools;
 
-import android.app.Activity;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiDeviceStatus;
 import android.media.midi.MidiManager;
@@ -34,29 +33,24 @@ import java.util.HashSet;
 /**
  * Base class that uses a Spinner to select available MIDI ports.
  */
-public abstract class MidiPortSelector extends DeviceCallback {
-    private int mType = MidiDeviceInfo.PortInfo.TYPE_INPUT;
+public class MidiPortSelector extends DeviceCallback {
+    private int mType;
     protected ArrayAdapter<MidiPortWrapper> mAdapter;
-    protected HashSet<MidiPortWrapper> mBusyPorts = new HashSet<MidiPortWrapper>();
+    protected HashSet<MidiPortWrapper> mBusyPorts = new HashSet<>();
     private Spinner mSpinner;
     protected MidiManager mMidiManager;
-    protected Activity mActivity;
     private MidiPortWrapper mCurrentWrapper;
 
     /**
      * @param midiManager
-     * @param activity
-     * @param spinnerId
-     *            ID from the layout resource
+     * @param spinner
      * @param type
      *            TYPE_INPUT or TYPE_OUTPUT
      */
-    public MidiPortSelector(MidiManager midiManager, Activity activity,
-            int spinnerId, int type) {
+    public MidiPortSelector(MidiManager midiManager, Spinner spinner, int type) {
         mMidiManager = midiManager;
-        mActivity = activity;
         mType = type;
-        mSpinner = (Spinner) activity.findViewById(spinnerId);
+        mSpinner = spinner;
         mAdapter = new ArrayAdapter<>(mSpinner.getContext(),
                 android.R.layout.simple_spinner_item);
         mAdapter.setDropDownViewResource(
@@ -69,11 +63,9 @@ public abstract class MidiPortSelector extends DeviceCallback {
                     public void onItemSelected(AdapterView<?> parent, View view,
                             int pos, long id) {
                         mCurrentWrapper = mAdapter.getItem(pos);
-                        onPortSelected(mCurrentWrapper);
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
-                        onPortSelected(null);
                         mCurrentWrapper = null;
                     }
                 });
@@ -86,6 +78,10 @@ public abstract class MidiPortSelector extends DeviceCallback {
         for (MidiDeviceInfo info : infos) {
             onDeviceAdded(info);
         }
+    }
+
+    public MidiPortWrapper getPortWrapper() {
+        return mCurrentWrapper;
     }
 
     /**
@@ -136,7 +132,6 @@ public abstract class MidiPortSelector extends DeviceCallback {
             MidiDeviceInfo info = status.getDeviceInfo();
             Log.i(MidiConstants.TAG, "MidiPortSelector.onDeviceStatusChanged status = " + status
                     + ", mType = " + mType
-                    + ", activity = " + mActivity.getPackageName()
                     + ", info = " + info);
             // Look for transitions from free to busy.
             int portCount = info.getInputPortCount();
@@ -163,29 +158,9 @@ public abstract class MidiPortSelector extends DeviceCallback {
     }
 
     /**
-     * Implement this method to handle the user selecting a port on a device.
-     *
-     * @param wrapper
-     */
-    public abstract void onPortSelected(MidiPortWrapper wrapper);
-
-    /**
-     * Implement this method to clean up any open resources.
-     */
-    public void onClose() {
-    }
-
-    /**
      * Implement this method to clean up any open resources.
      */
     public void onDestroy() {
         MidiDeviceMonitor.getInstance(mMidiManager).unregisterDeviceCallback(this);
-    }
-
-    /**
-     *
-     */
-    public void close() {
-        onClose();
     }
 }
