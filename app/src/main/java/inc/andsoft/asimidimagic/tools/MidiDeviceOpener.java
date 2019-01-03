@@ -43,26 +43,31 @@ public class MidiDeviceOpener implements Closeable {
     }
 
     public void execute(@NonNull MidiManager midiManager, final Completed callBack) {
-        Handler handler = new Handler();
+        if (myDeviceInfos.isEmpty()) {
+            // nothing to do, call immediately
+            callBack.action(MidiDeviceOpener.this);
+        } else {
+            Handler handler = new Handler();
 
-        for (final Iterator<MidiDeviceInfo> i = myDeviceInfos.iterator(); i.hasNext();) {
-            final MidiDeviceInfo deviceInfo = i.next();
-            midiManager.openDevice(deviceInfo, new MidiManager.OnDeviceOpenedListener() {
-                @Override
-                public void onDeviceOpened(MidiDevice device) {
-                    if (device == null) {
-                        Log.e(TAG, "Cannot open device " + deviceInfo);
+            for (final Iterator<MidiDeviceInfo> i = myDeviceInfos.iterator(); i.hasNext(); ) {
+                final MidiDeviceInfo deviceInfo = i.next();
+                midiManager.openDevice(deviceInfo, new MidiManager.OnDeviceOpenedListener() {
+                    @Override
+                    public void onDeviceOpened(MidiDevice device) {
+                        if (device == null) {
+                            Log.e(TAG, "Cannot open device " + deviceInfo);
+                        }
+                        myMidiToClose.push(device);
+                        myDevices.put(deviceInfo, device);  // store for later
+                        i.remove();  // mark it as processed
+                        if (myDeviceInfos.isEmpty()) {
+                            // we have processed the last one
+                            // callback
+                            callBack.action(MidiDeviceOpener.this);
+                        }
                     }
-                    myMidiToClose.push(device);
-                    myDevices.put(deviceInfo, device);  // store for later
-                    i.remove();  // mark it as processed
-                    if (myDeviceInfos.isEmpty()) {
-                        // we have processed the last one
-                        // callback
-                        callBack.action(MidiDeviceOpener.this);
-                    }
-                }
-            }, handler);
+                }, handler);
+            }
         }
     }
 
