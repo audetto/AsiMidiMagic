@@ -35,6 +35,7 @@ public class DelayActivity extends CommonActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delay);
+        setActionBar();
 
         Intent intent = getIntent();
         final MidiPortWrapper input = intent.getParcelableExtra("input");
