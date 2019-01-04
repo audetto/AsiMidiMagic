@@ -1,0 +1,6 @@
+<devices>
+    <device manufacturer="AndSoft Inc" product="MidiSynthBasic">
+        <input-port name="input" />
+        <output-port name="output" />
+    </device>
+</devices>
