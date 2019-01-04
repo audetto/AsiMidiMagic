@@ -165,10 +165,10 @@ public class DelayActivity extends CommonActivity {
 
         if (myInputPort != null) {
             try {
+                // clean all remaining messages
+                myInputPort.flush();
                 // and send a final ALL_NOTES_OFF
                 StartStopReceiver.allNotesOff(myInputPort);
-                // then clean all remaining messages
-                myInputPort.flush();
             } catch (IOException e) {
                 Log.e(TAG, e.toString());
             }
