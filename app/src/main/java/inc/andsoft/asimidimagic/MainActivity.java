@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity {
         ArrayAdapter<DataWithLabel<Class>> arrayAdapter = new ArrayAdapter<>(
                 handlerSpinner.getContext(), android.R.layout.simple_spinner_dropdown_item);
 
-        arrayAdapter.add(new DataWithLabel<Class>("ON-OFF Delay", DelayActivity.class));
+        arrayAdapter.add(new DataWithLabel<>("ON-OFF Delay", DelayActivity.class));
         handlerSpinner.setAdapter(arrayAdapter);
     }
 

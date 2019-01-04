@@ -88,30 +88,25 @@ public class DelayActivity extends CommonActivity {
         });
 
         RadioButton red = findViewById(R.id.red_radio);
-        red.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    close();
-                    redButton();
-                }
+
+        red.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked) {
+                close();
+                redButton();
             }
         });
 
         RadioButton amber = findViewById(R.id.amber_radio);
-        amber.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked && myDelayHandler != null) {
-                    myDelayHandler.setRunning(false);
-                }
+        amber.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked && myDelayHandler != null) {
+                myDelayHandler.setRunning(false);
             }
         });
 
         RadioButton green = findViewById(R.id.green_radio);
-        green.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked && myDelayHandler != null) {
-                    myDelayHandler.setRunning(true);
-                }
+        green.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked && myDelayHandler != null) {
+                myDelayHandler.setRunning(true);
             }
         });
 
@@ -122,36 +117,30 @@ public class DelayActivity extends CommonActivity {
 
         MidiManager midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
 
-        myMidiDeviceOpener.execute(midiManager, new MidiDeviceOpener.Completed() {
-            @Override
-            public void action(MidiDeviceOpener opener) {
-                myInputPort = opener.openInputPort(input);
-                myOutputPort = opener.openOutputPort(output);
+        myMidiDeviceOpener.execute(midiManager, (MidiDeviceOpener opener) -> {
+            myInputPort = opener.openInputPort(input);
+            myOutputPort = opener.openOutputPort(output);
 
-                if (myInputPort != null && myOutputPort != null) {
-                    myDelayHandler = new DelayHandler(myInputPort) {
-                        @Override
-                        public void onRunningChange(final boolean value) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (value) {
-                                        greenButton();
-                                    } else {
-                                        amberButton();
-                                    }
-                                }
-                            });
-                        }
-                    };
+            if (myInputPort != null && myOutputPort != null) {
+                myDelayHandler = new DelayHandler(myInputPort) {
+                    @Override
+                    public void onRunningChange(final boolean value) {
+                        runOnUiThread(() ->  {
+                            if (value) {
+                                greenButton();
+                            } else {
+                                amberButton();
+                            }
+                        });
+                    }
+                };
 
-                    myFramer = new MidiFramer(myDelayHandler);
-                    myOutputPort.connect(myFramer);
-                    myDelayHandler.fireRunningChange();
-                } else {
-                    Toast.makeText(DelayActivity.this, "Missing MIDI ports", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
+                myFramer = new MidiFramer(myDelayHandler);
+                myOutputPort.connect(myFramer);
+                myDelayHandler.fireRunningChange();
+            } else {
+                Toast.makeText(DelayActivity.this, "Missing MIDI ports", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
     }

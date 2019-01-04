@@ -81,32 +81,28 @@ public class SynthMIDIServer extends MidiDeviceService {
         myReferenceTime = System.nanoTime();
 
         if (outputs.length > 0 && outputs[0] != null) {
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        for (byte i = 0; i < 120; ++i) {
-                            Thread.sleep(1000);
+            myThread = new Thread(() -> {
+                try {
+                    for (byte i = 0; i < 120; ++i) {
+                        Thread.sleep(1000);
 
-                            byte note = (byte) (60 + (i % 12));
-                            byte velocity = (byte) 100;
-                            byte channel = (byte) 3;
+                        byte note = (byte) (60 + (i % 12));
+                        byte velocity = (byte) 100;
+                        byte channel = (byte) 3;
 
-                            long now = System.nanoTime();
-                            noteOn(outputs[0], channel, note, velocity, now);
+                        long now = System.nanoTime();
+                        noteOn(outputs[0], channel, note, velocity, now);
 
-                            long future = now + 2 * NANOS_PER_SECOND;
+                        long future = now + 2 * NANOS_PER_SECOND;
 
-                            noteOff(outputs[0], channel, note, velocity, future);
+                        noteOff(outputs[0], channel, note, velocity, future);
 
-                            Log.d(TAG, "Sent =     " + getTimeStr(now) + ", note = " + note + ", id = " + i);
-                        }
-                    } catch (IOException | InterruptedException e) {
-                        Log.d(TAG, e.toString());
+                        Log.d(TAG, "Sent =     " + getTimeStr(now) + ", note = " + note + ", id = " + i);
                     }
+                } catch (IOException | InterruptedException e) {
+                    Log.d(TAG, e.toString());
                 }
-            };
-            myThread = new Thread(runnable);
+            });
             myThread.start();
         }
     }
