@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,26 +97,28 @@ public class DelayActivity extends CommonActivity {
             }
         });
 
-        RadioButton amber = findViewById(R.id.amber_radio);
+        final RadioButton amber = findViewById(R.id.amber_radio);
         amber.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked && myDelayHandler != null) {
                 myDelayHandler.setRunning(false);
             }
         });
 
-        RadioButton green = findViewById(R.id.green_radio);
+        final RadioButton green = findViewById(R.id.green_radio);
         green.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked && myDelayHandler != null) {
                 myDelayHandler.setRunning(true);
             }
         });
 
-        redButton();
+        amberButton();
 
         myMidiDeviceOpener.queueDevice(input);
         myMidiDeviceOpener.queueDevice(output);
 
         MidiManager midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
+
+        final Switch sticky = findViewById(R.id.sticky_switch);
 
         myMidiDeviceOpener.execute(midiManager, (MidiDeviceOpener opener) -> {
             myInputPort = opener.openInputPort(input);
@@ -126,10 +129,25 @@ public class DelayActivity extends CommonActivity {
                     @Override
                     public void onRunningChange(final boolean value) {
                         runOnUiThread(() ->  {
-                            if (value) {
-                                greenButton();
+                            if (sticky.isChecked()) {
+                                // change amber <-> green each time the pedal is pressed
+                                // do nothing when it is released
+                                if (value) {
+                                    if (green.isChecked()) {
+                                        amberButton();
+                                    }
+                                    if (amber.isChecked()) {
+                                        greenButton();
+                                    }
+                                }
                             } else {
-                                amberButton();
+                                // pressed => green
+                                // released => amber
+                                if (value) {
+                                    greenButton();
+                                } else {
+                                    amberButton();
+                                }
                             }
                         });
                     }
@@ -177,6 +195,7 @@ public class DelayActivity extends CommonActivity {
         RadioButton green = findViewById(R.id.green_radio);
         SeekBar onDelaySeek = findViewById(R.id.on_delay_seek);
         SeekBar offDelaySeek = findViewById(R.id.off_delay_seek);
+        Switch sticky = findViewById(R.id.sticky_switch);
 
         onDelaySeek.setProgress(0);
         offDelaySeek.setProgress(0);
@@ -187,6 +206,7 @@ public class DelayActivity extends CommonActivity {
         green.setEnabled(false);
         red.setEnabled(false);
         amber.setEnabled(false);
+        sticky.setEnabled(false);
     }
 
     void amberButton() {

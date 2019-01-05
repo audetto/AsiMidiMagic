@@ -6,4 +6,6 @@
     <string name="red">Stopped</string>
     <string name="amber">Paused</string>
     <string name="green">Running</string>
+
+    <string name="sticky">Sticky</string>
 </resources>
