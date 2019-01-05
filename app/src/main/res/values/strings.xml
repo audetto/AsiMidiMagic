@@ -12,26 +12,15 @@
 
     <string name="switch_sticky">Sticky</string>
 
-    <!-- for DeviceScanActivity -->
     <string name="title_devices">MIDI Device Scan</string>
-    <string name="explain_btle_location">
-    This app can scan for Bluetooth devices near you.
-    In general, an app could use that information to determine your location,
-    although this app does not do that.
-    If you allow Location permission then you can turn it off later
-    in Settings under Apps.
-    Note that this app will not work without Location permission.</string>
     <string name="why_btle_location">
-    Location permission is needed to scan for nearby Bluetooth devices.</string>
+        Location permission is needed to scan for nearby Bluetooth devices.
+    </string>
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
     <string name="ble_not_supported">BLE is not supported</string>
     <string name="unknown_device">Unknown device</string>
 
-    <string name="menu_connect">Connect</string>
-    <string name="menu_disconnect">Disconnect</string>
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
-
-    <string name="nothing_paired">Nothing paired.</string>
 
 </resources>

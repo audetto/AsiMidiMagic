@@ -1,5 +1,6 @@
 package inc.andsoft.asimidimagic;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -32,6 +33,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void bleAction(MenuItem item) {
+        Intent bleActivity = new Intent(BaseActivity.this, ScanActivity.class);
+        startActivity(bleActivity);
     }
 
 }

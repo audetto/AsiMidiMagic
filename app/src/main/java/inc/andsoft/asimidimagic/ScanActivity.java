@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,8 +26,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class ScanActivity extends BaseActivity implements AdapterView.OnItemClickListener {
-    private static final String TAG = "DeviceScanActivity";
+public class ScanActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private LeDeviceListAdapter mLeDeviceListAdapter;
     private BluetoothAdapter mBluetoothAdapter;
@@ -46,7 +47,8 @@ public class ScanActivity extends BaseActivity implements AdapterView.OnItemClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
-        setActionBar();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         mHandler = new Handler();
 
