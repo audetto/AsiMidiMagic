@@ -30,7 +30,7 @@ public class MainActivity extends BaseActivity {
         myInputPortSelector = new MidiPortSelector(myMidiManager, inputSpinner, MidiDeviceInfo.PortInfo.TYPE_INPUT);
 
         Spinner outputSpinner = findViewById(R.id.spinner_output);
-        myOutputPortSelector = new MidiPortSelector(myMidiManager, outputSpinner, MidiDeviceInfo.PortInfo.TYPE_INPUT);
+        myOutputPortSelector = new MidiPortSelector(myMidiManager, outputSpinner, MidiDeviceInfo.PortInfo.TYPE_OUTPUT);
 
         Spinner handlerSpinner = findViewById(R.id.spinner_handler);
         ArrayAdapter<DataWithLabel<Class>> arrayAdapter = new ArrayAdapter<>(
