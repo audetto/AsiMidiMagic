@@ -5,7 +5,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     protected void setActionBar() {
         Toolbar toolbar = findViewById(R.id.toolbar);

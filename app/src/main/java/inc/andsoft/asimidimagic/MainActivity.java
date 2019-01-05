@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -63,5 +64,11 @@ public class MainActivity extends BaseActivity {
             startActivity(secondActivity);
         }
     }
+
+    public void bleButton(MenuItem item) {
+        Intent bleActivity = new Intent(MainActivity.this, ScanActivity.class);
+        startActivity(bleActivity);
+    }
+
 
 }

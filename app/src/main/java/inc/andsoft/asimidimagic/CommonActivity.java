@@ -2,7 +2,7 @@ package inc.andsoft.asimidimagic;
 
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 
-public class CommonActivity extends BaseActivity {
+public abstract class CommonActivity extends BaseActivity {
 
     protected MidiDeviceOpener myMidiDeviceOpener = new MidiDeviceOpener();
 
