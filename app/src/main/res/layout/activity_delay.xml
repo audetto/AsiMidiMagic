@@ -36,7 +36,7 @@
             app:layout_constraintTop_toBottomOf="@+id/input_name" />
 
         <SeekBar
-            android:id="@+id/on_delay_seek"
+            android:id="@+id/seek_on_delay"
             style="@android:style/Widget.DeviceDefault.SeekBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
             app:layout_constraintTop_toBottomOf="@+id/output_name" />
 
         <SeekBar
-            android:id="@+id/off_delay_seek"
+            android:id="@+id/seek_off_delay"
             style="@android:style/Widget.DeviceDefault.SeekBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
             android:thumbTint="@android:color/holo_red_dark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/on_delay_seek" />
+            app:layout_constraintTop_toBottomOf="@+id/seek_on_delay" />
 
         <RadioGroup
             android:id="@+id/radioGroup"
@@ -77,42 +77,42 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/off_delay_seek">
+            app:layout_constraintTop_toBottomOf="@+id/seek_off_delay">
 
             <RadioButton
-                android:id="@+id/red_radio"
+                android:id="@+id/radio_red"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:buttonTint="@android:color/holo_red_dark"
-                android:text="@string/red" />
+                android:text="@string/radio_red" />
 
             <RadioButton
-                android:id="@+id/amber_radio"
+                android:id="@+id/radio_amber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:buttonTint="@android:color/holo_orange_dark"
-                android:text="@string/amber" />
+                android:text="@string/radio_amber" />
 
             <RadioButton
-                android:id="@+id/green_radio"
+                android:id="@+id/radio_green"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:buttonTint="@android:color/holo_green_light"
-                android:text="@string/green" />
+                android:text="@string/radio_green" />
         </RadioGroup>
 
         <Switch
-            android:id="@+id/sticky_switch"
+            android:id="@+id/switch_sticky"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
             android:checked="true"
-            android:text="@string/sticky"
+            android:text="@string/switch_sticky"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/radioGroup" />

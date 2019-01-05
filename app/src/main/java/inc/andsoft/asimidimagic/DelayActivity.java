@@ -48,7 +48,7 @@ public class DelayActivity extends CommonActivity {
         TextView outputText = findViewById(R.id.output_name);
         outputText.setText(output.toString());
 
-        SeekBar onDelaySeek = findViewById(R.id.on_delay_seek);
+        SeekBar onDelaySeek = findViewById(R.id.seek_on_delay);
         onDelaySeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -68,7 +68,7 @@ public class DelayActivity extends CommonActivity {
             }
         });
 
-        SeekBar offDelaySeek = findViewById(R.id.off_delay_seek);
+        SeekBar offDelaySeek = findViewById(R.id.seek_off_delay);
         offDelaySeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -88,7 +88,7 @@ public class DelayActivity extends CommonActivity {
             }
         });
 
-        RadioButton red = findViewById(R.id.red_radio);
+        RadioButton red = findViewById(R.id.radio_red);
 
         red.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked) {
@@ -97,14 +97,14 @@ public class DelayActivity extends CommonActivity {
             }
         });
 
-        final RadioButton amber = findViewById(R.id.amber_radio);
+        final RadioButton amber = findViewById(R.id.radio_amber);
         amber.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked && myDelayHandler != null) {
                 myDelayHandler.setRunning(false);
             }
         });
 
-        final RadioButton green = findViewById(R.id.green_radio);
+        final RadioButton green = findViewById(R.id.radio_green);
         green.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked && myDelayHandler != null) {
                 myDelayHandler.setRunning(true);
@@ -118,7 +118,7 @@ public class DelayActivity extends CommonActivity {
 
         MidiManager midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
 
-        final Switch sticky = findViewById(R.id.sticky_switch);
+        final Switch sticky = findViewById(R.id.switch_sticky);
 
         myMidiDeviceOpener.execute(midiManager, (MidiDeviceOpener opener) -> {
             myInputPort = opener.openInputPort(input);
@@ -190,12 +190,12 @@ public class DelayActivity extends CommonActivity {
     }
 
     void redButton() {
-        RadioButton red = findViewById(R.id.red_radio);
-        RadioButton amber = findViewById(R.id.amber_radio);
-        RadioButton green = findViewById(R.id.green_radio);
-        SeekBar onDelaySeek = findViewById(R.id.on_delay_seek);
-        SeekBar offDelaySeek = findViewById(R.id.off_delay_seek);
-        Switch sticky = findViewById(R.id.sticky_switch);
+        RadioButton red = findViewById(R.id.radio_red);
+        RadioButton amber = findViewById(R.id.radio_amber);
+        RadioButton green = findViewById(R.id.radio_green);
+        SeekBar onDelaySeek = findViewById(R.id.seek_on_delay);
+        SeekBar offDelaySeek = findViewById(R.id.seek_off_delay);
+        Switch sticky = findViewById(R.id.switch_sticky);
 
         onDelaySeek.setProgress(0);
         offDelaySeek.setProgress(0);
@@ -210,16 +210,16 @@ public class DelayActivity extends CommonActivity {
     }
 
     void amberButton() {
-        RadioButton amber = findViewById(R.id.amber_radio);
+        RadioButton amber = findViewById(R.id.radio_amber);
         amber.toggle();
     }
 
     void greenButton() {
-        RadioButton red = findViewById(R.id.red_radio);
-        RadioButton amber = findViewById(R.id.amber_radio);
-        RadioButton green = findViewById(R.id.green_radio);
-        SeekBar onDelaySeek = findViewById(R.id.on_delay_seek);
-        SeekBar offDelaySeek = findViewById(R.id.off_delay_seek);
+        RadioButton red = findViewById(R.id.radio_red);
+        RadioButton amber = findViewById(R.id.radio_amber);
+        RadioButton green = findViewById(R.id.radio_green);
+        SeekBar onDelaySeek = findViewById(R.id.seek_on_delay);
+        SeekBar offDelaySeek = findViewById(R.id.seek_off_delay);
 
         onDelaySeek.setEnabled(true);
         offDelaySeek.setEnabled(true);
