@@ -54,7 +54,7 @@ public class ScanActivity extends BaseActivity implements AdapterView.OnItemClic
         // selectively disable BLE-related features.
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-//            finish();
+            finish();
             return;
         }
 
@@ -67,7 +67,7 @@ public class ScanActivity extends BaseActivity implements AdapterView.OnItemClic
         // Checks if Bluetooth is supported on the device.
         if (mBluetoothAdapter == null) {
             Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
-//            finish();
+            finish();
             return;
         }
     }
@@ -120,7 +120,7 @@ public class ScanActivity extends BaseActivity implements AdapterView.OnItemClic
 
         ListView listView = findViewById(R.id.list_ble);
         listView.setAdapter(mLeDeviceListAdapter);
-        //scanLeDevice(true);
+        scanLeDevice(true);
     }
 
     @Override
