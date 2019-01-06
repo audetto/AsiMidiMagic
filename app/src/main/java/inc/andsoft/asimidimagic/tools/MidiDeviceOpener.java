@@ -49,18 +49,18 @@ public class MidiDeviceOpener implements Closeable {
         } else {
             Handler handler = new Handler();
 
-            for (final Iterator<MidiDeviceInfo> i = myDeviceInfos.iterator(); i.hasNext(); ) {
-                final MidiDeviceInfo deviceInfo = i.next();
+            int[] counter = new int [] {myDeviceInfos.size()};
+
+            for (MidiDeviceInfo deviceInfo : myDeviceInfos) {
                 midiManager.openDevice(deviceInfo, (MidiDevice device) -> {
                     if (device == null) {
                         Log.e(TAG, "Cannot open device " + deviceInfo);
                     }
                     myMidiToClose.push(device);
                     myDevices.put(deviceInfo, device);  // store for later
-                    i.remove();  // mark it as processed
-                    if (myDeviceInfos.isEmpty()) {
-                        // we have processed the last one
-                        // callback
+                    counter[0]--;
+                    if (counter[0] == 0) {
+                        // we have processed them all
                         callBack.action(MidiDeviceOpener.this);
                     }
                 }, handler);
