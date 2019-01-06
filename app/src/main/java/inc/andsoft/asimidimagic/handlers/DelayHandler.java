@@ -16,6 +16,8 @@ public abstract class DelayHandler extends StartStopReceiver {
 
     private MidiInputPort myInputPort;
 
+    private boolean myRunning = false;
+
     // atomic as it is changed by the UI thread
     private volatile long myOnDelay = 0;
     private volatile long myOffDelay = 0;
@@ -75,6 +77,10 @@ public abstract class DelayHandler extends StartStopReceiver {
         }
 
         myInputPort.send(data, offset, count, newTimestamp);
+    }
+
+    public void setRunning(boolean running) {
+        myRunning = running;
     }
 
 }

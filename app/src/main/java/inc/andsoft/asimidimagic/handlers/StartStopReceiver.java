@@ -12,7 +12,7 @@ import java.io.IOException;
 
 abstract public class StartStopReceiver extends MidiReceiver {
 
-    protected boolean myRunning = true;
+    private boolean myPedalPressed = false;
 
     private static final byte CC_SOSTENUTO = (byte) 66;
     private static final byte ALL_SOUND_OFF = (byte) 120;
@@ -40,24 +40,18 @@ abstract public class StartStopReceiver extends MidiReceiver {
         }
     }
 
-    abstract public void onRunningChange(boolean value);
+    abstract public void onPedalChange(boolean value);
 
     public void fireRunningChange() {
-        onRunningChange(myRunning);
+        onPedalChange(myPedalPressed);
     }
 
     private void sostenutoPedal(byte value) {
-        boolean newRunning = value >= 64;
-        if (newRunning != myRunning) {
-            myRunning = newRunning;
+        boolean newPressed = value >= 64;
+        if (newPressed != myPedalPressed) {
+            myPedalPressed = newPressed;
             fireRunningChange();
         }
     }
 
-    public void setRunning(boolean running) {
-        if (running != myRunning) {
-            myRunning = running;
-            fireRunningChange();
-        }
-    }
 }

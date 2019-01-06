@@ -127,26 +127,18 @@ public class DelayActivity extends CommonActivity {
             if (myInputPort != null && myOutputPort != null) {
                 myDelayHandler = new DelayHandler(myInputPort) {
                     @Override
-                    public void onRunningChange(final boolean value) {
+                    public void onPedalChange(boolean value) {
                         runOnUiThread(() ->  {
-                            if (sticky.isChecked()) {
-                                // change amber <-> green each time the pedal is pressed
-                                // do nothing when it is released
-                                if (value) {
-                                    if (green.isChecked()) {
-                                        amberButton();
-                                    }
+                            // we only change if it is non sticky or if the pedal goes down
+                            if (!sticky.isChecked() || value) {
+                                // the 'else' is really important
+                                // as otherwise amber becomes true and green is triggered again
+                                if (green.isChecked()) {
+                                    amberButton();
+                                } else {
                                     if (amber.isChecked()) {
                                         greenButton();
                                     }
-                                }
-                            } else {
-                                // pressed => green
-                                // released => amber
-                                if (value) {
-                                    greenButton();
-                                } else {
-                                    amberButton();
                                 }
                             }
                         });
