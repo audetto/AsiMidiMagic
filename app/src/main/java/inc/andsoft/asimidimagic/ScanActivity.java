@@ -92,7 +92,9 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        int id = item.getItemId();
+
+        switch (id) {
             case R.id.menu_scan:
                 mLeDeviceListAdapter.clear();
                 scanLeDevice(true);
@@ -100,6 +102,8 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
             case R.id.menu_stop:
                 scanLeDevice(false);
                 break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
         return true;
     }

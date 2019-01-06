@@ -8,7 +8,6 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_bluetooth"
-        android:onClick="bleAction"
         android:title="@string/action_bluetooth"
         app:showAsAction="never" />
 </menu>
