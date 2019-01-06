@@ -49,6 +49,7 @@ public class MidiDeviceOpener implements Closeable {
         } else {
             Handler handler = new Handler();
 
+            // TODO: find a more elegant solution
             int[] counter = new int [] {myDeviceInfos.size()};
 
             for (MidiDeviceInfo deviceInfo : myDeviceInfos) {
