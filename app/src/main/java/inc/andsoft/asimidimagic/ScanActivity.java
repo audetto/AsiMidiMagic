@@ -93,7 +93,9 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopScanningLeDevices();
+        if (mScanning) {
+            stopScanningLeDevices();
+        }
         mLeDeviceListAdapter.clear();
     }
 
