@@ -37,7 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return true;
     }
 
-    void startBLEActivity() {
+    private void startBLEActivity() {
         Intent bleActivity = new Intent(BaseActivity.this, ScanActivity.class);
         startActivity(bleActivity);
     }

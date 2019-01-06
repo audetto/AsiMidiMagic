@@ -189,7 +189,7 @@ public class DelayActivity extends CommonActivity {
         super.close();
     }
 
-    void redButton() {
+    private void redButton() {
         RadioButton red = findViewById(R.id.radio_red);
         RadioButton amber = findViewById(R.id.radio_amber);
         RadioButton green = findViewById(R.id.radio_green);
@@ -209,12 +209,12 @@ public class DelayActivity extends CommonActivity {
         sticky.setEnabled(false);
     }
 
-    void amberButton() {
+    private void amberButton() {
         RadioButton amber = findViewById(R.id.radio_amber);
         amber.toggle();
     }
 
-    void greenButton() {
+    private void greenButton() {
         RadioButton red = findViewById(R.id.radio_red);
         RadioButton amber = findViewById(R.id.radio_amber);
         RadioButton green = findViewById(R.id.radio_green);

@@ -289,7 +289,7 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             };
 
-    static class ViewHolder {
+    private static class ViewHolder {
         TextView deviceName;
         TextView deviceAddress;
     }

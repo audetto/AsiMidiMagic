@@ -17,16 +17,16 @@ import java.util.Date;
 public class SynthMIDIServer extends MidiDeviceService {
     private static final String TAG = "SynthMIDIServer";
 
-    MidiReceiver myInputPort = new LogReceiver();
-    byte[] buffer = new byte[32];
-    Thread myThread;
+    private MidiReceiver myInputPort = new LogReceiver();
+    private byte[] buffer = new byte[32];
+    private Thread myThread;
 
-    long NANOS_PER_SECOND = 1000000000L;
-    long NANOS_PER_MS = 1000000L;
-    long myReferenceTime;
-    SimpleDateFormat myDateFormat = new SimpleDateFormat("hh:mm:ss.SSS");
+    private long NANOS_PER_SECOND = 1000000000L;
+    private long NANOS_PER_MS = 1000000L;
+    private long myReferenceTime;
+    private SimpleDateFormat myDateFormat = new SimpleDateFormat("hh:mm:ss.SSS");
 
-    class LogReceiver extends MidiReceiver {
+    private class LogReceiver extends MidiReceiver {
         public void onSend(byte[] data, int offset, int count, long timestamp) throws IOException
         {
             long now = System.nanoTime();
