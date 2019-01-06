@@ -39,8 +39,8 @@ public class DelayActivity extends CommonActivity {
         setActionBar();
 
         Intent intent = getIntent();
-        final MidiPortWrapper input = intent.getParcelableExtra("input");
-        final MidiPortWrapper output = intent.getParcelableExtra("output");
+        MidiPortWrapper input = intent.getParcelableExtra("input");
+        MidiPortWrapper output = intent.getParcelableExtra("output");
 
         TextView inputText = findViewById(R.id.input_name);
         inputText.setText(input.toString());
@@ -97,14 +97,14 @@ public class DelayActivity extends CommonActivity {
             }
         });
 
-        final RadioButton amber = findViewById(R.id.radio_amber);
+        RadioButton amber = findViewById(R.id.radio_amber);
         amber.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked && myDelayHandler != null) {
                 myDelayHandler.setRunning(false);
             }
         });
 
-        final RadioButton green = findViewById(R.id.radio_green);
+        RadioButton green = findViewById(R.id.radio_green);
         green.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked && myDelayHandler != null) {
                 myDelayHandler.setRunning(true);
@@ -118,7 +118,7 @@ public class DelayActivity extends CommonActivity {
 
         MidiManager midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
 
-        final Switch sticky = findViewById(R.id.switch_sticky);
+        Switch sticky = findViewById(R.id.switch_sticky);
 
         myMidiDeviceOpener.execute(midiManager, (MidiDeviceOpener opener) -> {
             myInputPort = opener.openInputPort(input);

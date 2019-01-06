@@ -77,7 +77,7 @@ public class SynthMIDIServer extends MidiDeviceService {
     @Override
     public void onCreate() {
         super.onCreate();
-        final MidiReceiver[] outputs = getOutputPortReceivers();
+        MidiReceiver[] outputs = getOutputPortReceivers();
         myReferenceTime = System.nanoTime();
 
         if (outputs.length > 0 && outputs[0] != null) {

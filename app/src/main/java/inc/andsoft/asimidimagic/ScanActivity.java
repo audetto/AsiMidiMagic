@@ -269,7 +269,7 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
             BluetoothDevice device = mLeDevices.get(i);
-            final String deviceName = device.getName();
+            String deviceName = device.getName();
             if (deviceName != null && deviceName.length() > 0)
                 viewHolder.deviceName.setText(deviceName);
             else
