@@ -93,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:buttonTint="@android:color/holo_orange_dark"
+                android:checked="true"
                 android:text="@string/radio_amber" />
 
             <RadioButton
