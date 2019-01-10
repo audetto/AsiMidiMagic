@@ -71,8 +71,7 @@ public class MidiPortSelector extends DeviceCallback {
                 });
         mSpinner.setAdapter(mAdapter);
 
-        MidiDeviceMonitor.getInstance(mMidiManager).registerDeviceCallback(this,
-                new Handler(Looper.getMainLooper()));
+        mMidiManager.registerDeviceCallback(this, new Handler(Looper.getMainLooper()));
 
         MidiDeviceInfo[] infos = mMidiManager.getDevices();
         for (MidiDeviceInfo info : infos) {
@@ -161,6 +160,6 @@ public class MidiPortSelector extends DeviceCallback {
      * Implement this method to clean up any open resources.
      */
     public void onDestroy() {
-        MidiDeviceMonitor.getInstance(mMidiManager).unregisterDeviceCallback(this);
+        mMidiManager.unregisterDeviceCallback(this);
     }
 }
