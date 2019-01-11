@@ -1,6 +1,8 @@
 package inc.andsoft.asimidimagic;
 
 import android.Manifest;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -13,32 +15,43 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.midi.MidiDevice;
+import android.media.midi.MidiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
-public class ScanActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+import inc.andsoft.asimidimagic.model.MagicModel;
+
+public class ScanActivity extends AppCompatActivity implements Observer<Map<BluetoothDevice, MidiDevice>> {
+    public final static String TAG = "ScanActivity";
 
     private LeDeviceListAdapter mLeDeviceListAdapter;
     private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning = false;
     private Handler mHandler = new Handler();
+    private MagicModel myMagicModel;
+    private MidiManager myMidiManager;
 
     private static final ParcelUuid MIDI_UUID =
             ParcelUuid.fromString("03B80E5A-EDE8-4B33-A751-6CE34EC4C700");
@@ -56,8 +69,10 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        myMagicModel = ViewModelProviders.of(ScanActivity.this).get(MagicModel.class);
+        myMidiManager = (MidiManager) getSystemService(MIDI_SERVICE);
+
         ListView listView = findViewById(R.id.list_ble);
-        listView.setOnItemClickListener(this);
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         listView.setAdapter(mLeDeviceListAdapter);
 
@@ -71,7 +86,7 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
         // BluetoothAdapter through BluetoothManager.
-        final BluetoothManager bluetoothManager =
+        BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
 
@@ -88,6 +103,8 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
+
+        myMagicModel.getDevices().observe(this, this);
     }
 
     @Override
@@ -121,7 +138,6 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
 
         switch (id) {
             case R.id.menu_scan:
-                mLeDeviceListAdapter.clear();
                 startScanningIfPermitted();
                 break;
             case R.id.menu_stop:
@@ -141,23 +157,6 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
-        if (device == null) {
-            return;
-        }
-
-        if (mScanning) {
-            stopScanningLeDevices();
-        }
-
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("device", device);
-        setResult(RESULT_OK, resultIntent);
-        finish();
     }
 
     private void startScanningIfPermitted() {
@@ -199,7 +198,7 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
             ScanSettings settings = settingsBuilder.build();
 
             // Stops scanning after a pre-defined scan period.
-            mHandler.postDelayed(() -> stopScanningLeDevices(), SCAN_PERIOD);
+            mHandler.postDelayed(this::stopScanningLeDevices, SCAN_PERIOD);
 
             leScanner.startScan(filters, settings, mLeScanCallback);
         }
@@ -216,39 +215,52 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
         invalidateOptionsMenu();
     }
 
+    @Override
+    public void onChanged(@Nullable Map<BluetoothDevice, MidiDevice> devices) {
+        mLeDeviceListAdapter.set(devices);
+    }
+
+
     // Adapter for holding devices found through scanning.
     private class LeDeviceListAdapter extends BaseAdapter {
-        private ArrayList<BluetoothDevice> mLeDevices;
-        private LayoutInflater mInflator;
+        private List<Map.Entry<BluetoothDevice, MidiDevice>> myLeDevices;
+        private LayoutInflater myInflator;
 
-        public LeDeviceListAdapter() {
+        LeDeviceListAdapter() {
             super();
-            mLeDevices = new ArrayList<>();
-            mInflator = ScanActivity.this.getLayoutInflater();
+            myLeDevices = new ArrayList<>();
+            myInflator = ScanActivity.this.getLayoutInflater();
+            clear();
         }
 
-        public void addDevice(BluetoothDevice device) {
-            if (!mLeDevices.contains(device)) {
-                mLeDevices.add(device);
-            }
+        void clear() {
+            myLeDevices.clear();
+            updateKeys();
         }
 
-        public BluetoothDevice getDevice(int position) {
-            return mLeDevices.get(position);
+        void set(Map<BluetoothDevice, MidiDevice> devices) {
+            myLeDevices.clear();
+            myLeDevices.addAll(devices.entrySet());
+            updateKeys();
         }
 
-        public void clear() {
-            mLeDevices.clear();
+        private void updateKeys() {
+            notifyDataSetChanged();
+        }
+
+        private Map.Entry<BluetoothDevice, MidiDevice> getDevices(int position) {
+            Map.Entry<BluetoothDevice, MidiDevice> value = myLeDevices.get(position);
+            return value;
         }
 
         @Override
         public int getCount() {
-            return mLeDevices.size();
+            return myLeDevices.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return mLeDevices.get(i);
+            return getDevices(i);
         }
 
         @Override
@@ -261,22 +273,54 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
             ViewHolder viewHolder;
             // General ListView optimization code.
             if (view == null) {
-                view = mInflator.inflate(R.layout.listitem_device, null);
+                view = myInflator.inflate(R.layout.listitem_device, null);
                 viewHolder = new ViewHolder();
                 viewHolder.deviceAddress = view.findViewById(R.id.device_address);
                 viewHolder.deviceName = view.findViewById(R.id.device_name);
+                viewHolder.deviceMidi = view.findViewById(R.id.device_midi);
+                viewHolder.button = view.findViewById(R.id.button_action);
                 view.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) view.getTag();
             }
 
-            BluetoothDevice device = mLeDevices.get(i);
-            String deviceName = device.getName();
-            if (deviceName != null && deviceName.length() > 0)
+            Map.Entry<BluetoothDevice, MidiDevice> devices = getDevices(i);
+            BluetoothDevice bleDevice = devices.getKey();
+            String deviceName = bleDevice.getName();
+
+            if (deviceName != null && deviceName.length() > 0) {
                 viewHolder.deviceName.setText(deviceName);
-            else
+            } else {
                 viewHolder.deviceName.setText(R.string.unknown_device);
-            viewHolder.deviceAddress.setText(device.getAddress());
+            }
+
+            viewHolder.deviceAddress.setText(devices.getKey().getAddress());
+
+            Handler handler = new Handler();
+
+            MidiDevice midiDevice = devices.getValue();
+            if (midiDevice != null) {
+                viewHolder.deviceMidi.setText(midiDevice.toString());
+                viewHolder.button.setText(R.string.button_disconnect);
+                viewHolder.button.setOnClickListener((v) ->
+                    myMidiManager.openBluetoothDevice(bleDevice, (MidiDevice md) -> {
+                        try {
+                            midiDevice.close();
+                            myMagicModel.addBLEDevice(bleDevice, null);
+                        } catch (IOException e) {
+                            Log.e(TAG, e.toString());
+                        }
+                    }, handler)
+                );
+            } else {
+                viewHolder.deviceMidi.setText(R.string.no_midi_device);
+                viewHolder.button.setText(R.string.button_connect);
+                viewHolder.button.setOnClickListener((v) ->
+                    myMidiManager.openBluetoothDevice(bleDevice,
+                            (MidiDevice md) -> myMagicModel.addBLEDevice(bleDevice, md),
+                            handler)
+                );
+            }
 
             return view;
         }
@@ -288,8 +332,7 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
         public void onScanResult(int callbackType, ScanResult result) {
             runOnUiThread(() -> {
                 BluetoothDevice device = result.getDevice();
-                mLeDeviceListAdapter.addDevice(device);
-                mLeDeviceListAdapter.notifyDataSetChanged();
+                myMagicModel.addBLEDevice(device, null);
             });
         }
 
@@ -298,9 +341,8 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
             runOnUiThread(() -> {
                 for (ScanResult result : results) {
                     BluetoothDevice device = result.getDevice();
-                    mLeDeviceListAdapter.addDevice(device);
+                    myMagicModel.addBLEDevice(device, null);
                 }
-                mLeDeviceListAdapter.notifyDataSetChanged();
             });
         }
 
@@ -313,6 +355,8 @@ public class ScanActivity extends AppCompatActivity implements AdapterView.OnIte
     private static class ViewHolder {
         TextView deviceName;
         TextView deviceAddress;
+        TextView deviceMidi;
+        Button button;
     }
 
 }
