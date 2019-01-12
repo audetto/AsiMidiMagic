@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -41,12 +43,41 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_settings:
+                break;
+            case R.id.action_bluetooth:
+                startBLEActivity();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return true;
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
         myMidiManager = null;
         myInputPortSelector.onDestroy();
         myOutputPortSelector.onDestroy();
+    }
+
+    private void startBLEActivity() {
+        Intent bleActivity = new Intent(this, ScanActivity.class);
+        startActivity(bleActivity);
     }
 
     public void clickButton(View view) {
