@@ -270,7 +270,7 @@ public class ScanActivity extends AppCompatActivity {
             ViewHolder viewHolder;
             // General ListView optimization code.
             if (view == null) {
-                view = mInflator.inflate(R.layout.listitem_device, null);
+                view = mInflator.inflate(R.layout.listitem_ble_scan, null);
                 viewHolder = new ViewHolder();
                 viewHolder.deviceAddress = view.findViewById(R.id.device_address);
                 viewHolder.deviceName = view.findViewById(R.id.device_name);
@@ -294,6 +294,13 @@ public class ScanActivity extends AppCompatActivity {
 
             return view;
         }
+
+    }
+
+    private static class ViewHolder {
+        Switch deviceName;
+        TextView deviceAddress;
+        Button button;
     }
 
     // Device scan callback.
@@ -321,11 +328,5 @@ public class ScanActivity extends AppCompatActivity {
         }
 
     };
-
-    private static class ViewHolder {
-        Switch deviceName;
-        TextView deviceAddress;
-        Button button;
-    }
 
 }

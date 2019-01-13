@@ -13,7 +13,9 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static android.content.Context.MIDI_SERVICE;
 
@@ -25,27 +27,34 @@ public class MagicModel extends AndroidViewModel {
     private Map<BluetoothDevice, MidiDevice> myDevices = new HashMap<>();
     private MutableLiveData<Map<BluetoothDevice, MidiDevice>> myLiveData = new MutableLiveData<>();
     private MidiManager.DeviceCallback myCallback;
+    private Handler myHandler;
 
     public MagicModel(Application application) {
         super(application);
         myMidiManager = (MidiManager) application.getSystemService(MIDI_SERVICE);
         myCallback = new MidiManager.DeviceCallback() {
             public void onDeviceRemoved(MidiDeviceInfo device) {
-                myDevices.entrySet().removeIf((value) -> value.getValue().getInfo() == device);
+                myDevices.entrySet().removeIf((value) -> value.getValue().getInfo().equals(device));
                 // this happens in the main event thread (new Handler())
                 myLiveData.setValue(myDevices);
             }
         };
 
-        Handler handler = new Handler();
-        myMidiManager.registerDeviceCallback(myCallback, handler);
+        myHandler = new Handler();  // same thread that created the class (i.e. UI)
+        myMidiManager.registerDeviceCallback(myCallback, myHandler);
         myLiveData.setValue(myDevices);
     }
 
-    public void addBLEDevice(BluetoothDevice ble, MidiDevice midi) {
-        if (!myDevices.containsKey(ble) || myDevices.get(ble) != midi) {
-            myDevices.put(ble, midi);
-            myLiveData.setValue(myDevices);
+    public void addBLEDevices(Set<BluetoothDevice> devices) {
+        for (BluetoothDevice device : devices) {
+            if (!myDevices.containsKey(device)) {
+                myMidiManager.openBluetoothDevice(device, (midi) -> {
+                    if (midi != null) {
+                        myDevices.put(device, midi);
+                        myLiveData.setValue(myDevices);
+                    }
+                }, myHandler);
+            }
         }
     }
 
