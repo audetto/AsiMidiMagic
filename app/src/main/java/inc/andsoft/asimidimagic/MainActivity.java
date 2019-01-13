@@ -1,9 +1,12 @@
 package inc.andsoft.asimidimagic;
 
+import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,9 +15,14 @@ import android.widget.Spinner;
 
 import com.mobileer.miditools.MidiPortSelector;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import inc.andsoft.asimidimagic.tools.DataWithLabel;
 
 public class MainActivity extends BaseActivity {
+    private static final int REQUEST_BLUETOOTH_SCAN = 1;
 
     private MidiManager myMidiManager;
     private MidiPortSelector myInputPortSelector;
@@ -67,6 +75,18 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_BLUETOOTH_SCAN && resultCode == Activity.RESULT_OK) {
+            Object[] devices = data.getParcelableArrayExtra("devices");
+            List<BluetoothDevice> bleDevices = Arrays.stream(devices)
+                    .map(x -> (BluetoothDevice)x).collect(Collectors.toList());
+            // for the time being we are doing nothing with it
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -76,8 +96,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void startBLEActivity() {
-        Intent bleActivity = new Intent(this, ScanActivity.class);
-        startActivity(bleActivity);
+        Intent bleIntent = new Intent(this, ScanActivity.class);
+        startActivityForResult(bleIntent, REQUEST_BLUETOOTH_SCAN);
     }
 
     public void clickButton(View view) {

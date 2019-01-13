@@ -1,8 +1,6 @@
 package inc.andsoft.asimidimagic;
 
 import android.Manifest;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -15,15 +13,11 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.midi.MidiDevice;
-import android.media.midi.MidiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,27 +25,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Vector;
 
-import inc.andsoft.asimidimagic.model.MagicModel;
 
-public class ScanActivity extends AppCompatActivity implements Observer<Map<BluetoothDevice, MidiDevice>> {
-    public final static String TAG = "ScanActivity";
-
+public class ScanActivity extends AppCompatActivity {
     private LeDeviceListAdapter mLeDeviceListAdapter;
     private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning = false;
     private Handler mHandler = new Handler();
-    private MagicModel myMagicModel;
-    private MidiManager myMidiManager;
 
     private static final ParcelUuid MIDI_UUID =
             ParcelUuid.fromString("03B80E5A-EDE8-4B33-A751-6CE34EC4C700");
@@ -68,9 +60,6 @@ public class ScanActivity extends AppCompatActivity implements Observer<Map<Blue
         setContentView(R.layout.activity_scan);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        myMagicModel = ViewModelProviders.of(ScanActivity.this).get(MagicModel.class);
-        myMidiManager = (MidiManager) getSystemService(MIDI_SERVICE);
 
         ListView listView = findViewById(R.id.list_ble);
         mLeDeviceListAdapter = new LeDeviceListAdapter();
@@ -103,8 +92,17 @@ public class ScanActivity extends AppCompatActivity implements Observer<Map<Blue
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
+    }
 
-        myMagicModel.getDevices().observe(this, this);
+    @Override
+    public void onBackPressed() {
+        BluetoothDevice[] devices = mLeDeviceListAdapter.getSelectedDevices();
+        if (devices.length > 0) {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("devices", devices);
+            setResult(RESULT_OK, resultIntent);
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -215,52 +213,51 @@ public class ScanActivity extends AppCompatActivity implements Observer<Map<Blue
         invalidateOptionsMenu();
     }
 
-    @Override
-    public void onChanged(@Nullable Map<BluetoothDevice, MidiDevice> devices) {
-        mLeDeviceListAdapter.set(devices);
-    }
-
-
     // Adapter for holding devices found through scanning.
     private class LeDeviceListAdapter extends BaseAdapter {
-        private List<Map.Entry<BluetoothDevice, MidiDevice>> myLeDevices;
-        private LayoutInflater myInflator;
+        private LayoutInflater mInflator;
+        private List<Map.Entry<BluetoothDevice, Boolean>> myDevices;
 
         LeDeviceListAdapter() {
-            super();
-            myLeDevices = new ArrayList<>();
-            myInflator = ScanActivity.this.getLayoutInflater();
-            clear();
+            myDevices = new ArrayList<>();
+            mInflator = ScanActivity.this.getLayoutInflater();
+        }
+
+        void addDevice(BluetoothDevice device) {
+            boolean present = myDevices.stream().anyMatch(x -> x.getKey().equals(device));
+            if (!present) {
+                Map.Entry<BluetoothDevice, Boolean> value = new AbstractMap.SimpleEntry<>(device, false);
+                myDevices.add(value);
+                notifyDataSetChanged();
+            }
+        }
+
+        void setDevice(BluetoothDevice device, boolean selected) {
+            Optional<Map.Entry<BluetoothDevice, Boolean>> value =
+                    myDevices.stream().filter(x -> x.getKey().equals(device)).findFirst();
+            value.get().setValue(selected);
+            // this is called as part of an event listener,
+            // so the view is automatically update
         }
 
         void clear() {
-            myLeDevices.clear();
-            updateKeys();
+            myDevices.clear();
         }
 
-        void set(Map<BluetoothDevice, MidiDevice> devices) {
-            myLeDevices.clear();
-            myLeDevices.addAll(devices.entrySet());
-            updateKeys();
-        }
-
-        private void updateKeys() {
-            notifyDataSetChanged();
-        }
-
-        private Map.Entry<BluetoothDevice, MidiDevice> getDevices(int position) {
-            Map.Entry<BluetoothDevice, MidiDevice> value = myLeDevices.get(position);
-            return value;
+        BluetoothDevice[] getSelectedDevices() {
+            BluetoothDevice[] devices = myDevices.stream().filter(x -> x.getValue())
+                    .map(x -> x.getKey()).toArray(BluetoothDevice[]::new);
+            return devices;
         }
 
         @Override
         public int getCount() {
-            return myLeDevices.size();
+            return myDevices.size();
         }
 
         @Override
-        public Object getItem(int i) {
-            return getDevices(i);
+        public Map.Entry<BluetoothDevice, Boolean> getItem(int i) {
+            return myDevices.get(i);
         }
 
         @Override
@@ -273,54 +270,27 @@ public class ScanActivity extends AppCompatActivity implements Observer<Map<Blue
             ViewHolder viewHolder;
             // General ListView optimization code.
             if (view == null) {
-                view = myInflator.inflate(R.layout.listitem_device, null);
+                view = mInflator.inflate(R.layout.listitem_device, null);
                 viewHolder = new ViewHolder();
                 viewHolder.deviceAddress = view.findViewById(R.id.device_address);
                 viewHolder.deviceName = view.findViewById(R.id.device_name);
-                viewHolder.deviceMidi = view.findViewById(R.id.device_midi);
-                viewHolder.button = view.findViewById(R.id.button_action);
                 view.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) view.getTag();
             }
 
-            Map.Entry<BluetoothDevice, MidiDevice> devices = getDevices(i);
-            BluetoothDevice bleDevice = devices.getKey();
-            String deviceName = bleDevice.getName();
-
-            if (deviceName != null && deviceName.length() > 0) {
+            Map.Entry<BluetoothDevice, Boolean> data = myDevices.get(i);
+            BluetoothDevice device = data.getKey();
+            final String deviceName = device.getName();
+            if (deviceName != null && deviceName.length() > 0)
                 viewHolder.deviceName.setText(deviceName);
-            } else {
+            else
                 viewHolder.deviceName.setText(R.string.unknown_device);
-            }
+            viewHolder.deviceAddress.setText(device.getAddress());
 
-            viewHolder.deviceAddress.setText(devices.getKey().getAddress());
-
-            Handler handler = new Handler();
-
-            MidiDevice midiDevice = devices.getValue();
-            if (midiDevice != null) {
-                viewHolder.deviceMidi.setText(midiDevice.toString());
-                viewHolder.button.setText(R.string.button_disconnect);
-                viewHolder.button.setOnClickListener((v) ->
-                    myMidiManager.openBluetoothDevice(bleDevice, (MidiDevice md) -> {
-                        try {
-                            midiDevice.close();
-                            myMagicModel.addBLEDevice(bleDevice, null);
-                        } catch (IOException e) {
-                            Log.e(TAG, e.toString());
-                        }
-                    }, handler)
-                );
-            } else {
-                viewHolder.deviceMidi.setText(R.string.no_midi_device);
-                viewHolder.button.setText(R.string.button_connect);
-                viewHolder.button.setOnClickListener((v) ->
-                    myMidiManager.openBluetoothDevice(bleDevice,
-                            (MidiDevice md) -> myMagicModel.addBLEDevice(bleDevice, md),
-                            handler)
-                );
-            }
+            viewHolder.deviceName.setChecked(data.getValue());
+            viewHolder.deviceName.setOnCheckedChangeListener(
+                    (CompoundButton buttonView, boolean isChecked) -> setDevice(device, isChecked));
 
             return view;
         }
@@ -332,7 +302,7 @@ public class ScanActivity extends AppCompatActivity implements Observer<Map<Blue
         public void onScanResult(int callbackType, ScanResult result) {
             runOnUiThread(() -> {
                 BluetoothDevice device = result.getDevice();
-                myMagicModel.addBLEDevice(device, null);
+                mLeDeviceListAdapter.addDevice(device);
             });
         }
 
@@ -341,7 +311,7 @@ public class ScanActivity extends AppCompatActivity implements Observer<Map<Blue
             runOnUiThread(() -> {
                 for (ScanResult result : results) {
                     BluetoothDevice device = result.getDevice();
-                    myMagicModel.addBLEDevice(device, null);
+                    mLeDeviceListAdapter.addDevice(device);
                 }
             });
         }
@@ -353,9 +323,8 @@ public class ScanActivity extends AppCompatActivity implements Observer<Map<Blue
     };
 
     private static class ViewHolder {
-        TextView deviceName;
+        Switch deviceName;
         TextView deviceAddress;
-        TextView deviceMidi;
         Button button;
     }
 
