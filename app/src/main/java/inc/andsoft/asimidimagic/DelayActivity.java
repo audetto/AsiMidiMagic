@@ -19,12 +19,12 @@ import com.mobileer.miditools.MidiPortWrapper;
 import java.io.IOException;
 
 import inc.andsoft.asimidimagic.handlers.DelayHandler;
-import inc.andsoft.asimidimagic.handlers.StartStopReceiver;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
+import inc.andsoft.asimidimagic.tools.Utilities;
 
 public class DelayActivity extends CommonActivity {
 
-    public final static String TAG = "DelayActivity";
+    private final static String TAG = "DelayActivity";
 
     private MidiInputPort myInputPort;
     private MidiOutputPort myOutputPort;
@@ -169,7 +169,7 @@ public class DelayActivity extends CommonActivity {
                 // clean all remaining messages
                 myInputPort.flush();
                 // and send a final ALL_NOTES_OFF
-                StartStopReceiver.allNotesOff(myInputPort);
+                Utilities.allNotesOff(myInputPort);
             } catch (IOException e) {
                 Log.e(TAG, e.toString());
             }

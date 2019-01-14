@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 
 import com.mobileer.miditools.MidiPortSelector;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,9 +34,9 @@ import java.util.stream.Collectors;
 
 import inc.andsoft.asimidimagic.model.MagicModel;
 import inc.andsoft.asimidimagic.tools.DataWithLabel;
+import inc.andsoft.asimidimagic.tools.Utilities;
 
 public class MainActivity extends BaseActivity implements Observer<Map<BluetoothDevice, MidiDevice>> {
-    private final static String TAG = "MainActivity";
     private static final int REQUEST_BLUETOOTH_SCAN = 1;
 
     private MidiManager myMidiManager;
@@ -207,13 +205,7 @@ class MidiDeviceListAdapter extends RecyclerView.Adapter<MidiDeviceListAdapter.M
         MidiDevice midiDevice = data.getValue();
 
         holder.setValues(bleDevice, midiDevice,
-                (View v) -> {
-                    try {
-                        midiDevice.close();
-                    } catch (IOException e) {
-                        Log.e(TAG, e.toString());
-                    }
-                });
+                (View v) -> Utilities.doClose(midiDevice));
     }
 
     @Override

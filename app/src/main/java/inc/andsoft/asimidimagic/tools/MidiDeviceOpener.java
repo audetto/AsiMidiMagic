@@ -12,7 +12,6 @@ import android.util.Log;
 import com.mobileer.miditools.MidiPortWrapper;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,7 +23,7 @@ import java.util.Stack;
  */
 
 public class MidiDeviceOpener implements Closeable {
-    public final static String TAG = "MidiDeviceOpener";
+    private final static String TAG = "MidiDeviceOpener";
 
     private Set<MidiDeviceInfo> myDeviceInfos = new HashSet<>();
     private Map<MidiDeviceInfo, MidiDevice> myDevices = new HashMap<>();
@@ -94,15 +93,7 @@ public class MidiDeviceOpener implements Closeable {
         myDeviceInfos.clear();
         myDevices.clear();
 
-        for (Closeable device : myMidiToClose) {
-            try {
-                if (device != null) {
-                    device.close();
-                }
-            } catch (IOException e) {
-                Log.e(TAG, e.toString());
-            }
-        }
+        myMidiToClose.forEach(Utilities::doClose);
         myMidiToClose.clear();
     }
 

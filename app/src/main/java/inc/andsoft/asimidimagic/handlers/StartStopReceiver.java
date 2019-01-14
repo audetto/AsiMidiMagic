@@ -15,15 +15,6 @@ abstract public class StartStopReceiver extends MidiReceiver {
     private boolean myPedalPressed = false;
 
     private static final byte CC_SOSTENUTO = (byte) 66;
-    private static final byte ALL_SOUND_OFF = (byte) 120;
-
-    public static void allNotesOff(MidiReceiver input) throws IOException {
-        byte[] buffer = new byte[3];
-        buffer[0] = MidiConstants.STATUS_CONTROL_CHANGE;
-        buffer[1] = ALL_SOUND_OFF;
-        buffer[2] = 0;
-        input.send(buffer, 0, buffer.length);
-    }
 
     public void onSend(byte[] data, int offset, int count, long timestamp)
             throws IOException {

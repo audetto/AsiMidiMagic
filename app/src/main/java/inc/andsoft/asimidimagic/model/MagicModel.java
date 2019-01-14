@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import inc.andsoft.asimidimagic.tools.Utilities;
+
 import static android.content.Context.MIDI_SERVICE;
 
 public class MagicModel extends AndroidViewModel {
@@ -64,13 +66,7 @@ public class MagicModel extends AndroidViewModel {
 
     protected void onCleared() {
         myMidiManager.unregisterDeviceCallback(myCallback);
-        for (Map.Entry<BluetoothDevice, MidiDevice> device : myDevices.entrySet()) {
-            try {
-                device.getValue().close();
-            } catch (IOException e) {
-                Log.e(TAG, e.toString());
-            }
-        }
+        myDevices.forEach((ble, midi) -> Utilities.doClose(midi));
         myDevices.clear();
     }
 
