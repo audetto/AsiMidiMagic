@@ -115,6 +115,7 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
     protected void onDestroy() {
         super.onDestroy();
 
+        myMidiDeviceListAdapter.clear();
         myMidiManager = null;
         myInputPortSelector.onDestroy();
         myOutputPortSelector.onDestroy();
@@ -149,7 +150,6 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
 
 // Adapter for holding devices found through scanning.
 class MidiDeviceListAdapter extends RecyclerView.Adapter<MidiDeviceListAdapter.MidiViewHolder> {
-    private final static String TAG = "MidiDeviceListAdapter";
     private List<Map.Entry<BluetoothDevice, MidiDevice>> myDevices;
 
     static class MidiViewHolder extends RecyclerView.ViewHolder {

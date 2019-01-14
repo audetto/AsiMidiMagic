@@ -40,10 +40,10 @@ import java.util.Vector;
 
 
 public class ScanActivity extends AppCompatActivity {
-    private LeDeviceListAdapter mLeDeviceListAdapter;
-    private BluetoothAdapter mBluetoothAdapter;
-    private boolean mScanning = false;
-    private Handler mHandler = new Handler();
+    private LeDeviceListAdapter myLeDeviceListAdapter;
+    private BluetoothAdapter myBluetoothAdapter;
+    private boolean myScanning = false;
+    private Handler myHandler = new Handler();
 
     private static final ParcelUuid MIDI_UUID =
             ParcelUuid.fromString("03B80E5A-EDE8-4B33-A751-6CE34EC4C700");
@@ -63,8 +63,8 @@ public class ScanActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.list_ble);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mLeDeviceListAdapter = new LeDeviceListAdapter();
-        recyclerView.setAdapter(mLeDeviceListAdapter);
+        myLeDeviceListAdapter = new LeDeviceListAdapter();
+        recyclerView.setAdapter(myLeDeviceListAdapter);
 
         // Use this check to determine whether BLE is supported on the device.  Then you can
         // selectively disable BLE-related features.
@@ -78,10 +78,10 @@ public class ScanActivity extends AppCompatActivity {
         // BluetoothAdapter through BluetoothManager.
         BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
+        myBluetoothAdapter = bluetoothManager.getAdapter();
 
         // Checks if Bluetooth is supported on the device.
-        if (mBluetoothAdapter == null) {
+        if (myBluetoothAdapter == null) {
             Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -89,7 +89,7 @@ public class ScanActivity extends AppCompatActivity {
 
         // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
         // fire an intent to display a dialog asking the user to grant permission to enable it.
-        if (!mBluetoothAdapter.isEnabled()) {
+        if (!myBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
@@ -97,7 +97,7 @@ public class ScanActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        BluetoothDevice[] devices = mLeDeviceListAdapter.getSelectedDevices();
+        BluetoothDevice[] devices = myLeDeviceListAdapter.getSelectedDevices();
         if (devices.length > 0) {
             Intent resultIntent = new Intent();
             resultIntent.putExtra("devices", devices);
@@ -109,16 +109,16 @@ public class ScanActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mScanning) {
+        if (myScanning) {
             stopScanningLeDevices();
         }
-        mLeDeviceListAdapter.clear();
+        myLeDeviceListAdapter.clear();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_ble, menu);
-        if (!mScanning) {
+        if (!myScanning) {
             menu.findItem(R.id.menu_stop).setVisible(false);
             menu.findItem(R.id.menu_scan).setVisible(true);
             menu.findItem(R.id.menu_refresh).setActionView(null);
@@ -184,10 +184,10 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     private void startScanningLeDevices() {
-        BluetoothLeScanner leScanner = mBluetoothAdapter.getBluetoothLeScanner();
+        BluetoothLeScanner leScanner = myBluetoothAdapter.getBluetoothLeScanner();
         if (leScanner != null) {
             // user might have disable Bluetooth by now
-            mScanning = true;
+            myScanning = true;
             ScanFilter.Builder filterBuilder = new ScanFilter.Builder();
             filterBuilder.setServiceUuid(MIDI_UUID);
             Vector<ScanFilter> filters = new Vector<>();
@@ -197,7 +197,7 @@ public class ScanActivity extends AppCompatActivity {
             ScanSettings settings = settingsBuilder.build();
 
             // Stops scanning after a pre-defined scan period.
-            mHandler.postDelayed(this::stopScanningLeDevices, SCAN_PERIOD);
+            myHandler.postDelayed(this::stopScanningLeDevices, SCAN_PERIOD);
 
             leScanner.startScan(filters, settings, mLeScanCallback);
         }
@@ -205,8 +205,8 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     private void stopScanningLeDevices() {
-        mScanning = false;
-        BluetoothLeScanner leScanner = mBluetoothAdapter.getBluetoothLeScanner();
+        myScanning = false;
+        BluetoothLeScanner leScanner = myBluetoothAdapter.getBluetoothLeScanner();
         if (leScanner != null) {
             // user might have disable Bluetooth by now
             leScanner.stopScan(mLeScanCallback);
@@ -220,7 +220,7 @@ public class ScanActivity extends AppCompatActivity {
         public void onScanResult(int callbackType, ScanResult result) {
             runOnUiThread(() -> {
                 BluetoothDevice device = result.getDevice();
-                mLeDeviceListAdapter.addDevice(device);
+                myLeDeviceListAdapter.addDevice(device);
             });
         }
 
@@ -229,7 +229,7 @@ public class ScanActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 for (ScanResult result : results) {
                     BluetoothDevice device = result.getDevice();
-                    mLeDeviceListAdapter.addDevice(device);
+                    myLeDeviceListAdapter.addDevice(device);
                 }
             });
         }
