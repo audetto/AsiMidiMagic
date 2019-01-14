@@ -59,7 +59,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spinner_handler" />
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/list_midi"
             android:layout_width="0dp"
             android:layout_height="0dp"

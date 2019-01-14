@@ -9,6 +9,9 @@ import android.media.midi.MidiDevice;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,9 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -66,9 +68,10 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
         arrayAdapter.add(new DataWithLabel<>("ON-OFF Delay", DelayActivity.class));
         handlerSpinner.setAdapter(arrayAdapter);
 
-        ListView listView = findViewById(R.id.list_midi);
+        RecyclerView recyclerView = findViewById(R.id.list_midi);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         myMidiDeviceListAdapter = new MidiDeviceListAdapter();
-        listView.setAdapter(myMidiDeviceListAdapter);
+        recyclerView.setAdapter(myMidiDeviceListAdapter);
 
         myMagicModel = ViewModelProviders.of(this).get(MagicModel.class);
         myMagicModel.getDevices().observe(this, this);
@@ -144,75 +147,78 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
         }
     }
 
-    // Adapter for holding devices found through scanning.
-    private class MidiDeviceListAdapter extends BaseAdapter {
-        private LayoutInflater myInflator;
-        private List<Map.Entry<BluetoothDevice, MidiDevice>> myDevices;
+}
 
-        MidiDeviceListAdapter() {
-            myDevices = new ArrayList<>();
-            myInflator = MainActivity.this.getLayoutInflater();
+// Adapter for holding devices found through scanning.
+class MidiDeviceListAdapter extends RecyclerView.Adapter<MidiDeviceListAdapter.MidiViewHolder> {
+    private final static String TAG = "MidiDeviceListAdapter";
+    private List<Map.Entry<BluetoothDevice, MidiDevice>> myDevices;
+
+    static class MidiViewHolder extends RecyclerView.ViewHolder {
+
+        MidiViewHolder(View view) {
+            super(view);
         }
 
-        void setDevices(Map<BluetoothDevice, MidiDevice> data) {
-            myDevices = new ArrayList<>(data.entrySet());
-            notifyDataSetChanged();
-        }
+        void setValues(BluetoothDevice ble, MidiDevice midi,
+                       CompoundButton.OnClickListener listener) {
+            TextView nameView = itemView.findViewById(R.id.device_name);
+            TextView midiView = itemView.findViewById(R.id.device_midi);
+            Button disconnectButton = itemView.findViewById(R.id.button_disconnect);
 
-        @Override
-        public int getCount() {
-            return myDevices.size();
-        }
+            String deviceName = ble.getName();
+            if (deviceName != null && deviceName.length() > 0)
+                nameView.setText(deviceName);
+            else
+                nameView.setText(R.string.unknown_device);
+            midiView.setText(midi.getInfo().toString());
 
-        @Override
-        public Map.Entry<BluetoothDevice, MidiDevice> getItem(int i) {
-            return myDevices.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            ViewHolder viewHolder;
-            // General ListView optimization code.
-            if (view == null) {
-                view = myInflator.inflate(R.layout.listitem_ble_device, null);
-                viewHolder = new ViewHolder();
-                viewHolder.deviceName = view.findViewById(R.id.device_name);
-                viewHolder.deviceMidi = view.findViewById(R.id.device_midi);
-                viewHolder.disconnect = view.findViewById(R.id.button_disconnect);
-                view.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) view.getTag();
-            }
-
-            Map.Entry<BluetoothDevice, MidiDevice> device = myDevices.get(i);
-            BluetoothDevice ble = device.getKey();
-            MidiDevice midi = device.getValue();
-
-            viewHolder.deviceName.setText(ble.getName());
-            viewHolder.deviceMidi.setText(midi.getInfo().toString());
-
-            viewHolder.disconnect.setOnClickListener(
-                    (View v) -> {
-                        try {
-                            midi.close();
-                        } catch (IOException e) {
-                            Log.e(TAG, e.toString());
-                        }
-                    });
-
-            return view;
+            disconnectButton.setOnClickListener(listener);
         }
     }
 
-    private static class ViewHolder {
-        TextView deviceName;
-        TextView deviceMidi;
-        Button disconnect;
+    MidiDeviceListAdapter() {
+        myDevices = new ArrayList<>();
+    }
+
+    void setDevices(Map<BluetoothDevice, MidiDevice> data) {
+        myDevices = new ArrayList<>(data.entrySet());
+        notifyDataSetChanged();
+    }
+
+    void clear() {
+        myDevices.clear();
+    }
+
+    @NonNull
+    @Override
+    public MidiViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.listitem_ble_device, parent, false);
+
+        MidiViewHolder viewHolder = new MidiViewHolder(view);
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull MidiViewHolder holder, int position) {
+        Map.Entry<BluetoothDevice, MidiDevice> data = myDevices.get(position);
+        BluetoothDevice bleDevice = data.getKey();
+        MidiDevice midiDevice = data.getValue();
+
+        holder.setValues(bleDevice, midiDevice,
+                (View v) -> {
+                    try {
+                        midiDevice.close();
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
+                    }
+                });
+    }
+
+    @Override
+    public int getItemCount() {
+        return myDevices.size();
     }
 
 }

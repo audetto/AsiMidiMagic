@@ -16,17 +16,17 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,9 +61,10 @@ public class ScanActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ListView listView = findViewById(R.id.list_ble);
+        RecyclerView recyclerView = findViewById(R.id.list_ble);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mLeDeviceListAdapter = new LeDeviceListAdapter();
-        listView.setAdapter(mLeDeviceListAdapter);
+        recyclerView.setAdapter(mLeDeviceListAdapter);
 
         // Use this check to determine whether BLE is supported on the device.  Then you can
         // selectively disable BLE-related features.
@@ -213,96 +214,6 @@ public class ScanActivity extends AppCompatActivity {
         invalidateOptionsMenu();
     }
 
-    // Adapter for holding devices found through scanning.
-    private class LeDeviceListAdapter extends BaseAdapter {
-        private LayoutInflater mInflator;
-        private List<Map.Entry<BluetoothDevice, Boolean>> myDevices;
-
-        LeDeviceListAdapter() {
-            myDevices = new ArrayList<>();
-            mInflator = ScanActivity.this.getLayoutInflater();
-        }
-
-        void addDevice(BluetoothDevice device) {
-            boolean present = myDevices.stream().anyMatch(x -> x.getKey().equals(device));
-            if (!present) {
-                Map.Entry<BluetoothDevice, Boolean> value = new AbstractMap.SimpleEntry<>(device, false);
-                myDevices.add(value);
-                notifyDataSetChanged();
-            }
-        }
-
-        void setDevice(BluetoothDevice device, boolean selected) {
-            Optional<Map.Entry<BluetoothDevice, Boolean>> value =
-                    myDevices.stream().filter(x -> x.getKey().equals(device)).findFirst();
-            value.get().setValue(selected);
-            // this is called as part of an event listener,
-            // so the view is automatically update
-        }
-
-        void clear() {
-            myDevices.clear();
-        }
-
-        BluetoothDevice[] getSelectedDevices() {
-            BluetoothDevice[] devices = myDevices.stream().filter(x -> x.getValue())
-                    .map(x -> x.getKey()).toArray(BluetoothDevice[]::new);
-            return devices;
-        }
-
-        @Override
-        public int getCount() {
-            return myDevices.size();
-        }
-
-        @Override
-        public Map.Entry<BluetoothDevice, Boolean> getItem(int i) {
-            return myDevices.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            ViewHolder viewHolder;
-            // General ListView optimization code.
-            if (view == null) {
-                view = mInflator.inflate(R.layout.listitem_ble_scan, null);
-                viewHolder = new ViewHolder();
-                viewHolder.deviceAddress = view.findViewById(R.id.device_address);
-                viewHolder.deviceName = view.findViewById(R.id.device_name);
-                view.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) view.getTag();
-            }
-
-            Map.Entry<BluetoothDevice, Boolean> data = myDevices.get(i);
-            BluetoothDevice device = data.getKey();
-            final String deviceName = device.getName();
-            if (deviceName != null && deviceName.length() > 0)
-                viewHolder.deviceName.setText(deviceName);
-            else
-                viewHolder.deviceName.setText(R.string.unknown_device);
-            viewHolder.deviceAddress.setText(device.getAddress());
-
-            viewHolder.deviceName.setChecked(data.getValue());
-            viewHolder.deviceName.setOnCheckedChangeListener(
-                    (CompoundButton buttonView, boolean isChecked) -> setDevice(device, isChecked));
-
-            return view;
-        }
-
-    }
-
-    private static class ViewHolder {
-        Switch deviceName;
-        TextView deviceAddress;
-        Button button;
-    }
-
     // Device scan callback.
     private ScanCallback mLeScanCallback = new ScanCallback() {
         @Override
@@ -328,5 +239,91 @@ public class ScanActivity extends AppCompatActivity {
         }
 
     };
+
+}
+
+// Adapter for holding devices found through scanning.
+class LeDeviceListAdapter extends RecyclerView.Adapter<LeDeviceListAdapter.LeViewHolder> {
+    private List<Map.Entry<BluetoothDevice, Boolean>> myDevices;
+
+    static class LeViewHolder extends RecyclerView.ViewHolder {
+
+        LeViewHolder(View view) {
+            super(view);
+        }
+
+        void setValues(BluetoothDevice device, Boolean selected,
+                       CompoundButton.OnCheckedChangeListener listener) {
+            Switch name = itemView.findViewById(R.id.device_name);
+            TextView address = itemView.findViewById(R.id.device_address);
+
+            String deviceName = device.getName();
+            if (deviceName != null && deviceName.length() > 0)
+                name.setText(deviceName);
+            else
+                name.setText(R.string.unknown_device);
+            address.setText(device.getAddress());
+
+            name.setChecked(selected);
+            name.setOnCheckedChangeListener(listener);
+        }
+    }
+
+    LeDeviceListAdapter() {
+        myDevices = new ArrayList<>();
+    }
+
+    void addDevice(BluetoothDevice device) {
+        boolean present = myDevices.stream().anyMatch(x -> x.getKey().equals(device));
+        if (!present) {
+            Map.Entry<BluetoothDevice, Boolean> value = new AbstractMap.SimpleEntry<>(device, false);
+            myDevices.add(value);
+            notifyDataSetChanged();
+        }
+    }
+
+    private void setDevice(BluetoothDevice device, boolean selected) {
+        Optional<Map.Entry<BluetoothDevice, Boolean>> value =
+                myDevices.stream().filter(x -> x.getKey().equals(device)).findFirst();
+        value.ifPresent(x -> x.setValue(selected));
+        // this is called as part of an event listener,
+        // so the view is automatically update
+    }
+
+    void clear() {
+        myDevices.clear();
+    }
+
+    BluetoothDevice[] getSelectedDevices() {
+        BluetoothDevice[] devices = myDevices.stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .toArray(BluetoothDevice[]::new);
+        return devices;
+    }
+
+    @NonNull
+    @Override
+    public LeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.listitem_ble_scan, parent, false);
+
+        LeViewHolder viewHolder = new LeViewHolder(view);
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull LeViewHolder holder, int position) {
+        Map.Entry<BluetoothDevice, Boolean> data = myDevices.get(position);
+        BluetoothDevice device = data.getKey();
+
+        holder.setValues(device, data.getValue(),
+                (CompoundButton buttonView, boolean isChecked) -> setDevice(device, isChecked));
+    }
+
+    @Override
+    public int getItemCount() {
+        return myDevices.size();
+    }
 
 }
