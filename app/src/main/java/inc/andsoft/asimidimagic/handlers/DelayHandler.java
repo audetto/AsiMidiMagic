@@ -1,7 +1,7 @@
 package inc.andsoft.asimidimagic.handlers;
 
 import android.media.midi.MidiInputPort;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.mobileer.miditools.MidiConstants;
 
