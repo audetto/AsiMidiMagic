@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.midi.MidiInputPort;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
+import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.CompoundButton;
@@ -19,6 +20,7 @@ import com.mobileer.miditools.MidiPortWrapper;
 import java.io.IOException;
 
 import inc.andsoft.asimidimagic.handlers.DelayHandler;
+import inc.andsoft.asimidimagic.handlers.MidiTimeScheduler;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.Utilities;
 
@@ -29,6 +31,7 @@ public class DelayActivity extends CommonActivity {
     private MidiInputPort myInputPort;
     private MidiOutputPort myOutputPort;
 
+    private MidiTimeScheduler myTimeScheduler;
     private DelayHandler myDelayHandler;
     private MidiFramer myFramer;
 
@@ -123,7 +126,8 @@ public class DelayActivity extends CommonActivity {
             myOutputPort = opener.openOutputPort(output);
 
             if (myInputPort != null && myOutputPort != null) {
-                myDelayHandler = new DelayHandler(myInputPort) {
+                myTimeScheduler = new MidiTimeScheduler(myInputPort);
+                myDelayHandler = new DelayHandler(myTimeScheduler) {
                     @Override
                     public void onPedalChange(boolean value) {
                         runOnUiThread(() ->  {
@@ -145,6 +149,7 @@ public class DelayActivity extends CommonActivity {
 
                 myFramer = new MidiFramer(myDelayHandler);
                 myOutputPort.connect(myFramer);
+                myTimeScheduler.start();
             } else {
                 Toast.makeText(DelayActivity.this, "Missing MIDI ports", Toast.LENGTH_SHORT).show();
                 finish();
@@ -175,10 +180,15 @@ public class DelayActivity extends CommonActivity {
             }
         }
 
+        if (myTimeScheduler != null) {
+            myTimeScheduler.stop();
+        }
+
         myFramer = null;
         myInputPort = null;
         myOutputPort = null;
         myDelayHandler = null;
+        myTimeScheduler = null;
 
         super.close();
     }

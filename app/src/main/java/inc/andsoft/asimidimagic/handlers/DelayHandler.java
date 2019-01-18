@@ -1,6 +1,8 @@
 package inc.andsoft.asimidimagic.handlers;
 
 import android.media.midi.MidiInputPort;
+import android.media.midi.MidiReceiver;
+
 import androidx.annotation.NonNull;
 
 import com.mobileer.miditools.MidiConstants;
@@ -14,7 +16,7 @@ import java.io.IOException;
 public abstract class DelayHandler extends StartStopReceiver {
     static private long MILLIS_PER_NANO = 1000000;
 
-    private MidiInputPort myInputPort;
+    private MidiReceiver myInputPort;
 
     private boolean myRunning = false;
 
@@ -22,7 +24,7 @@ public abstract class DelayHandler extends StartStopReceiver {
     private volatile long myOnDelay = 0;
     private volatile long myOffDelay = 0;
 
-    public DelayHandler(@NonNull MidiInputPort inputPort) {
+    public DelayHandler(@NonNull MidiReceiver inputPort) {
         myInputPort = inputPort;
     }
 
