@@ -1,4 +1,4 @@
-package inc.andsoft.asimidimagic.handlers;
+package inc.andsoft.asimidimagic.miditools;
 
 import android.media.midi.MidiReceiver;
 

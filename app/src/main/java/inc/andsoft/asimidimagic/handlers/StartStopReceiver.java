@@ -6,15 +6,22 @@ import com.mobileer.miditools.MidiConstants;
 
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
+
 /**
  * Created by andrea on 28/01/18.
  */
 
 abstract public class StartStopReceiver extends MidiReceiver {
 
+    protected MidiReceiver myReceiver;
     private boolean myPedalPressed = false;
 
     private static final byte CC_SOSTENUTO = (byte) 66;
+
+    public StartStopReceiver(@NonNull MidiReceiver receiver) {
+        myReceiver = receiver;
+    }
 
     public void onSend(byte[] data, int offset, int count, long timestamp)
             throws IOException {
@@ -26,8 +33,11 @@ abstract public class StartStopReceiver extends MidiReceiver {
                 if (control == CC_SOSTENUTO) {
                     byte value = data[offset + 2];
                     sostenutoPedal(value);
-                }
-                break;
+                    return;
+                } // otherwise pass it
+            default: {
+                myReceiver.onSend(data, offset, count, timestamp);
+            }
         }
     }
 

@@ -16,16 +16,14 @@ import java.io.IOException;
 public abstract class DelayHandler extends StartStopReceiver {
     static private long MILLIS_PER_NANO = 1000000;
 
-    private MidiReceiver myInputPort;
-
-    private boolean myRunning = false;
+    private volatile boolean myRunning = false;
 
     // atomic as it is changed by the UI thread
     private volatile long myOnDelay = 0;
     private volatile long myOffDelay = 0;
 
-    public DelayHandler(@NonNull MidiReceiver inputPort) {
-        myInputPort = inputPort;
+    protected DelayHandler(@NonNull MidiReceiver receiver) {
+        super(receiver);
     }
 
     public void setOffDelay(long delayInMS) {
@@ -66,7 +64,7 @@ public abstract class DelayHandler extends StartStopReceiver {
                 newTimestamp = timestamp;
             }
 
-            myInputPort.send(data, offset, count, newTimestamp);
+            myReceiver.send(data, offset, count, newTimestamp);
         }
     }
 
@@ -78,7 +76,7 @@ public abstract class DelayHandler extends StartStopReceiver {
             newTimestamp = timestamp;
         }
 
-        myInputPort.send(data, offset, count, newTimestamp);
+        myReceiver.send(data, offset, count, newTimestamp);
     }
 
     public void setRunning(boolean running) {

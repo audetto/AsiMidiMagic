@@ -20,7 +20,8 @@ import com.mobileer.miditools.MidiPortWrapper;
 import java.io.IOException;
 
 import inc.andsoft.asimidimagic.handlers.DelayHandler;
-import inc.andsoft.asimidimagic.handlers.MidiTimeScheduler;
+import inc.andsoft.asimidimagic.miditools.MidiCountedOnOff;
+import inc.andsoft.asimidimagic.miditools.MidiTimeScheduler;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.Utilities;
 
@@ -126,7 +127,8 @@ public class DelayActivity extends CommonActivity {
             myOutputPort = opener.openOutputPort(output);
 
             if (myInputPort != null && myOutputPort != null) {
-                myTimeScheduler = new MidiTimeScheduler(myInputPort);
+                MidiReceiver counted = new MidiCountedOnOff(myInputPort);
+                myTimeScheduler = new MidiTimeScheduler(counted);
                 myDelayHandler = new DelayHandler(myTimeScheduler) {
                     @Override
                     public void onPedalChange(boolean value) {
