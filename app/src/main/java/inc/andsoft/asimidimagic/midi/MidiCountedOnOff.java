@@ -68,7 +68,7 @@ public class MidiCountedOnOff extends MidiReceiver {
 
             if (channelData.onCounters[note] == 0) {
                 while (channelData.offToSend[note] > 0) {
-                    myReceiver.onSend(data, offset, count, 0);
+                    myReceiver.onSend(data, offset, count, timestamp);
                     channelData.offToSend[note]--;
                 }
             }

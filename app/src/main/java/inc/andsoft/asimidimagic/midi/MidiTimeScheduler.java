@@ -40,7 +40,7 @@ public class MidiTimeScheduler extends MidiReceiver {
                 try {
                     MidiEvent event = (MidiEvent) myEventScheduler.waitNextEvent();
                     try {
-                        myReceiver.send(event.data, 0, event.count, event.getTimestamp());
+                        myReceiver.send(event.data, 0, event.count, 0);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
