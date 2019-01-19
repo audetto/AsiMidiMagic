@@ -97,8 +97,9 @@ public class DelayActivity extends CommonActivity {
 
         red.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked) {
-                close();
-                setEnabledControls(false);
+                disconnect();
+            } else {
+                connect();
             }
         });
 
@@ -152,13 +153,11 @@ public class DelayActivity extends CommonActivity {
 
                 MidiReceiver filter = new MidiFilter(myDelayHandler);
                 myFramer = new MidiFramer(filter);
-                myOutputPort.connect(myFramer);
+                connect();
 
                 // the chain is
                 // myOutputPort -> MidiFramer -> MidiFilter -> DelayHandler -> TimeScheduler ->
                 // MidiCountedOnOff -> myInputPort
-
-                myTimeScheduler.start();
             } else {
                 Toast.makeText(DelayActivity.this, "Missing MIDI ports", Toast.LENGTH_SHORT).show();
                 finish();
@@ -171,8 +170,13 @@ public class DelayActivity extends CommonActivity {
         amberButton();
     }
 
-    @Override
-    protected void close() {
+    void connect() {
+        if (myOutputPort != null && myFramer != null) {
+            myOutputPort.connect(myFramer);
+        }
+    }
+
+    void disconnect() {
         if (myOutputPort != null && myFramer != null) {
             // first detach the input port (wrapped in the framer)
             myOutputPort.disconnect(myFramer);
@@ -188,6 +192,11 @@ public class DelayActivity extends CommonActivity {
                 Log.e(TAG, e.toString());
             }
         }
+    }
+
+    @Override
+    protected void close() {
+        disconnect();
 
         if (myTimeScheduler != null) {
             myTimeScheduler.stop();
@@ -202,30 +211,12 @@ public class DelayActivity extends CommonActivity {
         super.close();
     }
 
-    private void setEnabledControls(boolean enabled) {
-        RadioButton red = findViewById(R.id.radio_red);
-        RadioButton amber = findViewById(R.id.radio_amber);
-        RadioButton green = findViewById(R.id.radio_green);
-        SeekBar onDelaySeek = findViewById(R.id.seek_on_delay);
-        SeekBar offDelaySeek = findViewById(R.id.seek_off_delay);
-        Switch sticky = findViewById(R.id.switch_sticky);
-
-        onDelaySeek.setEnabled(enabled);
-        offDelaySeek.setEnabled(enabled);
-        green.setEnabled(enabled);
-        red.setEnabled(enabled);
-        amber.setEnabled(enabled);
-        sticky.setEnabled(enabled);
-    }
-
     private void amberButton() {
-        setEnabledControls(true);
         RadioButton amber = findViewById(R.id.radio_amber);
         amber.toggle();
     }
 
     private void greenButton() {
-        setEnabledControls(true);
         RadioButton green = findViewById(R.id.radio_green);
         green.toggle();
     }

@@ -33,7 +33,7 @@ public class MidiTimeScheduler extends MidiReceiver {
         }
     }
 
-    class EventThread implements Runnable {
+    class EventProcessing implements Runnable {
         @Override
         public void run() {
             while (myThreadEnabled) {
@@ -54,19 +54,17 @@ public class MidiTimeScheduler extends MidiReceiver {
 
     public MidiTimeScheduler(MidiReceiver receiver) {
         myReceiver = receiver;
+
+        myEventScheduler = new EventScheduler();
+        myThread = new Thread(new EventProcessing());
+        myThread.start();
+        myThreadEnabled = true;
     }
 
     @Override
     public void onSend(byte[] msg, int offset, int count, long timestamp) throws IOException {
         EventScheduler.SchedulableEvent event = new MidiEvent(msg, offset, count, timestamp);
-        myEventScheduler.add(event);
-    }
-
-    public void start() {
-        myEventScheduler = new EventScheduler();
-        myThread = new Thread(new EventThread());
-        myThread.start();
-        myThreadEnabled = true;
+        myEventScheduler.add(event);  // this is synchronised
     }
 
     public void stop() {
