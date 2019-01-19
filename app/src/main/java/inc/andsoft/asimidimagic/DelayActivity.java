@@ -19,9 +19,9 @@ import com.mobileer.miditools.MidiPortWrapper;
 
 import java.io.IOException;
 
-import inc.andsoft.asimidimagic.handlers.DelayHandler;
-import inc.andsoft.asimidimagic.miditools.MidiCountedOnOff;
-import inc.andsoft.asimidimagic.miditools.MidiTimeScheduler;
+import inc.andsoft.asimidimagic.midi.DelayHandler;
+import inc.andsoft.asimidimagic.midi.MidiCountedOnOff;
+import inc.andsoft.asimidimagic.midi.MidiTimeScheduler;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.Utilities;
 

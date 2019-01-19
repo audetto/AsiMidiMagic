@@ -1,6 +1,5 @@
-package inc.andsoft.asimidimagic.handlers;
+package inc.andsoft.asimidimagic.midi;
 
-import android.media.midi.MidiInputPort;
 import android.media.midi.MidiReceiver;
 
 import androidx.annotation.NonNull;
