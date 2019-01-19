@@ -1,6 +1,7 @@
 package inc.andsoft.asimidimagic.midi;
 
 import android.media.midi.MidiReceiver;
+import android.util.SparseArray;
 
 import com.mobileer.miditools.MidiConstants;
 
@@ -9,8 +10,7 @@ import java.io.IOException;
 public class MidiCountedOnOff extends MidiReceiver {
     private MidiReceiver myReceiver;
 
-    private int[] myOnCounters = new int[128];
-    private int[] myOffToSend = new int[128];
+    private SparseArray<ChannelData> myChannels = new SparseArray<>();
 
     public MidiCountedOnOff(MidiReceiver receiver) {
         myReceiver = receiver;
@@ -18,7 +18,12 @@ public class MidiCountedOnOff extends MidiReceiver {
 
     @Override
     public void onSend(byte[] data, int offset, int count, long timestamp) throws IOException {
-        byte command = (byte) (data[offset] & MidiConstants.STATUS_COMMAND_MASK);
+        int command = (data[offset] & MidiConstants.STATUS_COMMAND_MASK);
+        int channel = (data[offset] & MidiConstants.STATUS_CHANNEL_MASK);
+        if (myChannels.get(channel) == null) {
+            myChannels.put(channel, new ChannelData());
+        }
+
         switch (command) {
             case MidiConstants.STATUS_NOTE_ON: {
                 noteOn(data, offset, count, timestamp);
@@ -39,29 +44,39 @@ public class MidiCountedOnOff extends MidiReceiver {
         if (velocity == 0) {
             noteOff(data, offset, count, timestamp);
         } else {
+            int channel = (data[offset] & MidiConstants.STATUS_CHANNEL_MASK);
+            ChannelData channelData = myChannels.get(channel);
+
             byte note = data[offset + 1];
-            myOnCounters[note]++;
+            channelData.onCounters[note]++;
             myReceiver.onSend(data, offset, count, timestamp);
         }
     }
 
     private void noteOff(byte[] data, int offset, int count, long timestamp) throws IOException {
         byte note = data[offset + 1];
+        int channel = (data[offset] & MidiConstants.STATUS_CHANNEL_MASK);
+        ChannelData channelData = myChannels.get(channel);
 
-        if (myOnCounters[note] == 0) {
+        if (channelData.onCounters[note] == 0) {
             // must have lost some
             // or started after the Ons
             myReceiver.onSend(data, offset, count, timestamp);
         } else {
-            myOnCounters[note]--;
-            myOffToSend[note]++;
+            channelData.onCounters[note]--;
+            channelData.offToSend[note]++;
 
-            if (myOnCounters[note] == 0) {
-                while (myOffToSend[note] > 0) {
+            if (channelData.onCounters[note] == 0) {
+                while (channelData.offToSend[note] > 0) {
                     myReceiver.onSend(data, offset, count, 0);
-                    myOffToSend[note]--;
+                    channelData.offToSend[note]--;
                 }
             }
         }
+    }
+
+    static class ChannelData {
+        int[] onCounters = new int[128];
+        int[] offToSend = new int[128];
     }
 }
