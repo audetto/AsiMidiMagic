@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import inc.andsoft.asimidimagic.midi.DelayHandler;
 import inc.andsoft.asimidimagic.midi.MidiCountedOnOff;
+import inc.andsoft.asimidimagic.midi.MidiFilter;
 import inc.andsoft.asimidimagic.midi.MidiTimeScheduler;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.Utilities;
@@ -149,8 +150,14 @@ public class DelayActivity extends CommonActivity {
                     }
                 };
 
-                myFramer = new MidiFramer(myDelayHandler);
+                MidiReceiver filter = new MidiFilter(myDelayHandler);
+                myFramer = new MidiFramer(filter);
                 myOutputPort.connect(myFramer);
+
+                // the chain is
+                // myOutputPort -> MidiFramer -> MidiFilter -> DelayHandler -> TimeScheduler ->
+                // MidiCountedOnOff -> myInputPort
+
                 myTimeScheduler.start();
             } else {
                 Toast.makeText(DelayActivity.this, "Missing MIDI ports", Toast.LENGTH_SHORT).show();
