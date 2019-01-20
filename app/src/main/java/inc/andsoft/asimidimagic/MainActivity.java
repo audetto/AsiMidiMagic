@@ -53,11 +53,11 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
 
         myMidiManager = (MidiManager) getSystemService(MIDI_SERVICE);
 
-        Spinner inputSpinner = findViewById(R.id.spinner_input);
-        myInputPortSelector = new MidiPortSelector(myMidiManager, inputSpinner, MidiDeviceInfo.PortInfo.TYPE_INPUT);
-
         Spinner outputSpinner = findViewById(R.id.spinner_output);
         myOutputPortSelector = new MidiPortSelector(myMidiManager, outputSpinner, MidiDeviceInfo.PortInfo.TYPE_OUTPUT);
+
+        Spinner inputSpinner = findViewById(R.id.spinner_input);
+        myInputPortSelector = new MidiPortSelector(myMidiManager, inputSpinner, MidiDeviceInfo.PortInfo.TYPE_INPUT);
 
         Spinner handlerSpinner = findViewById(R.id.spinner_handler);
         ArrayAdapter<DataWithLabel<Class>> arrayAdapter = new ArrayAdapter<>(
@@ -139,8 +139,8 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
             DataWithLabel<Class> data = (DataWithLabel<Class>)selected;
             Class activity = data.getData();
             Intent secondActivity = new Intent(MainActivity.this, activity);
-            secondActivity.putExtra("input", myInputPortSelector.getPortWrapper());
             secondActivity.putExtra("output", myOutputPortSelector.getPortWrapper());
+            secondActivity.putExtra("input", myInputPortSelector.getPortWrapper());
 
             startActivity(secondActivity);
         }

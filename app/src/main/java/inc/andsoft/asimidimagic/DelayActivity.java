@@ -44,14 +44,14 @@ public class DelayActivity extends CommonActivity {
         setActionBar();
 
         Intent intent = getIntent();
-        MidiPortWrapper input = intent.getParcelableExtra("input");
         MidiPortWrapper output = intent.getParcelableExtra("output");
-
-        TextView inputText = findViewById(R.id.input_name);
-        inputText.setText(input.toString());
+        MidiPortWrapper input = intent.getParcelableExtra("input");
 
         TextView outputText = findViewById(R.id.output_name);
         outputText.setText(output.toString());
+
+        TextView inputText = findViewById(R.id.input_name);
+        inputText.setText(input.toString());
 
         SeekBar onDelaySeek = findViewById(R.id.seek_on_delay);
         onDelaySeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -117,16 +117,16 @@ public class DelayActivity extends CommonActivity {
             }
         });
 
-        myMidiDeviceOpener.queueDevice(input);
         myMidiDeviceOpener.queueDevice(output);
+        myMidiDeviceOpener.queueDevice(input);
 
         MidiManager midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
 
         Switch sticky = findViewById(R.id.switch_sticky);
 
         myMidiDeviceOpener.execute(midiManager, (MidiDeviceOpener opener) -> {
-            myInputPort = opener.openInputPort(input);
             myOutputPort = opener.openOutputPort(output);
+            myInputPort = opener.openInputPort(input);
 
             if (myInputPort != null && myOutputPort != null) {
                 MidiReceiver counted = new MidiCountedOnOff(myInputPort);

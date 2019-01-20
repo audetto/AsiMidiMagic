@@ -14,7 +14,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <Spinner
-            android:id="@+id/spinner_input"
+            android:id="@+id/spinner_output"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/spinner_output"
+            android:id="@+id/spinner_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -33,7 +33,7 @@
             android:layout_marginEnd="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_input" />
+            app:layout_constraintTop_toBottomOf="@+id/spinner_output" />
 
         <Spinner
             android:id="@+id/spinner_handler"
@@ -44,7 +44,7 @@
             android:layout_marginEnd="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_output" />
+            app:layout_constraintTop_toBottomOf="@+id/spinner_input" />
 
         <Button
             android:id="@+id/button_start"

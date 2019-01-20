@@ -14,7 +14,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
-            android:id="@+id/input_name"
+            android:id="@+id/output_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/output_name"
+            android:id="@+id/input_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -33,7 +33,7 @@
             android:layout_marginEnd="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/input_name" />
+            app:layout_constraintTop_toBottomOf="@+id/output_name" />
 
         <SeekBar
             android:id="@+id/seek_on_delay"
@@ -49,7 +49,7 @@
             android:thumbTint="@android:color/holo_green_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/output_name" />
+            app:layout_constraintTop_toBottomOf="@+id/input_name" />
 
         <SeekBar
             android:id="@+id/seek_off_delay"
