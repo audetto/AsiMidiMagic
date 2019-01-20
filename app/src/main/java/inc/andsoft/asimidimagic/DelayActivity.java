@@ -184,9 +184,7 @@ public class DelayActivity extends CommonActivity {
 
         if (myInputPort != null) {
             try {
-                // clean all remaining messages
-                myInputPort.flush();
-                // and send a final ALL_NOTES_OFF
+                // send a final ALL_NOTES_OFF
                 Utilities.allNotesOff(myInputPort);
             } catch (IOException e) {
                 Log.e(TAG, e.toString());

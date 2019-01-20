@@ -8,20 +8,33 @@ import com.mobileer.miditools.MidiConstants;
 import java.io.Closeable;
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
+
 public class Utilities {
     private final static String TAG = "Utilities";
 
-    private static final byte ALL_SOUND_OFF = (byte) 120;
+    private static final byte ALL_NOTES_OFF = (byte) 123;
 
-    public static void allNotesOff(MidiReceiver input) throws IOException {
-        byte[] buffer = new byte[3];
-        buffer[0] = MidiConstants.STATUS_CONTROL_CHANGE;
-        buffer[1] = ALL_SOUND_OFF;
-        buffer[2] = 0;
-        input.send(buffer, 0, buffer.length);
+    /**
+     * Send ALL_NOTES_OFF to all 15 MIDI channels
+     * @param receiver input device to send data to
+     * @throws IOException
+     */
+    public static void allNotesOff(@NonNull MidiReceiver receiver) throws IOException {
+        for (int i = 0; i < 16; ++i) {
+            byte[] buffer = new byte[3];
+            buffer[0] = (byte) (MidiConstants.STATUS_CONTROL_CHANGE + i);
+            buffer[1] = ALL_NOTES_OFF;
+            buffer[2] = 0;
+            receiver.send(buffer, 0, buffer.length);
+        }
     }
 
-    public static void doClose(Closeable object) {
+    /**
+     * Close and log any exception
+     * @param object object to close
+     */
+    public static void doClose(@NonNull Closeable object) {
         try {
             Log.d(TAG, "Closing " + object);
             object.close();
