@@ -7,7 +7,6 @@ import com.mobileer.miditools.MidiConstants;
 import java.io.IOException;
 
 public class MidiFilter extends MidiReceiver {
-
     private MidiReceiver myReceiver;
 
     public MidiFilter(MidiReceiver receiver) {
@@ -26,7 +25,7 @@ public class MidiFilter extends MidiReceiver {
             case MidiConstants.STATUS_PROGRAM_CHANGE:
             case MidiConstants.STATUS_CHANNEL_PRESSURE:
             case MidiConstants.STATUS_PITCH_BEND: {
-                myReceiver.onSend(data, offset, count, timestamp);
+                myReceiver.send(data, offset, count, timestamp);
                 break;
             }
             default: {

@@ -36,7 +36,7 @@ abstract public class StartStopReceiver extends MidiReceiver {
                     return;
                 } // otherwise pass it
             default: {
-                myReceiver.onSend(data, offset, count, timestamp);
+                myReceiver.send(data, offset, count, timestamp);
             }
         }
     }

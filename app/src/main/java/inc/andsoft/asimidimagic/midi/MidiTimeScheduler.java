@@ -51,7 +51,6 @@ public class MidiTimeScheduler extends MidiReceiver {
         }
     }
 
-
     public MidiTimeScheduler(MidiReceiver receiver) {
         myReceiver = receiver;
 
