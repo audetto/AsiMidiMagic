@@ -9,6 +9,7 @@ public class DataWithLabel<T> {
         myData = data;
     }
 
+    @Override
     public String toString() {
         return myStr;
     }

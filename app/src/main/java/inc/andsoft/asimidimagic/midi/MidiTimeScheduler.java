@@ -13,7 +13,7 @@ public class MidiTimeScheduler extends MidiReceiver {
     private Thread myThread;
 
     public static class MidiEvent extends EventScheduler.SchedulableEvent {
-        public int count;
+        int count;
         public byte[] data;
 
         private MidiEvent(byte[] msg, int offset, int count, long timestamp) {
@@ -21,15 +21,6 @@ public class MidiTimeScheduler extends MidiReceiver {
             data = new byte[count];
             System.arraycopy(msg, offset, data, 0, count);
             this.count = count;
-        }
-
-        @Override
-        public String toString() {
-            String text = "Event: ";
-            for (int i = 0; i < count; i++) {
-                text += data[i] + ", ";
-            }
-            return text;
         }
     }
 

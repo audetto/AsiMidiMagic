@@ -14,19 +14,19 @@ import androidx.annotation.NonNull;
 
 abstract public class StartStopReceiver extends MidiReceiver {
 
-    protected MidiReceiver myReceiver;
+    MidiReceiver myReceiver;
     private boolean myPedalPressed = false;
 
     private static final byte CC_SOSTENUTO = (byte) 66;
 
-    public StartStopReceiver(@NonNull MidiReceiver receiver) {
+    StartStopReceiver(@NonNull MidiReceiver receiver) {
         myReceiver = receiver;
     }
 
+    @Override
     public void onSend(byte[] data, int offset, int count, long timestamp)
             throws IOException {
         byte command = (byte) (data[offset] & MidiConstants.STATUS_COMMAND_MASK);
-//        int channel = (byte) (data[offset] & MidiConstants.STATUS_CHANNEL_MASK);
         switch (command) {
             case MidiConstants.STATUS_CONTROL_CHANGE:
                 byte control = data[offset + 1];
@@ -43,7 +43,7 @@ abstract public class StartStopReceiver extends MidiReceiver {
 
     abstract public void onPedalChange(boolean value);
 
-    public void fireRunningChange() {
+    private void fireRunningChange() {
         onPedalChange(myPedalPressed);
     }
 

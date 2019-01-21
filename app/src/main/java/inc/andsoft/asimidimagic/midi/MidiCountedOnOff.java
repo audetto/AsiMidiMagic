@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import androidx.annotation.NonNull;
+
 public class MidiCountedOnOff extends MidiReceiver {
     private MidiReceiver myReceiver;
 
@@ -45,7 +47,7 @@ public class MidiCountedOnOff extends MidiReceiver {
         myReceiver.send(data, offset, count, timestamp);
     }
 
-    private void noteOn(byte[] data, int offset, int count, long timestamp) throws IOException {
+    private void noteOn(@NonNull byte[] data, int offset, int count, long timestamp) throws IOException {
         byte velocity = data[offset + 2];
         if (velocity == 0) {
             noteOff(data, offset, count, timestamp);
@@ -59,7 +61,7 @@ public class MidiCountedOnOff extends MidiReceiver {
         }
     }
 
-    private void noteOff(byte[] data, int offset, int count, long timestamp) throws IOException {
+    private void noteOff(@NonNull byte[] data, int offset, int count, long timestamp) throws IOException {
         byte note = data[offset + 1];
         int channel = (data[offset] & MidiConstants.STATUS_CHANNEL_MASK);
         ChannelData channelData = myChannels.get(channel);

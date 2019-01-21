@@ -194,8 +194,7 @@ class MidiDeviceListAdapter extends RecyclerView.Adapter<MidiDeviceListAdapter.M
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.listitem_ble_device, parent, false);
 
-        MidiViewHolder viewHolder = new MidiViewHolder(view);
-        return viewHolder;
+        return new MidiViewHolder(view);
     }
 
     @Override

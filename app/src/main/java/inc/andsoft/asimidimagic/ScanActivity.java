@@ -172,8 +172,8 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startScanningLeDevices();
@@ -308,8 +308,7 @@ class LeDeviceListAdapter extends RecyclerView.Adapter<LeDeviceListAdapter.LeVie
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.listitem_ble_scan, parent, false);
 
-        LeViewHolder viewHolder = new LeViewHolder(view);
-        return viewHolder;
+        return new LeViewHolder(view);
     }
 
     @Override

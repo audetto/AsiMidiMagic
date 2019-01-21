@@ -33,6 +33,7 @@ public abstract class DelayHandler extends StartStopReceiver {
         myOnDelay = delayInMS * MILLIS_PER_NANO;
     }
 
+    @Override
     public void onSend(byte[] data, int offset, int count, long timestamp)
             throws IOException {
         byte command = (byte) (data[offset] & MidiConstants.STATUS_COMMAND_MASK);
@@ -51,7 +52,7 @@ public abstract class DelayHandler extends StartStopReceiver {
         }
     }
 
-    private void noteOn(byte[] data, int offset, int count, long timestamp) throws IOException {
+    private void noteOn(@NonNull byte[] data, int offset, int count, long timestamp) throws IOException {
         byte velocity = data[offset + 2];
         if (velocity == 0) {
             noteOff(data, offset, count, timestamp);

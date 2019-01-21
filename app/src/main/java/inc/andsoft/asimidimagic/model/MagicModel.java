@@ -19,8 +19,6 @@ import inc.andsoft.asimidimagic.tools.Utilities;
 import static android.content.Context.MIDI_SERVICE;
 
 public class MagicModel extends AndroidViewModel {
-    private final static String TAG = "MagicModel";
-
     private MidiManager myMidiManager;
 
     private Map<BluetoothDevice, MidiDevice> myDevices = new HashMap<>();
@@ -32,6 +30,7 @@ public class MagicModel extends AndroidViewModel {
         super(application);
         myMidiManager = (MidiManager) application.getSystemService(MIDI_SERVICE);
         myCallback = new MidiManager.DeviceCallback() {
+            @Override
             public void onDeviceRemoved(MidiDeviceInfo device) {
                 myDevices.entrySet().removeIf((value) -> value.getValue().getInfo().equals(device));
                 // this happens in the main event thread (new Handler())
@@ -61,6 +60,7 @@ public class MagicModel extends AndroidViewModel {
         return myLiveData;
     }
 
+    @Override
     protected void onCleared() {
         myMidiManager.unregisterDeviceCallback(myCallback);
         myDevices.forEach((ble, midi) -> Utilities.doClose(midi));

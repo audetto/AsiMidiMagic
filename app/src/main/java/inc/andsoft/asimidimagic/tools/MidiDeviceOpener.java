@@ -89,6 +89,7 @@ public class MidiDeviceOpener implements Closeable {
         }
     }
 
+    @Override
     public void close() {
         myDeviceInfos.clear();
         myDevices.clear();
