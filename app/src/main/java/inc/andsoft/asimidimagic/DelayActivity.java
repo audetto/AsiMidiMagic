@@ -7,6 +7,7 @@ import android.media.midi.MidiOutputPort;
 import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
@@ -36,6 +37,8 @@ public class DelayActivity extends CommonActivity {
     private MidiTimeScheduler myTimeScheduler;
     private DelayHandler myDelayHandler;
     private MidiFramer myFramer;
+    private MidiFilter myFilter;
+    private MidiCountedOnOff myCounted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,8 +132,8 @@ public class DelayActivity extends CommonActivity {
             myInputPort = opener.openInputPort(input);
 
             if (myInputPort != null && myOutputPort != null) {
-                MidiReceiver counted = new MidiCountedOnOff(myInputPort);
-                myTimeScheduler = new MidiTimeScheduler(counted);
+                myCounted = new MidiCountedOnOff(myInputPort);
+                myTimeScheduler = new MidiTimeScheduler(myCounted);
                 myDelayHandler = new DelayHandler(myTimeScheduler) {
                     @Override
                     public void onPedalChange(boolean value) {
@@ -151,8 +154,8 @@ public class DelayActivity extends CommonActivity {
                     }
                 };
 
-                MidiReceiver filter = new MidiFilter(myDelayHandler);
-                myFramer = new MidiFramer(filter);
+                myFilter = new MidiFilter(myDelayHandler);
+                myFramer = new MidiFramer(myFilter);
                 connect();
 
                 // the chain is
@@ -200,6 +203,8 @@ public class DelayActivity extends CommonActivity {
             myTimeScheduler.stop();
         }
 
+        myCounted = null;
+        myFilter = null;
         myFramer = null;
         myInputPort = null;
         myOutputPort = null;
@@ -219,4 +224,26 @@ public class DelayActivity extends CommonActivity {
         green.toggle();
     }
 
+    public void notesOff(View v) {
+        try {
+            Utilities.allNotesOff(myInputPort);
+        } catch (IOException e) {
+
+        }
+    }
+
+    public void counters(View v) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("In ON = ");
+        builder.append(myFilter.myOnCounter);
+        builder.append(", In OFF = ");
+        builder.append(myFilter.myOffCounter);
+        builder.append(", Out ON = ");
+        builder.append(myCounted.myOnCounter);
+        builder.append(", Out OFF = ");
+        builder.append(myCounted.myOffCounter);
+
+        TextView text = findViewById(R.id.text_counters);
+        text.setText(builder.toString());
+    }
 }

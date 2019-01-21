@@ -14,6 +14,9 @@ import androidx.annotation.NonNull;
 public class MidiCountedOnOff extends MidiReceiver {
     private MidiReceiver myReceiver;
 
+    public int myOnCounter;
+    public int myOffCounter;
+
     private SparseArray<ChannelData> myChannels = new SparseArray<>();
 
     public MidiCountedOnOff(MidiReceiver receiver) {
@@ -44,6 +47,19 @@ public class MidiCountedOnOff extends MidiReceiver {
     }
 
     private void forward(byte[] data, int offset, int count, long timestamp) throws IOException {
+        int command = (data[offset] & MidiConstants.STATUS_COMMAND_MASK);
+
+        switch (command) {
+            case MidiConstants.STATUS_NOTE_ON: {
+                myOnCounter++;
+                break;
+            }
+            case MidiConstants.STATUS_NOTE_OFF: {
+                myOffCounter++;
+                break;
+            }
+        }
+
         myReceiver.send(data, offset, count, timestamp);
     }
 
