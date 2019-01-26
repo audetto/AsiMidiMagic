@@ -36,6 +36,11 @@
         </activity>
 
         <activity
+            android:name=".ScaleActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
             android:name=".ScanActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

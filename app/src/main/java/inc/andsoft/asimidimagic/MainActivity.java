@@ -64,6 +64,7 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
                 handlerSpinner.getContext(), android.R.layout.simple_spinner_dropdown_item);
 
         arrayAdapter.add(new DataWithLabel<>("ON-OFF Delay", DelayActivity.class));
+        arrayAdapter.add(new DataWithLabel<>("Scales", ScaleActivity.class));
         handlerSpinner.setAdapter(arrayAdapter);
 
         RecyclerView recyclerView = findViewById(R.id.list_midi);
