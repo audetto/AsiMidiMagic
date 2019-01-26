@@ -21,7 +21,7 @@ public class Utilities {
      * @throws IOException
      */
     public static void allNotesOff(@NonNull MidiReceiver receiver) throws IOException {
-        for (int i = 0; i < 16; ++i) {
+        for (int i = 0; i < MidiConstants.MAX_CHANNELS; ++i) {
             byte[] buffer = new byte[3];
             buffer[0] = (byte) (MidiConstants.STATUS_CONTROL_CHANGE + i);
             buffer[1] = ALL_NOTES_OFF;
