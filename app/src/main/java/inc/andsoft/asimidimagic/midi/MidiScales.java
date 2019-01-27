@@ -13,10 +13,12 @@ import androidx.annotation.NonNull;
 class Scale {
     int myFirstNote;
     int myLastNote;
+    int myValidSign;
     List<Integer> myNotes = new ArrayList<>();
     List<Long> myTimes = new ArrayList<>();
 
     void addNote(int note, long timestamp) {
+        myValidSign = 0;
         myLastNote = note;
         myNotes.add(note);
         myTimes.add(timestamp);
@@ -33,6 +35,15 @@ class Scale {
 
     boolean complete() {
         return (myNotes.size() >= 2) && (myFirstNote == myLastNote);
+    }
+
+    boolean valid(int note) {
+        boolean ok = !complete();
+        if (myValidSign != 0) {
+            int noteSign = Integer.signum(note - myFirstNote);
+            ok = (myValidSign * noteSign) != -1;
+        }
+        return ok;
     }
 }
 
@@ -101,10 +112,19 @@ abstract public class MidiScales extends StartStopReceiver {
             // we have 2 scales
             mySecondScale.myFirstNote = note;
             mySecondScale.addNote(note, timestamp);
+
+            // this could still be 2 contrary motion scales
+            // which is ok, as long as they do not share the middle note
         } else {
             // it could be a contrary motion scale
             mySecondScale.copy(myFirstScale);
             myFirstScale.addNote(note, timestamp);
+
+            // in which case they need to go to separate directions
+            myFirstScale.myValidSign = Integer.signum(note - myFirstScale.myFirstNote);
+            mySecondScale.myValidSign = -myFirstScale.myValidSign;
+
+            // or no 2nd scale at all
         }
 
         String message = String.format(Locale.getDefault(), FORMAT_TWO_SCALES,
@@ -114,29 +134,38 @@ abstract public class MidiScales extends StartStopReceiver {
     }
 
     private void waitingForNotes(int note, long timestamp) {
-        int leftDistance = Math.abs(note - mySecondScale.myLastNote);
-        int rightDistance = Math.abs(note - myFirstScale.myLastNote);
-
         /*
-        This is not quite correct yet.
-        A single scale where the first interval is a semitone,
-        allocates the notes to the other (non existing scale)
+        What is not working if 2 scales contrary motion,
+        starting far apart and peaking to the same note in the middle
          */
 
-        boolean closingCommonScales = (myFirstScale.myFirstNote == mySecondScale.myFirstNote) &&
-                (note == myFirstScale.myFirstNote);
+        int distance1st = Math.abs(note - myFirstScale.myLastNote);
+        int distance2nd = Math.abs(note - mySecondScale.myLastNote);
 
-        if ((rightDistance <= leftDistance) && !myFirstScale.complete()) {
-            myFirstScale.addNote(note, timestamp);
-            if (closingCommonScales && !mySecondScale.complete()) {
+        boolean valid1st = myFirstScale.valid(note);
+        boolean valid2nd = mySecondScale.valid(note);
+
+        if (valid1st && valid2nd) {
+            boolean closingCommonScales = (myFirstScale.myFirstNote == mySecondScale.myFirstNote) &&
+                    (note == myFirstScale.myFirstNote);
+
+            if (distance1st <= distance2nd) {
+                myFirstScale.addNote(note, timestamp);
+                if (closingCommonScales) {
+                    mySecondScale.addNote(note, timestamp);
+                }
+            } else {
                 mySecondScale.addNote(note, timestamp);
-            }
-        } else {
-            if ((rightDistance >= leftDistance) && !mySecondScale.complete()) {
-                mySecondScale.addNote(note, timestamp);
-                if (closingCommonScales && !myFirstScale.complete()) {
+                if (closingCommonScales) {
                     myFirstScale.addNote(note, timestamp);
                 }
+            }
+        } else {
+            if (valid1st) {
+                myFirstScale.addNote(note, timestamp);
+            }
+            if (valid2nd) {
+                mySecondScale.addNote(note, timestamp);
             }
         }
 
