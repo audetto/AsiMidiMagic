@@ -12,6 +12,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +47,9 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
     private MagicModel myMagicModel;
     private MidiDeviceListAdapter myMidiDeviceListAdapter;
 
+    private static final String OUTPUT_SELECTOR_KEY = "output selector";
+    private static final String INPUT_SELECTOR_KEY = "input selector";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +79,28 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
 
         myMagicModel = ViewModelProviders.of(this).get(MagicModel.class);
         myMagicModel.getDevices().observe(this, this);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Parcelable outputSelectorState = myOutputPortSelector.onSaveInstanceState();
+        outState.putParcelable(OUTPUT_SELECTOR_KEY, outputSelectorState);
+
+        Parcelable inputSelectorState = myInputPortSelector.onSaveInstanceState();
+        outState.putParcelable(INPUT_SELECTOR_KEY, inputSelectorState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        Parcelable outputSelectorState = savedInstanceState.getParcelable(OUTPUT_SELECTOR_KEY);
+        myOutputPortSelector.onRestoreInstanceState(outputSelectorState);
+
+        Parcelable inputSelectorState = savedInstanceState.getParcelable(INPUT_SELECTOR_KEY);
+        myInputPortSelector.onRestoreInstanceState(inputSelectorState);
     }
 
     @Override

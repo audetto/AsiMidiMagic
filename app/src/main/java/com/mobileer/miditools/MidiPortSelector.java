@@ -22,6 +22,7 @@ import android.media.midi.MidiManager;
 import android.media.midi.MidiManager.DeviceCallback;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -76,6 +77,19 @@ public class MidiPortSelector extends DeviceCallback {
         MidiDeviceInfo[] infos = mMidiManager.getDevices();
         for (MidiDeviceInfo info : infos) {
             onDeviceAdded(info);
+        }
+    }
+
+    public Parcelable onSaveInstanceState() {
+        return mCurrentWrapper;
+    }
+
+    public void onRestoreInstanceState(Parcelable state) {
+        MidiPortWrapper previous = (MidiPortWrapper)state;
+
+        int pos = mAdapter.getPosition(previous);
+        if (pos >= 0) {
+            mSpinner.setSelection(pos);
         }
     }
 
