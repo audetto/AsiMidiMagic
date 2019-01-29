@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 /**
  * Created by andrea on 28/01/18.
@@ -31,39 +33,46 @@ public class MidiDeviceOpener implements Closeable {
     private Stack<Closeable> myMidiToClose = new Stack<>();
 
     public void queueDevice(@NonNull MidiPortWrapper wrapper) {
-        if (wrapper.getDeviceInfo() != null) {
+        MidiDeviceInfo info = wrapper.getDeviceInfo();
+        if (info != null && !myDevices.containsKey(info)) {
             myDeviceInfos.add(wrapper.getDeviceInfo());
         }
     }
 
-    public interface Completed {
-        void action(MidiDeviceOpener opener);
-    }
-
-    public void execute(@NonNull MidiManager midiManager, final Completed callBack) {
+    public void execute(@NonNull MidiManager midiManager, Consumer<MidiDeviceOpener> callBack) {
         if (myDeviceInfos.isEmpty()) {
             // nothing to do, call immediately
-            callBack.action(MidiDeviceOpener.this);
+            callBack.accept(MidiDeviceOpener.this);
         } else {
-            Handler handler = new Handler();
+            Handler handler = new Handler(); // to run in this thread
 
-            // TODO: find a more elegant solution
-            int[] counter = new int [] {myDeviceInfos.size()};
+            AtomicInteger counter = new AtomicInteger(myDeviceInfos.size());
 
             for (MidiDeviceInfo deviceInfo : myDeviceInfos) {
-                midiManager.openDevice(deviceInfo, (MidiDevice device) -> {
+                MidiManager.OnDeviceOpenedListener listener = (MidiDevice device) -> {
                     if (device == null) {
                         Log.e(TAG, "Cannot open device " + deviceInfo);
+                    } else {
+                        myMidiToClose.push(device);
                     }
-                    myMidiToClose.push(device);
                     myDevices.put(deviceInfo, device);  // store for later
-                    counter[0]--;
-                    if (counter[0] == 0) {
+
+                    int remaining = counter.decrementAndGet();
+                    if (remaining == 0) {
                         // we have processed them all
-                        callBack.action(MidiDeviceOpener.this);
+                        callBack.accept(MidiDeviceOpener.this);
                     }
-                }, handler);
+                };
+
+                try {
+                    midiManager.openDevice(deviceInfo, listener, handler);
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception " + e + " while opening device " + deviceInfo);
+                    // call it manually here
+                    listener.onDeviceOpened(null);
+                }
             }
+            myDeviceInfos.clear();
         }
     }
 
