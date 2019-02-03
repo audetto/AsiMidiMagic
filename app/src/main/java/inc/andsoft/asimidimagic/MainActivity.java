@@ -1,6 +1,8 @@
 package inc.andsoft.asimidimagic;
 
 import android.app.Activity;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.bluetooth.BluetoothDevice;
@@ -9,19 +11,16 @@ import android.media.midi.MidiDevice;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -36,6 +35,7 @@ import java.util.stream.Collectors;
 
 import inc.andsoft.asimidimagic.model.MagicModel;
 import inc.andsoft.asimidimagic.tools.DataWithLabel;
+import inc.andsoft.asimidimagic.tools.RecyclerArrayAdapter;
 import inc.andsoft.asimidimagic.tools.Utilities;
 
 public class MainActivity extends BaseActivity implements Observer<Map<BluetoothDevice, MidiDevice>> {
@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
     private MidiPortSelector myInputPortSelector;
     private MidiPortSelector myOutputPortSelector;
     private MagicModel myMagicModel;
-    private MidiDeviceListAdapter myMidiDeviceListAdapter;
+    private RecyclerArrayAdapter<Map.Entry<BluetoothDevice, MidiDevice>> myMidiDeviceListAdapter;
 
     private static final String OUTPUT_SELECTOR_KEY = "output selector";
     private static final String INPUT_SELECTOR_KEY = "input selector";
@@ -66,15 +66,35 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
 
         Spinner handlerSpinner = findViewById(R.id.spinner_handler);
         ArrayAdapter<DataWithLabel<Class>> arrayAdapter = new ArrayAdapter<>(
-                handlerSpinner.getContext(), android.R.layout.simple_spinner_dropdown_item);
+                handlerSpinner.getContext(), android.R.layout.simple_spinner_item);
 
         arrayAdapter.add(new DataWithLabel<>("ON-OFF Delay", DelayActivity.class));
         arrayAdapter.add(new DataWithLabel<>("Scales", ScaleActivity.class));
+        arrayAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         handlerSpinner.setAdapter(arrayAdapter);
 
         RecyclerView recyclerView = findViewById(R.id.list_midi);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        myMidiDeviceListAdapter = new MidiDeviceListAdapter();
+        myMidiDeviceListAdapter = new RecyclerArrayAdapter<Map.Entry<BluetoothDevice, MidiDevice>>(R.layout.listitem_ble_device) {
+            @Override
+            public void populateView(@NonNull View itemView, @NonNull Map.Entry<BluetoothDevice, MidiDevice> data) {
+                TextView nameView = itemView.findViewById(R.id.device_name);
+                TextView midiView = itemView.findViewById(R.id.device_midi);
+                Button disconnectButton = itemView.findViewById(R.id.button_disconnect);
+
+                BluetoothDevice bleDevice = data.getKey();
+                MidiDevice midiDevice = data.getValue();
+
+                String deviceName = bleDevice.getName();
+                if (deviceName != null && deviceName.length() > 0)
+                    nameView.setText(deviceName);
+                else
+                    nameView.setText(R.string.unknown_device);
+                midiView.setText(midiDevice.getInfo().toString());
+
+                disconnectButton.setOnClickListener((View v) -> Utilities.doClose(midiDevice));
+            }
+        };
         recyclerView.setAdapter(myMidiDeviceListAdapter);
 
         myMagicModel = ViewModelProviders.of(this).get(MagicModel.class);
@@ -151,7 +171,8 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
 
     @Override
     public void onChanged(Map<BluetoothDevice, MidiDevice> data) {
-        myMidiDeviceListAdapter.setDevices(data);
+        List<Map.Entry<BluetoothDevice, MidiDevice>> items = new ArrayList<>(data.entrySet());
+        myMidiDeviceListAdapter.setItems(items);
     }
 
     private void startBLEActivity() {
@@ -172,72 +193,6 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
 
             startActivity(secondActivity);
         }
-    }
-
-}
-
-// Adapter for holding devices found through scanning.
-class MidiDeviceListAdapter extends RecyclerView.Adapter<MidiDeviceListAdapter.MidiViewHolder> {
-    private List<Map.Entry<BluetoothDevice, MidiDevice>> myDevices;
-
-    static class MidiViewHolder extends RecyclerView.ViewHolder {
-
-        MidiViewHolder(View view) {
-            super(view);
-        }
-
-        void setValues(BluetoothDevice ble, MidiDevice midi,
-                       CompoundButton.OnClickListener listener) {
-            TextView nameView = itemView.findViewById(R.id.device_name);
-            TextView midiView = itemView.findViewById(R.id.device_midi);
-            Button disconnectButton = itemView.findViewById(R.id.button_disconnect);
-
-            String deviceName = ble.getName();
-            if (deviceName != null && deviceName.length() > 0)
-                nameView.setText(deviceName);
-            else
-                nameView.setText(R.string.unknown_device);
-            midiView.setText(midi.getInfo().toString());
-
-            disconnectButton.setOnClickListener(listener);
-        }
-    }
-
-    MidiDeviceListAdapter() {
-        myDevices = new ArrayList<>();
-    }
-
-    void setDevices(Map<BluetoothDevice, MidiDevice> data) {
-        myDevices = new ArrayList<>(data.entrySet());
-        notifyDataSetChanged();
-    }
-
-    void clear() {
-        myDevices.clear();
-    }
-
-    @NonNull
-    @Override
-    public MidiViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.listitem_ble_device, parent, false);
-
-        return new MidiViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull MidiViewHolder holder, int position) {
-        Map.Entry<BluetoothDevice, MidiDevice> data = myDevices.get(position);
-        BluetoothDevice bleDevice = data.getKey();
-        MidiDevice midiDevice = data.getValue();
-
-        holder.setValues(bleDevice, midiDevice,
-                (View v) -> Utilities.doClose(midiDevice));
-    }
-
-    @Override
-    public int getItemCount() {
-        return myDevices.size();
     }
 
 }

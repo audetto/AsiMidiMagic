@@ -8,14 +8,15 @@ import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import inc.andsoft.asimidimagic.tools.Scale;
 
 
-class Scale {
+class ScaleStorage {
     int myFirstNote;
     int myLastNote;
     int myValidSign;
     List<Integer> myNotes = new ArrayList<>();
-    List<Long> myTimes = new ArrayList<>();
+    private List<Long> myTimes = new ArrayList<>();
 
     void addNote(int note, long timestamp) {
         myValidSign = 0;
@@ -24,7 +25,7 @@ class Scale {
         myTimes.add(timestamp);
     }
 
-    void copy(@NonNull Scale other) {
+    void copy(@NonNull ScaleStorage other) {
         myFirstNote = other.myFirstNote;
         myLastNote = other.myLastNote;
         myNotes.clear();
@@ -33,17 +34,21 @@ class Scale {
         myTimes.addAll(other.myTimes);
     }
 
-    boolean complete() {
+    boolean isComplete() {
         return (myNotes.size() >= 2) && (myFirstNote == myLastNote);
     }
 
-    boolean valid(int note) {
-        boolean ok = !complete();
+    boolean isValid(int note) {
+        boolean ok = !isComplete();
         if (myValidSign != 0) {
             int noteSign = Integer.signum(note - myFirstNote);
             ok = (myValidSign * noteSign) != -1;
         }
         return ok;
+    }
+
+    public Scale getScale() {
+        return new Scale(myNotes, myTimes);
     }
 }
 
@@ -57,8 +62,8 @@ abstract public class MidiScales extends StartStopReceiver {
 
     private State myState;
 
-    private Scale mySecondScale;
-    private Scale myFirstScale;
+    private ScaleStorage mySecondScale;
+    private ScaleStorage myFirstScale;
 
     private Integer myChannel;
 
@@ -80,8 +85,8 @@ abstract public class MidiScales extends StartStopReceiver {
 
     private void initialise() {
         changeState(State.FIRST_NOTE, MSG_FIRST_NOTE);
-        mySecondScale = new Scale();
-        myFirstScale = new Scale();
+        mySecondScale = new ScaleStorage();
+        myFirstScale = new ScaleStorage();
         myChannel = null;
     }
 
@@ -96,6 +101,13 @@ abstract public class MidiScales extends StartStopReceiver {
      * @param message A message
      */
     abstract public void onChangeState(@NonNull State state, @NonNull String message);
+
+    /**
+     *
+     * @param leftScale
+     * @param rightScale
+     */
+    abstract public void complete(Scale leftScale, Scale rightScale);
 
     private void waitingForFirstNote(int note, long timestamp) {
         myFirstScale.myFirstNote = note;
@@ -142,8 +154,8 @@ abstract public class MidiScales extends StartStopReceiver {
         int distance1st = Math.abs(note - myFirstScale.myLastNote);
         int distance2nd = Math.abs(note - mySecondScale.myLastNote);
 
-        boolean valid1st = myFirstScale.valid(note);
-        boolean valid2nd = mySecondScale.valid(note);
+        boolean valid1st = myFirstScale.isValid(note);
+        boolean valid2nd = mySecondScale.isValid(note);
 
         if (valid1st && valid2nd) {
             boolean closingCommonScales = (myFirstScale.myFirstNote == mySecondScale.myFirstNote) &&
@@ -169,21 +181,38 @@ abstract public class MidiScales extends StartStopReceiver {
             }
         }
 
-        if (mySecondScale.complete() && myFirstScale.complete()) {
+        if (mySecondScale.isComplete() && myFirstScale.isComplete()) {
             String message = String.format(Locale.getDefault(), FORMAT_COMPLETE,
                     mySecondScale.myNotes.size(), myFirstScale.myNotes.size());
             changeState(State.COMPLETE, message);
-            complete();
+
+            Scale scale1st = myFirstScale.getScale();
+            Scale scale2nd = mySecondScale.getScale();
+
+            int lowest1st = scale1st.getLowestNote();
+            int highest1st = scale1st.getHighestNote();
+
+            int lowest2nd = scale2nd.getLowestNote();
+            int highest2nd = scale2nd.getHighestNote();
+
+            Scale leftScale = null;
+            Scale rightScale = null;
+
+            if (lowest1st < lowest2nd || highest1st < highest2nd) {
+                leftScale = scale1st;
+                rightScale = scale2nd;
+            } else {
+                leftScale = scale2nd;
+                rightScale = scale1st;
+            }
+
+            complete(leftScale, rightScale);
         } else {
             String message = String.format(Locale.getDefault(), FORMAT_TWO_SCALES,
                     mySecondScale.myFirstNote, mySecondScale.myNotes.size(),
                     myFirstScale.myFirstNote, myFirstScale.myNotes.size());
             changeState(State.NOTES, message);
         }
-    }
-
-    private void complete() {
-
     }
 
     private void noteOn(@NonNull byte[] data, int offset, int count, long timestamp) throws IOException {

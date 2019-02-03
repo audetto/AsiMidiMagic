@@ -54,8 +54,6 @@ public class MidiPortSelector extends DeviceCallback {
         mSpinner = spinner;
         mAdapter = new ArrayAdapter<>(mSpinner.getContext(),
                 android.R.layout.simple_spinner_item);
-        mAdapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
         mAdapter.add(new MidiPortWrapper(null, 0, 0));
 
         mSpinner.setOnItemSelectedListener(
@@ -70,6 +68,7 @@ public class MidiPortSelector extends DeviceCallback {
                         mCurrentWrapper = null;
                     }
                 });
+        mAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         mSpinner.setAdapter(mAdapter);
 
         mMidiManager.registerDeviceCallback(this, new Handler(Looper.getMainLooper()));
