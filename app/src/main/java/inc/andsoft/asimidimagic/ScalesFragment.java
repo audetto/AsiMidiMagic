@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import inc.andsoft.asimidimagic.tools.RecyclerArrayAdapter;
 import inc.andsoft.asimidimagic.tools.Scale;
+import inc.andsoft.asimidimagic.tools.Utilities;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +20,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
 
 public class ScalesFragment extends Fragment {
 
-    private RecyclerArrayAdapter<String> myAdapterStats;
+    private RecyclerArrayAdapter<Scale.Stats> myAdapterStats;
     private ArrayAdapter<Integer> myAdapterPeriods;
     private Spinner mySpinnerPeriods;
     private Scale myScale;
@@ -56,11 +58,23 @@ public class ScalesFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        myAdapterStats = new RecyclerArrayAdapter<String>(android.R.layout.simple_list_item_1) {
+        myAdapterStats = new RecyclerArrayAdapter<Scale.Stats>(R.layout.listitem_scale_stats) {
             @Override
-            public void populateView(@NonNull View itemView, @NonNull String data) {
-                TextView textView = (TextView) itemView;
-                textView.setText(data);
+            public void populateView(@NonNull View itemView, int position, @NonNull Scale.Stats data) {
+                TextView grade = itemView.findViewById(R.id.grade);
+                grade.setText(String.valueOf(1 + position));
+
+                TextView mean = itemView.findViewById(R.id.mean);
+                mean.setText(Utilities.getPercentageFormat(data.mean));
+
+                TextView std = itemView.findViewById(R.id.std);
+                std.setText(Utilities.getPercentageFormat(data.std));
+
+                TextView ratio = itemView.findViewById(R.id.ratio);
+                ratio.setText(Utilities.getPercentageFormat(data.ratio));
+
+                TextView target = itemView.findViewById(R.id.target);
+                target.setText(Utilities.getPercentageFormat(data.target));
             }
         };
         RecyclerView recyclerViewStats = view.findViewById(R.id.recycler_stats);
@@ -89,7 +103,7 @@ public class ScalesFragment extends Fragment {
 
     private void setPeriod(int period) {
         if (period > 1) {
-            List<String> stats = myScale.getStatistics(period, true);
+            List<Scale.Stats> stats = myScale.getStatistics(period, true);
             myAdapterStats.setItems(stats);
             myAdapterStats.notifyDataSetChanged();
         }

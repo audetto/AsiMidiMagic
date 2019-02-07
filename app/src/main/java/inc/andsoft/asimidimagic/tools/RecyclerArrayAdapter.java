@@ -41,13 +41,13 @@ public abstract class RecyclerArrayAdapter<T> extends RecyclerView.Adapter<Recyc
         return new MultiViewHolder(view);
     }
 
-    abstract public void populateView(@NonNull View itemView, @NonNull T data);
+    abstract public void populateView(@NonNull View itemView, int position, @NonNull T data);
 
     @Override
     public void onBindViewHolder(@NonNull MultiViewHolder holder, int position) {
         T data = myItems.get(position);
 
-        populateView(holder.itemView, data);
+        populateView(holder.itemView, position, data);
     }
 
     @Override

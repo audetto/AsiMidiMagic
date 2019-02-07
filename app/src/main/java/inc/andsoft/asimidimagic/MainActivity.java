@@ -77,7 +77,7 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         myMidiDeviceListAdapter = new RecyclerArrayAdapter<Map.Entry<BluetoothDevice, MidiDevice>>(R.layout.listitem_ble_device) {
             @Override
-            public void populateView(@NonNull View itemView, @NonNull Map.Entry<BluetoothDevice, MidiDevice> data) {
+            public void populateView(@NonNull View itemView, int position, @NonNull Map.Entry<BluetoothDevice, MidiDevice> data) {
                 TextView nameView = itemView.findViewById(R.id.device_name);
                 TextView midiView = itemView.findViewById(R.id.device_midi);
                 Button disconnectButton = itemView.findViewById(R.id.button_disconnect);

@@ -70,7 +70,21 @@ public class Scale {
         return periods;
     }
 
-    public List<String> getStatistics(int period, boolean normalise) {
+    public static class Stats {
+        public final double mean;
+        public final double std;
+        public final double ratio;
+        public final double target;
+
+        public Stats(double mean, double std, double ratio, double target) {
+            this.mean = mean;
+            this.std = std;
+            this.ratio = ratio;
+            this.target = target;
+        }
+    }
+
+    public List<Stats> getStatistics(int period, boolean normalise) {
         int numberOfNotes = myNotes.size();
 
         if (numberOfNotes % period != 1) {
@@ -100,19 +114,17 @@ public class Scale {
             position = (position + 1) % period;
         }
 
-        List<String> statistics = new ArrayList<>(period);
+        List<Stats> statistics = new ArrayList<>(period);
         double target = 1.0 / period;
         for (int i = 0; i < period; ++i) {
             SummaryStatistics stats = deltas.get(i);
             double mean = stats.getMean();
             double stddev = stats.getStandardDeviation();
             double ratio = stddev / mean;
-            String msg = String.format(Locale.getDefault(), "%2d: mean = %4.2f, std = %f, target = %4.2f",
-                    i, mean * 100, ratio, target * 100);
-            statistics.add(msg);
+
+            statistics.add(new Stats(mean, stddev, ratio, target));
         }
 
         return statistics;
     }
-
 }

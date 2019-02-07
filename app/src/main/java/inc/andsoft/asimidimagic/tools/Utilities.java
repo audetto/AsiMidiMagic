@@ -7,6 +7,7 @@ import com.mobileer.miditools.MidiConstants;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 
@@ -41,5 +42,9 @@ public class Utilities {
         } catch (IOException e) {
             Log.e(TAG, e.toString());
         }
+    }
+
+    public static String getPercentageFormat(double number) {
+        return String.format(Locale.getDefault(), "%5.2f", number * 100);
     }
 }
