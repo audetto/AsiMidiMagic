@@ -8,7 +8,11 @@ import com.mobileer.miditools.MidiConstants;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by andrea on 13/01/18.
@@ -19,12 +23,13 @@ public class SynthMIDIServer extends MidiDeviceService {
 
     private MidiReceiver myInputPort = new LogReceiver();
     private byte[] buffer = new byte[32];
-    private Thread myThread;
+    private List<Thread> myThreads;
 
-    private long NANOS_PER_SECOND = 1000000000L;
-    private long NANOS_PER_MS = 1000000L;
+    private final long NANOS_PER_SECOND = 1000000000L;
+    private final long NANOS_PER_MS = 1000000L;
     private long myReferenceTime;
-    private SimpleDateFormat myDateFormat = new SimpleDateFormat("hh:mm:ss.SSS");
+    private SimpleDateFormat myDateFormat = new SimpleDateFormat("hh:mm:ss.SSS",
+            Locale.getDefault());
 
     private class LogReceiver extends MidiReceiver {
         public void onSend(byte[] data, int offset, int count, long timestamp) throws IOException
@@ -60,17 +65,71 @@ public class SynthMIDIServer extends MidiDeviceService {
 
     @Override
     public void onClose() {
-        if (myThread != null) {
-            myThread.interrupt();
-            while (myThread.isAlive()) {
+        for (Thread thread : myThreads) {
+            thread.interrupt();
+            while (thread.isAlive()) {
                 try {
-                    myThread.join();
+                    thread.join();
                 } catch (InterruptedException e) {
                     // someone interrupted this thread
                     // we have to join again
                 }
             }
-            myThread = null;
+        }
+        myThreads.clear();
+    }
+
+    class ScaleRunnable implements Runnable {
+        private MidiReceiver myReceiver;
+        private int myStartNote;
+        private long myPeriod;
+        private int myOctaves;
+
+        ScaleRunnable(MidiReceiver receiver, int startNote, long period, int octaves) {
+            this.myReceiver = receiver;
+            this.myStartNote = startNote;
+            this.myPeriod = period;
+            this.myOctaves = octaves;
+        }
+
+        public void run() {
+            Integer up[] = {2, 2, 1, 2, 2, 2, 1};
+            Integer down[] = {-1, -2, -2, -2, -1, -2, -2};
+
+            List<Integer> listUp = new ArrayList<>(Arrays.asList(up));
+            List<Integer> listDown = new ArrayList<>(Arrays.asList(down));
+
+            List<Integer> increments = new ArrayList<>();
+
+            for (int i = 0; i < myOctaves; ++i) {
+                increments.addAll(0, listUp);
+                increments.addAll(listDown);
+            }
+
+            int note = myStartNote;
+            try {
+                Thread.sleep(1000);
+                for (byte i = 0; i < 120; ++i) {
+                    Thread.sleep(myPeriod);
+
+                    byte velocity = (byte) 100;
+                    byte channel = (byte) 3;
+
+                    long now = System.nanoTime();
+                    noteOn(myReceiver, channel, (byte)note, velocity, now);
+
+                    long future = now + 2 * NANOS_PER_SECOND;
+
+                    noteOff(myReceiver, channel, (byte)note, velocity, future);
+
+                    Log.d(TAG, "Sent =     " + getTimeStr(now) + ", note = " + note + ", id = " + i);
+
+                    int increment = increments.get(i % increments.size());
+                    note += increment;
+                }
+            } catch (IOException | InterruptedException e) {
+                Log.d(TAG, e.toString());
+            }
         }
     }
 
@@ -80,30 +139,15 @@ public class SynthMIDIServer extends MidiDeviceService {
         MidiReceiver[] outputs = getOutputPortReceivers();
         myReferenceTime = System.nanoTime();
 
-        if (outputs.length > 0 && outputs[0] != null) {
-            myThread = new Thread(() -> {
-                try {
-                    for (byte i = 0; i < 120; ++i) {
-                        Thread.sleep(1000);
+        myThreads = new ArrayList<>();
 
-                        byte note = (byte) (60 + (i % 12));
-                        byte velocity = (byte) 100;
-                        byte channel = (byte) 3;
+        if (outputs.length > 0) {
+            myThreads.add(new Thread(new ScaleRunnable(outputs[0], 44, 300, 2)));
+            myThreads.add(new Thread(new ScaleRunnable(outputs[0], 68, 200, 3)));
+        }
 
-                        long now = System.nanoTime();
-                        noteOn(outputs[0], channel, note, velocity, now);
-
-                        long future = now + 2 * NANOS_PER_SECOND;
-
-                        noteOff(outputs[0], channel, note, velocity, future);
-
-                        Log.d(TAG, "Sent =     " + getTimeStr(now) + ", note = " + note + ", id = " + i);
-                    }
-                } catch (IOException | InterruptedException e) {
-                    Log.d(TAG, e.toString());
-                }
-            });
-            myThread.start();
+        for (Thread thread : myThreads) {
+            thread.start();
         }
     }
 
