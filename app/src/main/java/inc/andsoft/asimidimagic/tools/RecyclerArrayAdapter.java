@@ -29,7 +29,9 @@ public abstract class RecyclerArrayAdapter<T> extends RecyclerView.Adapter<Recyc
     }
 
     public void clear() {
-        myItems.clear();
+        if (myItems != null) {
+            myItems.clear();
+        }
     }
 
     @NonNull

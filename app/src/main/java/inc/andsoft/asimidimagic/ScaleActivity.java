@@ -53,6 +53,13 @@ public class ScaleActivity extends CommonActivity {
                         runOnUiThread(() -> {
                             TextView statusView = findViewById(R.id.text_status);
                             statusView.setText(message);
+
+                            if (state == State.FIRST_NOTE) {
+                                ScalesFragment leftFragment = (ScalesFragment)myAdapter.getRegisteredFragment(0);
+                                leftFragment.clear();
+                                ScalesFragment rightFragment = (ScalesFragment)myAdapter.getRegisteredFragment(1);
+                                rightFragment.clear();
+                            }
                         });
                     }
                     public void complete(Scale leftScale, Scale rightScale) {
@@ -114,7 +121,7 @@ class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
-    public Fragment getRegisteredFragment(int position) {
+    Fragment getRegisteredFragment(int position) {
         return myRegisteredFragments.get(position);
     }
 
@@ -148,6 +155,7 @@ class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
+    @NonNull
     public Object instantiateItem(ViewGroup container, int position) {
         Fragment fragment = (Fragment) super.instantiateItem(container, position);
         myRegisteredFragments.put(position, fragment);

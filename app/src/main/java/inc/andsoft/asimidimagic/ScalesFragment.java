@@ -28,6 +28,7 @@ public class ScalesFragment extends Fragment {
     private RecyclerArrayAdapter<Scale.Stats> myAdapterStats;
     private ArrayAdapter<Integer> myAdapterPeriods;
     private Spinner mySpinnerPeriods;
+    private TextView myTextStatus;
     private Scale myScale;
 
     public ScalesFragment() {
@@ -83,6 +84,7 @@ public class ScalesFragment extends Fragment {
 
         myAdapterPeriods = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item);
         myAdapterPeriods.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+
         mySpinnerPeriods = view.findViewById(R.id.spinner_periods);
         mySpinnerPeriods.setAdapter(myAdapterPeriods);
 
@@ -99,6 +101,8 @@ public class ScalesFragment extends Fragment {
 
                     }
                 });
+
+        myTextStatus = view.findViewById(R.id.text_status);
     }
 
     private void setPeriod(int period) {
@@ -107,6 +111,17 @@ public class ScalesFragment extends Fragment {
             myAdapterStats.setItems(stats);
             myAdapterStats.notifyDataSetChanged();
         }
+    }
+
+    void clear() {
+        myScale = null;
+        myAdapterPeriods.clear();
+        myAdapterPeriods.notifyDataSetChanged();
+
+        myAdapterStats.clear();
+        myAdapterStats.notifyDataSetChanged();
+
+        myTextStatus.setText(null);
     }
 
     void setScale(Scale scale) {
@@ -122,6 +137,11 @@ public class ScalesFragment extends Fragment {
         if (pos >= 0) {
             mySpinnerPeriods.setSelection(pos);
         }
+
+        String status = String.format(Locale.getDefault(), "%d scale = %d notes",
+                myScale.getNotes().get(0), myScale.getNotes().size());
+
+        myTextStatus.setText(status);
     }
 
 }

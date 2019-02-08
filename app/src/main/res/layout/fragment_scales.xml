@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ScalesFragment">
 
+    <TextView
+        android:id="@+id/text_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:textAlignment="center"
+        grid:layout_constraintEnd_toEndOf="parent"
+        grid:layout_constraintStart_toStartOf="parent"
+        grid:layout_constraintTop_toTopOf="parent" />
+
     <Spinner
         android:id="@+id/spinner_periods"
         android:layout_width="0dp"
@@ -15,7 +27,7 @@
         android:layout_marginEnd="8dp"
         grid:layout_constraintEnd_toEndOf="parent"
         grid:layout_constraintStart_toStartOf="parent"
-        grid:layout_constraintTop_toTopOf="parent" />
+        grid:layout_constraintTop_toBottomOf="@+id/text_status" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_stats"
