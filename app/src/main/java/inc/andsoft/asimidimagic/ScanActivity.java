@@ -21,21 +21,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
+import inc.andsoft.asimidimagic.adapters.LeDeviceListAdapter;
+
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Vector;
 
 
@@ -242,87 +234,3 @@ public class ScanActivity extends AppCompatActivity {
 
 }
 
-// Adapter for holding devices found through scanning.
-class LeDeviceListAdapter extends RecyclerView.Adapter<LeDeviceListAdapter.LeViewHolder> {
-    private List<Map.Entry<BluetoothDevice, Boolean>> myDevices;
-
-    static class LeViewHolder extends RecyclerView.ViewHolder {
-
-        LeViewHolder(View view) {
-            super(view);
-        }
-
-        void setValues(BluetoothDevice device, Boolean selected,
-                       CompoundButton.OnCheckedChangeListener listener) {
-            Switch name = itemView.findViewById(R.id.device_name);
-            TextView address = itemView.findViewById(R.id.device_address);
-
-            String deviceName = device.getName();
-            if (deviceName != null && deviceName.length() > 0)
-                name.setText(deviceName);
-            else
-                name.setText(R.string.unknown_device);
-            address.setText(device.getAddress());
-
-            name.setChecked(selected);
-            name.setOnCheckedChangeListener(listener);
-        }
-    }
-
-    LeDeviceListAdapter() {
-        myDevices = new ArrayList<>();
-    }
-
-    void addDevice(BluetoothDevice device) {
-        boolean present = myDevices.stream().anyMatch(x -> x.getKey().equals(device));
-        if (!present) {
-            Map.Entry<BluetoothDevice, Boolean> value = new AbstractMap.SimpleEntry<>(device, false);
-            myDevices.add(value);
-            notifyDataSetChanged();
-        }
-    }
-
-    private void setDevice(BluetoothDevice device, boolean selected) {
-        Optional<Map.Entry<BluetoothDevice, Boolean>> value =
-                myDevices.stream().filter(x -> x.getKey().equals(device)).findFirst();
-        value.ifPresent(x -> x.setValue(selected));
-        // this is called as part of an event listener,
-        // so the view is automatically update
-    }
-
-    void clear() {
-        myDevices.clear();
-    }
-
-    BluetoothDevice[] getSelectedDevices() {
-        BluetoothDevice[] devices = myDevices.stream()
-                .filter(Map.Entry::getValue)
-                .map(Map.Entry::getKey)
-                .toArray(BluetoothDevice[]::new);
-        return devices;
-    }
-
-    @NonNull
-    @Override
-    public LeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.listitem_ble_scan, parent, false);
-
-        return new LeViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull LeViewHolder holder, int position) {
-        Map.Entry<BluetoothDevice, Boolean> data = myDevices.get(position);
-        BluetoothDevice device = data.getKey();
-
-        holder.setValues(device, data.getValue(),
-                (CompoundButton buttonView, boolean isChecked) -> setDevice(device, isChecked));
-    }
-
-    @Override
-    public int getItemCount() {
-        return myDevices.size();
-    }
-
-}

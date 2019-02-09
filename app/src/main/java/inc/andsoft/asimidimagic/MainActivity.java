@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import inc.andsoft.asimidimagic.model.MagicModel;
+import inc.andsoft.asimidimagic.models.BLEModel;
 import inc.andsoft.asimidimagic.tools.DataWithLabel;
 import inc.andsoft.asimidimagic.tools.RecyclerArrayAdapter;
 import inc.andsoft.asimidimagic.tools.Utilities;
@@ -44,7 +44,7 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
     private MidiManager myMidiManager;
     private MidiPortSelector myInputPortSelector;
     private MidiPortSelector myOutputPortSelector;
-    private MagicModel myMagicModel;
+    private BLEModel myMagicModel;
     private RecyclerArrayAdapter<Map.Entry<BluetoothDevice, MidiDevice>> myMidiDeviceListAdapter;
 
     private static final String OUTPUT_SELECTOR_KEY = "output selector";
@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
         };
         recyclerView.setAdapter(myMidiDeviceListAdapter);
 
-        myMagicModel = ViewModelProviders.of(this).get(MagicModel.class);
+        myMagicModel = ViewModelProviders.of(this).get(BLEModel.class);
         myMagicModel.getDevices().observe(this, this);
     }
 

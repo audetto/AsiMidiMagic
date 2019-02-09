@@ -1,4 +1,4 @@
-package inc.andsoft.asimidimagic.model;
+package inc.andsoft.asimidimagic.models;
 
 import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
@@ -18,7 +18,7 @@ import inc.andsoft.asimidimagic.tools.Utilities;
 
 import static android.content.Context.MIDI_SERVICE;
 
-public class MagicModel extends AndroidViewModel {
+public class BLEModel extends AndroidViewModel {
     private MidiManager myMidiManager;
 
     private Map<BluetoothDevice, MidiDevice> myDevices = new HashMap<>();
@@ -26,7 +26,7 @@ public class MagicModel extends AndroidViewModel {
     private MidiManager.DeviceCallback myCallback;
     private Handler myHandler;
 
-    public MagicModel(Application application) {
+    public BLEModel(Application application) {
         super(application);
         myMidiManager = (MidiManager) application.getSystemService(MIDI_SERVICE);
         myCallback = new MidiManager.DeviceCallback() {
