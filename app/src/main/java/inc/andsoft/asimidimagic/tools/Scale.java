@@ -73,13 +73,13 @@ public class Scale {
     public static class Stats {
         public final double mean;
         public final double std;
-        public final double ratio;
+        public final double vol;
         public final double target;
 
-        public Stats(double mean, double std, double ratio, double target) {
+        public Stats(double mean, double std, double vol, double target) {
             this.mean = mean;
             this.std = std;
-            this.ratio = ratio;
+            this.vol = vol;
             this.target = target;
         }
     }
@@ -120,9 +120,9 @@ public class Scale {
             SummaryStatistics stats = deltas.get(i);
             double mean = stats.getMean();
             double stddev = stats.getStandardDeviation();
-            double ratio = stddev / mean;
+            double vol = stddev / mean;
 
-            statistics.add(new Stats(mean, stddev, ratio, target));
+            statistics.add(new Stats(mean, stddev, vol, target));
         }
 
         return statistics;

@@ -71,8 +71,8 @@ public class ScalesFragment extends Fragment {
                 TextView std = itemView.findViewById(R.id.std);
                 std.setText(Utilities.getPercentageFormat(data.std));
 
-                TextView ratio = itemView.findViewById(R.id.ratio);
-                ratio.setText(Utilities.getPercentageFormat(data.ratio));
+                TextView vol = itemView.findViewById(R.id.vol);
+                vol.setText(Utilities.getPercentageFormat(data.vol));
 
                 TextView target = itemView.findViewById(R.id.target);
                 target.setText(Utilities.getPercentageFormat(data.target));

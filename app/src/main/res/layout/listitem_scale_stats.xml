@@ -32,13 +32,13 @@
         android:text="std" />
 
     <TextView
-        android:id="@+id/ratio"
+        android:id="@+id/vol"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="end"
-        android:text="ratio" />
+        android:text="vol" />
 
     <TextView
         android:id="@+id/target"
