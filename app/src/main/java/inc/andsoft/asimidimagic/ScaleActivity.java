@@ -55,9 +55,9 @@ public class ScaleActivity extends CommonActivity {
                             statusView.setText(message);
 
                             if (state == State.FIRST_NOTE) {
-                                ScalesFragment leftFragment = (ScalesFragment)myAdapter.getRegisteredFragment(0);
+                                ScaleFragment leftFragment = (ScaleFragment)myAdapter.getRegisteredFragment(0);
                                 leftFragment.clear();
-                                ScalesFragment rightFragment = (ScalesFragment)myAdapter.getRegisteredFragment(1);
+                                ScaleFragment rightFragment = (ScaleFragment)myAdapter.getRegisteredFragment(1);
                                 rightFragment.clear();
                             }
                         });
@@ -95,9 +95,9 @@ public class ScaleActivity extends CommonActivity {
     }
 
     void processScales(Scale leftScale, Scale rightScale) {
-        ScalesFragment leftFragment = (ScalesFragment)myAdapter.getRegisteredFragment(0);
+        ScaleFragment leftFragment = (ScaleFragment)myAdapter.getRegisteredFragment(0);
         leftFragment.setScale(leftScale);
-        ScalesFragment rightFragment = (ScalesFragment)myAdapter.getRegisteredFragment(1);
+        ScaleFragment rightFragment = (ScaleFragment)myAdapter.getRegisteredFragment(1);
         rightFragment.setScale(rightScale);
     }
 
@@ -129,9 +129,9 @@ class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return ScalesFragment.newInstance();
+                return ScaleFragment.newInstance();
             case 1:
-                return ScalesFragment.newInstance();
+                return ScaleFragment.newInstance();
             default:
                 return null;
         }

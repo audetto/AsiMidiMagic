@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class ScalesFragment extends Fragment {
+public class ScaleFragment extends Fragment {
 
     private RecyclerArrayAdapter<Scale.Stats> myAdapterStats;
     private ArrayAdapter<Integer> myAdapterPeriods;
@@ -31,7 +31,7 @@ public class ScalesFragment extends Fragment {
     private TextView myTextStatus;
     private Scale myScale;
 
-    public ScalesFragment() {
+    public ScaleFragment() {
         // Required empty public constructor
     }
 
@@ -39,10 +39,10 @@ public class ScalesFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment ScalesFragment.
+     * @return A new instance of fragment ScaleFragment.
      */
-    static ScalesFragment newInstance() {
-        ScalesFragment fragment = new ScalesFragment();
+    static ScaleFragment newInstance() {
+        ScaleFragment fragment = new ScaleFragment();
         return fragment;
     }
 
@@ -55,7 +55,7 @@ public class ScalesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_scales, container, false);
+        return inflater.inflate(R.layout.fragment_scale, container, false);
     }
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
