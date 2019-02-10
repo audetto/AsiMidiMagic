@@ -173,6 +173,7 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
     public void onChanged(Map<BluetoothDevice, MidiDevice> data) {
         List<Map.Entry<BluetoothDevice, MidiDevice>> items = new ArrayList<>(data.entrySet());
         myMidiDeviceListAdapter.setItems(items);
+        myMidiDeviceListAdapter.notifyDataSetChanged();
     }
 
     private void startBLEActivity() {
