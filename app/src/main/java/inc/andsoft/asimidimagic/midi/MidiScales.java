@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import inc.andsoft.asimidimagic.tools.Scale;
@@ -47,8 +48,15 @@ class ScaleStorage {
         return ok;
     }
 
-    public Scale getScale() {
-        return new Scale(myNotes, myTimes);
+    Scale getScale() {
+        long startTime = myTimes.get(0);
+        long NANOS_PER_SECOND = 1000000000L;
+
+        List<Double> times = myTimes.stream()
+                .map(x -> (double)(x - startTime) / NANOS_PER_SECOND)
+                .collect(Collectors.toList());
+
+        return new Scale(myNotes, times);
     }
 }
 
@@ -195,8 +203,8 @@ abstract public class MidiScales extends StartStopReceiver {
             int lowest2nd = scale2nd.getLowestNote();
             int highest2nd = scale2nd.getHighestNote();
 
-            Scale leftScale = null;
-            Scale rightScale = null;
+            Scale leftScale;
+            Scale rightScale;
 
             if (lowest1st < lowest2nd || highest1st < highest2nd) {
                 leftScale = scale1st;

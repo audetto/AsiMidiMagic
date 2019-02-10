@@ -14,9 +14,9 @@ import java.util.stream.IntStream;
 public class Scale {
 
     private List<Integer> myNotes;
-    private List<Long> myTimes;
+    private List<Double> myTimes;
 
-    public Scale(List<Integer> notes, List<Long> times) {
+    public Scale(List<Integer> notes, List<Double> times) {
         myNotes = notes;
         myTimes = times;
     }
@@ -25,7 +25,7 @@ public class Scale {
         return myNotes;
     }
 
-    public List<Long> getTimes() {
+    public List<Double> getTimes() {
         return myTimes;
     }
 
@@ -64,7 +64,7 @@ public class Scale {
 
     public List<Integer> getValidPeriods() {
         int numberOfIntervals = myNotes.size() - 1;
-        List<Integer> periods = IntStream.range(2, numberOfIntervals)
+        List<Integer> periods = IntStream.range(1, numberOfIntervals)
                 .filter(i -> (numberOfIntervals % i) == 0) // Only keep those indices
                 .boxed().collect(Collectors.toList());
         return periods;
@@ -72,14 +72,14 @@ public class Scale {
 
     public static class Stats {
         public final double mean;
-        public final double std;
         public final double vol;
+        public final double cumulative;
         public final double target;
 
-        public Stats(double mean, double std, double vol, double target) {
+        public Stats(double mean, double vol, double cumulative, double target) {
             this.mean = mean;
-            this.std = std;
             this.vol = vol;
+            this.cumulative = cumulative;
             this.target = target;
         }
     }
@@ -87,16 +87,16 @@ public class Scale {
     public List<Stats> getStatistics(int period, boolean normalise) {
         int numberOfNotes = myNotes.size();
 
-        if (numberOfNotes % period != 1) {
+        if ((numberOfNotes - 1 ) % period != 0) {
             throw new IllegalArgumentException(String.format(Locale.getDefault(),
                     "Invalid period %d for size %d", period, numberOfNotes));
         }
 
         double coefficient = 1.0;
         if (normalise) {
-            long totalTime = myTimes.get(numberOfNotes - 1) - myTimes.get(0);
+            double totalTime = myTimes.get(numberOfNotes - 1) - myTimes.get(0);
             long numberOfGroups = (numberOfNotes - 1) / period;
-            coefficient = (double)numberOfGroups / (double)totalTime;
+            coefficient = (double)numberOfGroups / totalTime;
         }
 
         ArrayList<SummaryStatistics> deltas = new ArrayList<>(period);
@@ -104,25 +104,23 @@ public class Scale {
             deltas.add(new SummaryStatistics());
         }
 
-        long previous = myTimes.get(0);
-        int position = 0;
         for (int i = 1; i < numberOfNotes; ++i) {
-            long current = myTimes.get(i);
-            double delta = (current - previous) * coefficient;
+            double delta = (myTimes.get(i) - myTimes.get(i - 1)) * coefficient;
+            int position = i % period;
             deltas.get(position).addValue(delta);
-            previous = current;
-            position = (position + 1) % period;
         }
 
         List<Stats> statistics = new ArrayList<>(period);
-        double target = 1.0 / period;
+        double cumulative = 0.0;
         for (int i = 0; i < period; ++i) {
             SummaryStatistics stats = deltas.get(i);
             double mean = stats.getMean();
             double stddev = stats.getStandardDeviation();
             double vol = stddev / mean;
+            cumulative += mean;
+            double target = (double)(1 + i) / (double)period;
 
-            statistics.add(new Stats(mean, stddev, vol, target));
+            statistics.add(new Stats(mean, vol, cumulative, target));
         }
 
         return statistics;

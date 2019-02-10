@@ -14,6 +14,7 @@ import inc.andsoft.asimidimagic.models.ScaleModel;
 import inc.andsoft.asimidimagic.tools.RecyclerArrayAdapter;
 import inc.andsoft.asimidimagic.tools.Scale;
 import inc.andsoft.asimidimagic.tools.Utilities;
+import inc.andsoft.asimidimagic.views.RhythmChart;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 
 public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
@@ -33,6 +35,7 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
     private ArrayAdapter<Integer> myAdapterPeriods;
     private Spinner mySpinnerPeriods;
     private TextView myTextStatus;
+    private RhythmChart myChart;
     private Scale myScale;
     private int myIndex;
 
@@ -83,14 +86,14 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
                 TextView mean = itemView.findViewById(R.id.mean);
                 mean.setText(Utilities.getPercentageFormat(data.mean));
 
-                TextView std = itemView.findViewById(R.id.std);
-                std.setText(Utilities.getPercentageFormat(data.std));
-
                 TextView vol = itemView.findViewById(R.id.vol);
                 vol.setText(Utilities.getPercentageFormat(data.vol));
 
-                TextView target = itemView.findViewById(R.id.target);
-                target.setText(Utilities.getPercentageFormat(data.target));
+                TextView std = itemView.findViewById(R.id.cumulative);
+                std.setText(Utilities.getPercentageFormat(data.cumulative));
+
+                TextView beat = itemView.findViewById(R.id.beat);
+                beat.setText(Utilities.getPercentageFormat(data.target));
             }
         };
         RecyclerView recyclerViewStats = view.findViewById(R.id.recycler_stats);
@@ -118,6 +121,8 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
                 });
 
         myTextStatus = view.findViewById(R.id.text_status);
+
+        myChart = view.findViewById(R.id.chart);
     }
 
     @Override
@@ -131,10 +136,13 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
     }
 
     private void setPeriod(int period) {
-        if (period > 1) {
+        if (period >= 1) {
             List<Scale.Stats> stats = myScale.getStatistics(period, true);
             myAdapterStats.setItems(stats);
             myAdapterStats.notifyDataSetChanged();
+
+            List<Double> times = stats.stream().map(x -> x.cumulative).collect(Collectors.toList());
+            myChart.setNotes(times, period);
         }
     }
 
@@ -147,6 +155,8 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
         myAdapterStats.notifyDataSetChanged();
 
         myTextStatus.setText(null);
+
+        myChart.setNotes(null, 0);
     }
 
     private void setScale(Scale scale) {

@@ -23,15 +23,6 @@
         android:text="mean" />
 
     <TextView
-        android:id="@+id/std"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:gravity="end"
-        android:text="std" />
-
-    <TextView
         android:id="@+id/vol"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -41,12 +32,23 @@
         android:text="vol" />
 
     <TextView
-        android:id="@+id/target"
+        android:id="@+id/cumulative"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="end"
-        android:text="target" />
+        android:text="cumulative"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/holo_blue_dark" />
+
+    <TextView
+        android:id="@+id/beat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:text="beat"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/holo_red_dark" />
 
 </LinearLayout>
