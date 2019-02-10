@@ -5,8 +5,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import inc.andsoft.asimidimagic.models.ScaleModel;
 import inc.andsoft.asimidimagic.tools.RecyclerArrayAdapter;
 import inc.andsoft.asimidimagic.tools.Scale;
 import inc.andsoft.asimidimagic.tools.Utilities;
@@ -23,13 +27,14 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class ScaleFragment extends Fragment {
+public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
 
     private RecyclerArrayAdapter<Scale.Stats> myAdapterStats;
     private ArrayAdapter<Integer> myAdapterPeriods;
     private Spinner mySpinnerPeriods;
     private TextView myTextStatus;
     private Scale myScale;
+    private int myIndex;
 
     public ScaleFragment() {
         // Required empty public constructor
@@ -41,14 +46,24 @@ public class ScaleFragment extends Fragment {
      *
      * @return A new instance of fragment ScaleFragment.
      */
-    static ScaleFragment newInstance() {
+    static ScaleFragment newInstance(int index) {
         ScaleFragment fragment = new ScaleFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("index", index);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ScaleModel scaleModel = ViewModelProviders.of(getActivity()).get(ScaleModel.class);
+        LiveData<List<Scale>> liveScales = scaleModel.getScales();
+        liveScales.observe(this, this);
+
+        Bundle args = getArguments();
+        myIndex = args.getInt("index");
     }
 
     @Override
@@ -105,6 +120,16 @@ public class ScaleFragment extends Fragment {
         myTextStatus = view.findViewById(R.id.text_status);
     }
 
+    @Override
+    public void onChanged(List<Scale> scales) {
+        Scale scale = scales.get(myIndex);
+        if (scale == null) {
+            clear();
+        } else {
+            setScale(scale);
+        }
+    }
+
     private void setPeriod(int period) {
         if (period > 1) {
             List<Scale.Stats> stats = myScale.getStatistics(period, true);
@@ -113,7 +138,7 @@ public class ScaleFragment extends Fragment {
         }
     }
 
-    void clear() {
+    private void clear() {
         myScale = null;
         myAdapterPeriods.clear();
         myAdapterPeriods.notifyDataSetChanged();
@@ -124,7 +149,7 @@ public class ScaleFragment extends Fragment {
         myTextStatus.setText(null);
     }
 
-    void setScale(Scale scale) {
+    private void setScale(Scale scale) {
         myScale = scale;
 
         List<Integer> validPeriods = myScale.getValidPeriods();

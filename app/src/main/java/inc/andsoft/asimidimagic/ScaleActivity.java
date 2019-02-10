@@ -3,6 +3,7 @@ package inc.andsoft.asimidimagic;
 import android.content.Intent;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
+import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.ViewGroup;
@@ -17,16 +18,17 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import inc.andsoft.asimidimagic.midi.MidiScales;
+import inc.andsoft.asimidimagic.models.ScaleModel;
 import inc.andsoft.asimidimagic.tools.Scale;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 
 public class ScaleActivity extends CommonActivity {
     private MidiOutputPort myOutputPort;
     private MidiFramer myFramer;
-    private MidiScales myScales;
-    private SimpleFragmentPagerAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,8 @@ public class ScaleActivity extends CommonActivity {
         TextView outputText = findViewById(R.id.output_name);
         outputText.setText(output.toString());
 
+        ScaleModel scaleModel = ViewModelProviders.of(this).get(ScaleModel.class);
+
         myMidiDeviceOpener.queueDevice(output);
 
         MidiManager midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
@@ -48,25 +52,22 @@ public class ScaleActivity extends CommonActivity {
             myOutputPort = opener.openOutputPort(output);
 
             if (myOutputPort != null) {
-                myScales = new MidiScales() {
+                MidiReceiver midiScales = new MidiScales() {
                     public void onChangeState(@NonNull MidiScales.State state, @NonNull String message) {
                         runOnUiThread(() -> {
                             TextView statusView = findViewById(R.id.text_status);
                             statusView.setText(message);
 
                             if (state == State.FIRST_NOTE) {
-                                ScaleFragment leftFragment = (ScaleFragment)myAdapter.getRegisteredFragment(0);
-                                leftFragment.clear();
-                                ScaleFragment rightFragment = (ScaleFragment)myAdapter.getRegisteredFragment(1);
-                                rightFragment.clear();
+                                scaleModel.setScales(null, null);
                             }
                         });
                     }
                     public void complete(Scale leftScale, Scale rightScale) {
-                        runOnUiThread(() -> processScales(leftScale, rightScale));
+                        runOnUiThread(() -> scaleModel.setScales(leftScale, rightScale));
                     }
                 };
-                myFramer = new MidiFramer(myScales);
+                myFramer = new MidiFramer(midiScales);
                 connect();
             } else {
                 Toast.makeText(ScaleActivity.this, "Missing MIDI port", Toast.LENGTH_SHORT).show();
@@ -74,9 +75,9 @@ public class ScaleActivity extends CommonActivity {
             }
         });
 
-        myAdapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager());
+        PagerAdapter adapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager());
         ViewPager pager = findViewById(R.id.viewpager);
-        pager.setAdapter(myAdapter);
+        pager.setAdapter(adapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(pager);
     }
@@ -94,18 +95,10 @@ public class ScaleActivity extends CommonActivity {
         }
     }
 
-    void processScales(Scale leftScale, Scale rightScale) {
-        ScaleFragment leftFragment = (ScaleFragment)myAdapter.getRegisteredFragment(0);
-        leftFragment.setScale(leftScale);
-        ScaleFragment rightFragment = (ScaleFragment)myAdapter.getRegisteredFragment(1);
-        rightFragment.setScale(rightScale);
-    }
-
     @Override
     protected void close() {
         disconnect();
 
-        myScales = null;
         myFramer = null;
         myOutputPort = null;
 
@@ -115,23 +108,17 @@ public class ScaleActivity extends CommonActivity {
 
 class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private SparseArray<Fragment> myRegisteredFragments = new SparseArray<>();
-
     SimpleFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
-    }
-
-    Fragment getRegisteredFragment(int position) {
-        return myRegisteredFragments.get(position);
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return ScaleFragment.newInstance();
+                return ScaleFragment.newInstance(0);
             case 1:
-                return ScaleFragment.newInstance();
+                return ScaleFragment.newInstance(1);
             default:
                 return null;
         }
@@ -154,17 +141,4 @@ class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    @Override
-    @NonNull
-    public Object instantiateItem(ViewGroup container, int position) {
-        Fragment fragment = (Fragment) super.instantiateItem(container, position);
-        myRegisteredFragments.put(position, fragment);
-        return fragment;
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        myRegisteredFragments.remove(position);
-        super.destroyItem(container, position, object);
-    }
 }
