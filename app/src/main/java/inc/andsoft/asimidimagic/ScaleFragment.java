@@ -173,8 +173,9 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
             mySpinnerPeriods.setSelection(pos);
         }
 
-        String status = String.format(Locale.getDefault(), "%d scale = %d notes",
-                myScale.getNotes().get(0), myScale.getNotes().size());
+        String noteName = Utilities.getNoteName(myScale.getNotes().get(0));
+        String status = String.format(Locale.getDefault(), "%s scale = %d notes", noteName,
+                myScale.getNotes().size());
 
         myTextStatus.setText(status);
     }

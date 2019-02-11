@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import inc.andsoft.asimidimagic.tools.Scale;
+import inc.andsoft.asimidimagic.tools.Utilities;
 
 
 class ScaleStorage {
@@ -77,7 +78,7 @@ abstract public class MidiScales extends StartStopReceiver {
 
     private static final String MSG_FIRST_NOTE = "Waiting for first note";
     private static final String FORMAT_ROOT_NOTE = "Root note: %d";
-    private static final String FORMAT_TWO_SCALES = "Scales: 2nd = %d (%d) - 1st = %d (%d)";
+    private static final String FORMAT_TWO_SCALES = "Scales: 2nd = %s (%d) - 1st = %s (%d)";
     private static final String FORMAT_COMPLETE = "Complete, notes: 2nd = %d, 1st = %d";
 
     protected MidiScales() {
@@ -147,9 +148,12 @@ abstract public class MidiScales extends StartStopReceiver {
             // or no 2nd scale at all
         }
 
+        String noteNameSecond = Utilities.getNoteName(mySecondScale.myFirstNote);
+        String noteNameFirst = Utilities.getNoteName(myFirstScale.myFirstNote);
+
         String message = String.format(Locale.getDefault(), FORMAT_TWO_SCALES,
-                mySecondScale.myFirstNote, mySecondScale.myNotes.size(),
-                myFirstScale.myFirstNote, myFirstScale.myNotes.size());
+                noteNameSecond, mySecondScale.myNotes.size(),
+                noteNameFirst, myFirstScale.myNotes.size());
         changeState(State.NOTES, message);
     }
 
@@ -216,9 +220,12 @@ abstract public class MidiScales extends StartStopReceiver {
 
             complete(leftScale, rightScale);
         } else {
+            String noteNameSecond = Utilities.getNoteName(mySecondScale.myFirstNote);
+            String noteNameFirst = Utilities.getNoteName(myFirstScale.myFirstNote);
+
             String message = String.format(Locale.getDefault(), FORMAT_TWO_SCALES,
-                    mySecondScale.myFirstNote, mySecondScale.myNotes.size(),
-                    myFirstScale.myFirstNote, myFirstScale.myNotes.size());
+                    noteNameSecond, mySecondScale.myNotes.size(),
+                    noteNameFirst, myFirstScale.myNotes.size());
             changeState(State.NOTES, message);
         }
     }

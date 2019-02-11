@@ -15,6 +15,8 @@ public class Utilities {
     private final static String TAG = "Utilities";
 
     private static final byte ALL_NOTES_OFF = (byte) 123;
+    private static final String[] NOTE_NAMES = {
+            "C", "C#", "D", "E-", "E", "F", "F#", "G", "G#", "A", "B-", "B"};
 
     /**
      * Send ALL_NOTES_OFF to all 15 MIDI channels
@@ -29,6 +31,17 @@ public class Utilities {
             buffer[2] = 0;
             receiver.send(buffer, 0, buffer.length);
         }
+    }
+
+    /**
+     *
+     * @param note MIDI note number
+     * @return String representation
+     */
+    public static String getNoteName(int note) {
+        int octave = note / 12 - 1;
+        int grade = note % 12;
+        return NOTE_NAMES[grade] + String.valueOf(octave);
     }
 
     /**
