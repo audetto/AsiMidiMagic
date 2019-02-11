@@ -16,7 +16,7 @@ public class Utilities {
 
     private static final byte ALL_NOTES_OFF = (byte) 123;
     private static final String[] NOTE_NAMES = {
-            "C", "C#", "D", "E-", "E", "F", "F#", "G", "G#", "A", "B-", "B"};
+            "C", "C\u266f", "D", "E\u266d", "E", "F", "F\u266d", "G", "G\u266f", "A", "B\u266d", "B"};
 
     /**
      * Send ALL_NOTES_OFF to all 15 MIDI channels
