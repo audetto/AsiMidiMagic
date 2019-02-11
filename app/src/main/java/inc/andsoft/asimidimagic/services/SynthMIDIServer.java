@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by andrea on 13/01/18.
@@ -106,11 +107,14 @@ public class SynthMIDIServer extends MidiDeviceService {
                 increments.addAll(listDown);
             }
 
+            ThreadLocalRandom random = ThreadLocalRandom.current();
+
             int note = myStartNote;
             try {
                 Thread.sleep(1000);
                 for (byte i = 0; i < 120; ++i) {
-                    Thread.sleep(myPeriod);
+                    int rnd = random.nextInt(-40, 40);
+                    Thread.sleep(myPeriod + rnd);
 
                     byte velocity = (byte) 100;
                     byte channel = (byte) 3;
