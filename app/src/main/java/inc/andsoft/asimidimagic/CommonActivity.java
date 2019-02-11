@@ -8,11 +8,7 @@ public abstract class CommonActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        close();
         super.onDestroy();
-    }
-
-    protected void close() {
         myMidiDeviceOpener.close();
     }
 

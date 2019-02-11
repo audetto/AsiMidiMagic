@@ -96,13 +96,13 @@ public class ScaleActivity extends CommonActivity {
     }
 
     @Override
-    protected void close() {
+    protected void onDestroy() {
+        super.onDestroy();
+
         disconnect();
 
         myFramer = null;
         myOutputPort = null;
-
-        super.close();
     }
 }
 

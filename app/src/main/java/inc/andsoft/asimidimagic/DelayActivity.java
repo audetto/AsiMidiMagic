@@ -196,7 +196,9 @@ public class DelayActivity extends CommonActivity {
     }
 
     @Override
-    protected void close() {
+    protected void onDestroy() {
+        super.onDestroy();
+
         disconnect();
 
         if (myTimeScheduler != null) {
@@ -210,8 +212,6 @@ public class DelayActivity extends CommonActivity {
         myOutputPort = null;
         myDelayHandler = null;
         myTimeScheduler = null;
-
-        super.close();
     }
 
     private void amberButton() {
