@@ -57,7 +57,7 @@ public class Utilities {
         }
     }
 
-    public static String getPercentageFormat(double number) {
-        return String.format(Locale.getDefault(), "%5.2f", number * 100);
+    public static String getReasonableFormal(double number) {
+        return String.format(Locale.getDefault(), "%5.2f", number);
     }
 }

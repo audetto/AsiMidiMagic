@@ -83,17 +83,20 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
                 TextView grade = itemView.findViewById(R.id.grade);
                 grade.setText(String.valueOf(1 + position));
 
+                TextView velocity = itemView.findViewById(R.id.velocity);
+                velocity.setText(Utilities.getReasonableFormal(data.velocity));
+
                 TextView mean = itemView.findViewById(R.id.mean);
-                mean.setText(Utilities.getPercentageFormat(data.mean));
+                mean.setText(Utilities.getReasonableFormal(data.mean * 100));
 
                 TextView vol = itemView.findViewById(R.id.vol);
-                vol.setText(Utilities.getPercentageFormat(data.vol));
+                vol.setText(Utilities.getReasonableFormal(data.vol * 100));
 
                 TextView std = itemView.findViewById(R.id.cumulative);
-                std.setText(Utilities.getPercentageFormat(data.cumulative));
+                std.setText(Utilities.getReasonableFormal(data.cumulative * 100));
 
                 TextView beat = itemView.findViewById(R.id.beat);
-                beat.setText(Utilities.getPercentageFormat(data.target));
+                beat.setText(Utilities.getReasonableFormal(data.target * 100));
             }
         };
         RecyclerView recyclerViewStats = view.findViewById(R.id.recycler_stats);
@@ -173,7 +176,7 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
             mySpinnerPeriods.setSelection(pos);
         }
 
-        String noteName = Utilities.getNoteName(myScale.getNotes().get(0));
+        String noteName = Utilities.getNoteName(myScale.getNotes().get(0).code);
         String status = String.format(Locale.getDefault(), "%s scale = %d notes", noteName,
                 myScale.getNotes().size());
 

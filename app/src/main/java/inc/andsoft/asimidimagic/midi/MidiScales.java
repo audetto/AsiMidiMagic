@@ -17,13 +17,13 @@ class ScaleStorage {
     int myFirstNote;
     int myLastNote;
     int myValidSign;
-    List<Integer> myNotes = new ArrayList<>();
+    List<Scale.Note> myNotes = new ArrayList<>();
     private List<Long> myTimes = new ArrayList<>();
 
-    void addNote(int note, long timestamp) {
+    void addNote(int code, int velocity, long timestamp) {
         myValidSign = 0;
-        myLastNote = note;
-        myNotes.add(note);
+        myLastNote = code;
+        myNotes.add(new Scale.Note(code, velocity));
         myTimes.add(timestamp);
     }
 
@@ -77,9 +77,9 @@ abstract public class MidiScales extends StartStopReceiver {
     private Integer myChannel;
 
     private static final String MSG_FIRST_NOTE = "Waiting for first note";
-    private static final String FORMAT_ROOT_NOTE = "Root note: %d";
+    private static final String FORMAT_ROOT_NOTE = "Root note: %s";
     private static final String FORMAT_TWO_SCALES = "Scales: 2nd = %s (%d) - 1st = %s (%d)";
-    private static final String FORMAT_COMPLETE = "Complete, notes: 2nd = %d, 1st = %d";
+    private static final String FORMAT_COMPLETE = "Complete: 2nd = %s (%d) - 1st = %s (%d)";
 
     protected MidiScales() {
         initialise();
@@ -118,28 +118,30 @@ abstract public class MidiScales extends StartStopReceiver {
      */
     abstract public void complete(Scale leftScale, Scale rightScale);
 
-    private void waitingForFirstNote(int note, long timestamp) {
+    private void waitingForFirstNote(int note, int velocity, long timestamp) {
         myFirstScale.myFirstNote = note;
-        myFirstScale.addNote(note, timestamp);
-        String message = String.format(Locale.getDefault(), FORMAT_ROOT_NOTE, note);
+        myFirstScale.addNote(note, velocity, timestamp);
+
+        String noteName = Utilities.getNoteName(myFirstScale.myFirstNote);
+        String message = String.format(Locale.getDefault(), FORMAT_ROOT_NOTE, noteName);
         changeState(State.SECOND_NOTE, message);
     }
 
-    private void waitingForSecondNote(int note, long timestamp) {
+    private void waitingForSecondNote(int note, int velocity, long timestamp) {
         int firstNote = myFirstScale.myFirstNote;
 
         int distance = firstNote - note;
         if (distance % 12 == 0) {
             // we have 2 scales
             mySecondScale.myFirstNote = note;
-            mySecondScale.addNote(note, timestamp);
+            mySecondScale.addNote(note, velocity, timestamp);
 
             // this could still be 2 contrary motion scales
             // which is ok, as long as they do not share the middle note
         } else {
             // it could be a contrary motion scale
             mySecondScale.copy(myFirstScale);
-            myFirstScale.addNote(note, timestamp);
+            myFirstScale.addNote(note, velocity, timestamp);
 
             // in which case they need to go to separate directions
             myFirstScale.myValidSign = Integer.signum(note - myFirstScale.myFirstNote);
@@ -157,7 +159,7 @@ abstract public class MidiScales extends StartStopReceiver {
         changeState(State.NOTES, message);
     }
 
-    private void waitingForNotes(int note, long timestamp) {
+    private void waitingForNotes(int note, int velocity, long timestamp) {
         /*
         What is not working if 2 scales contrary motion,
         starting far apart and peaking to the same note in the middle
@@ -174,28 +176,31 @@ abstract public class MidiScales extends StartStopReceiver {
                     (note == myFirstScale.myFirstNote);
 
             if (distance1st <= distance2nd) {
-                myFirstScale.addNote(note, timestamp);
+                myFirstScale.addNote(note, velocity, timestamp);
                 if (closingCommonScales) {
-                    mySecondScale.addNote(note, timestamp);
+                    mySecondScale.addNote(note, velocity, timestamp);
                 }
             } else {
-                mySecondScale.addNote(note, timestamp);
+                mySecondScale.addNote(note, velocity, timestamp);
                 if (closingCommonScales) {
-                    myFirstScale.addNote(note, timestamp);
+                    myFirstScale.addNote(note, velocity, timestamp);
                 }
             }
         } else {
             if (valid1st) {
-                myFirstScale.addNote(note, timestamp);
+                myFirstScale.addNote(note, velocity, timestamp);
             }
             if (valid2nd) {
-                mySecondScale.addNote(note, timestamp);
+                mySecondScale.addNote(note, velocity, timestamp);
             }
         }
 
+        String noteNameSecond = Utilities.getNoteName(mySecondScale.myFirstNote);
+        String noteNameFirst = Utilities.getNoteName(myFirstScale.myFirstNote);
         if (mySecondScale.isComplete() && myFirstScale.isComplete()) {
             String message = String.format(Locale.getDefault(), FORMAT_COMPLETE,
-                    mySecondScale.myNotes.size(), myFirstScale.myNotes.size());
+                    noteNameSecond, mySecondScale.myNotes.size(),
+                    noteNameFirst, myFirstScale.myNotes.size());
             changeState(State.COMPLETE, message);
 
             Scale scale1st = myFirstScale.getScale();
@@ -220,9 +225,6 @@ abstract public class MidiScales extends StartStopReceiver {
 
             complete(leftScale, rightScale);
         } else {
-            String noteNameSecond = Utilities.getNoteName(mySecondScale.myFirstNote);
-            String noteNameFirst = Utilities.getNoteName(myFirstScale.myFirstNote);
-
             String message = String.format(Locale.getDefault(), FORMAT_TWO_SCALES,
                     noteNameSecond, mySecondScale.myNotes.size(),
                     noteNameFirst, myFirstScale.myNotes.size());
@@ -232,15 +234,16 @@ abstract public class MidiScales extends StartStopReceiver {
 
     private void noteOn(@NonNull byte[] data, int offset, int count, long timestamp) throws IOException {
         int note = data[offset + 1];
+        int velocity = data[offset + 2];
         switch (myState) {
             case FIRST_NOTE:
-                waitingForFirstNote(note, timestamp);
+                waitingForFirstNote(note, velocity, timestamp);
                 break;
             case SECOND_NOTE:
-                waitingForSecondNote(note, timestamp);
+                waitingForSecondNote(note, velocity, timestamp);
                 break;
             case NOTES:
-                waitingForNotes(note, timestamp);
+                waitingForNotes(note, velocity, timestamp);
                 break;
         }
     }
