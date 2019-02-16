@@ -3,7 +3,6 @@ package inc.andsoft.asimidimagic.tools;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -85,64 +84,64 @@ public class Scale {
     }
 
     public static class Stats {
-        public final double mean;           // length of this beat
+        public final double time;           // time of the beat
         public final double vol;            // volatility of this beat
-        public final double cumulative;     // end of the beat
         public final double target;         // target end of the beat
         public final double velocity;       // velocity of this beat
 
-        public Stats(double mean, double vol, double cumulative, double target, double velocity) {
-            this.mean = mean;
+        public Stats(double time, double vol, double target, double velocity) {
+            this.time = time;
             this.vol = vol;
-            this.cumulative = cumulative;
             this.target = target;
             this.velocity = velocity;
         }
     }
 
-    public List<Stats> getStatistics(int period, boolean normalise) {
+    public List<Stats> getStatistics(int period) {
         int numberOfNotes = myNotes.size();
 
         if ((numberOfNotes - 1 ) % period != 0) {
             throw new IllegalArgumentException(String.format(Locale.getDefault(),
                     "Invalid period %d for size %d", period, numberOfNotes));
         }
-
-        double coefficient = 1.0;
-        if (normalise) {
-            double totalTime = myTimes.get(numberOfNotes - 1) - myTimes.get(0);
-            long numberOfGroups = (numberOfNotes - 1) / period;
-            coefficient = (double)numberOfGroups / totalTime;
-        }
-
-        ArrayList<SummaryStatistics> deltas = new ArrayList<>(period);
+        ArrayList<SummaryStatistics> beats = new ArrayList<>(period);
         ArrayList<SummaryStatistics> velocities = new ArrayList<>(period);
         for (int i = 0; i < period; ++i) {
-            deltas.add(new SummaryStatistics());
+            beats.add(new SummaryStatistics());
             velocities.add(new SummaryStatistics());
         }
 
-        for (int i = 1; i < numberOfNotes; ++i) {
-            double delta = (myTimes.get(i) - myTimes.get(i - 1)) * coefficient;
-            int position = i % period;
-            deltas.get(position).addValue(delta);
-            velocities.get(position).addValue(myNotes.get(i).velocity);
+        for (int i = 0; i < numberOfNotes - 1; ++i) {
+            int positionBegin = (i / period) * period;
+            double timeBegin = myTimes.get(positionBegin);
+
+            int positionEnd = positionBegin + period;
+            double timeEnd = myTimes.get(positionEnd);
+
+            double timeBeat = myTimes.get(i + 1); // time at the end of the beat
+
+            double time = (timeBeat - timeBegin) / (timeEnd - timeBegin);
+            int velocity = myNotes.get(i).velocity; // velocity of the beat
+
+            int positionBeat = i % period;
+            beats.get(positionBeat).addValue(time);
+            velocities.get(positionBeat).addValue(velocity);
         }
 
         List<Stats> statistics = new ArrayList<>(period);
-        double cumulative = 0.0;
         for (int i = 0; i < period; ++i) {
-            SummaryStatistics statDeltas = deltas.get(i);
-            double mean = statDeltas.getMean();
-            double stddev = statDeltas.getStandardDeviation();
+            SummaryStatistics statBeat = beats.get(i);
+
+            double mean = statBeat.getMean();
+            double stddev = statBeat.getStandardDeviation();
             double vol = stddev / mean;
-            cumulative += mean;
+
             double target = (double)(1 + i) / (double)period;
 
             SummaryStatistics statVelocities = velocities.get(i);
             double velocity = statVelocities.getMean();
 
-            statistics.add(new Stats(mean, vol, cumulative, target, velocity));
+            statistics.add(new Stats(mean, vol, target, velocity));
         }
 
         return statistics;

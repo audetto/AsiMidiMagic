@@ -86,17 +86,14 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
                 TextView velocity = itemView.findViewById(R.id.velocity);
                 velocity.setText(Utilities.getReasonableFormal(data.velocity));
 
-                TextView mean = itemView.findViewById(R.id.mean);
-                mean.setText(Utilities.getReasonableFormal(data.mean * 100));
+                TextView time = itemView.findViewById(R.id.time);
+                time.setText(Utilities.getReasonableFormal(data.time * 100));
 
                 TextView vol = itemView.findViewById(R.id.vol);
                 vol.setText(Utilities.getReasonableFormal(data.vol * 100));
 
-                TextView std = itemView.findViewById(R.id.cumulative);
-                std.setText(Utilities.getReasonableFormal(data.cumulative * 100));
-
-                TextView beat = itemView.findViewById(R.id.beat);
-                beat.setText(Utilities.getReasonableFormal(data.target * 100));
+                TextView target = itemView.findViewById(R.id.target);
+                target.setText(Utilities.getReasonableFormal(data.target * 100));
             }
         };
         RecyclerView recyclerViewStats = view.findViewById(R.id.recycler_stats);
@@ -140,11 +137,11 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
 
     private void setPeriod(int period) {
         if (period >= 1) {
-            List<Scale.Stats> stats = myScale.getStatistics(period, true);
+            List<Scale.Stats> stats = myScale.getStatistics(period);
             myAdapterStats.setItems(stats);
             myAdapterStats.notifyDataSetChanged();
 
-            List<Double> times = stats.stream().map(x -> x.cumulative).collect(Collectors.toList());
+            List<Double> times = stats.stream().map(x -> x.time).collect(Collectors.toList());
             myChart.setNotes(times, period);
         }
     }

@@ -4,9 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.apache.commons.math3.util.ArithmeticUtils;
@@ -21,10 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import inc.andsoft.asimidimagic.models.ScaleModel;
-import inc.andsoft.asimidimagic.tools.RecyclerArrayAdapter;
 import inc.andsoft.asimidimagic.tools.Scale;
 import inc.andsoft.asimidimagic.tools.Utilities;
 import inc.andsoft.asimidimagic.views.RhythmChart;
@@ -82,8 +76,8 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
         int numberOfNotes = scale.getTimes().size();
 
         int period = (numberOfNotes - 1) / gcd;
-        List<Scale.Stats> stats = scale.getStatistics(period, true);
-        List<Double> times = stats.stream().map(x -> x.cumulative).collect(Collectors.toList());
+        List<Scale.Stats> stats = scale.getStatistics(period);
+        List<Double> times = stats.stream().map(x -> x.time).collect(Collectors.toList());
         chart.setNotes(times, period);
 
         String noteName = Utilities.getNoteName(scale.getNotes().get(0).code);
