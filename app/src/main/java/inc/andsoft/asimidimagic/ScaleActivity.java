@@ -5,8 +5,6 @@ import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
 import android.media.midi.MidiReceiver;
 import android.os.Bundle;
-import android.util.SparseArray;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +15,7 @@ import com.mobileer.miditools.MidiPortWrapper;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -106,7 +104,7 @@ public class ScaleActivity extends CommonActivity {
     }
 }
 
-class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
+class SimpleFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     SimpleFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
