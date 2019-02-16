@@ -165,12 +165,13 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
     private void setScale(Scale scale) {
         myScale = scale;
 
-        List<Integer> validPeriods = myScale.getValidPeriods();
+        int scaleLength = myScale.getScaleLength();
+
+        List<Integer> validPeriods = myScale.getValidPeriods(scaleLength);
         myAdapterPeriods.clear();
         myAdapterPeriods.addAll(validPeriods);
         myAdapterPeriods.notifyDataSetChanged();
 
-        int scaleLength = myScale.getScaleLength();
         int pos = myAdapterPeriods.getPosition(scaleLength);
         if (pos >= 0) {
             mySpinnerPeriods.setSelection(pos);

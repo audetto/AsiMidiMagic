@@ -75,9 +75,10 @@ public class Scale {
         }
     }
 
-    public List<Integer> getValidPeriods() {
+    public List<Integer> getValidPeriods(int upperBound) {
         int numberOfIntervals = myNotes.size() - 1;
-        List<Integer> periods = IntStream.range(1, numberOfIntervals)
+        int maximumPeriod = upperBound > 0 ? upperBound : 12;
+        List<Integer> periods = IntStream.rangeClosed(1, maximumPeriod)
                 .filter(i -> (numberOfIntervals % i) == 0) // Only keep those indices
                 .boxed().collect(Collectors.toList());
         return periods;
