@@ -84,11 +84,11 @@ public class Scale {
     }
 
     public static class Stats {
-        public final double mean;
-        public final double vol;
-        public final double cumulative;
-        public final double target;
-        public final double velocity;
+        public final double mean;           // length of this beat
+        public final double vol;            // volatility of this beat
+        public final double cumulative;     // end of the beat
+        public final double target;         // target end of the beat
+        public final double velocity;       // velocity of this beat
 
         public Stats(double mean, double vol, double cumulative, double target, double velocity) {
             this.mean = mean;
