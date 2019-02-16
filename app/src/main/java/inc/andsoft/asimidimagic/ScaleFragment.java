@@ -24,6 +24,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.apache.commons.math3.util.ArithmeticUtils;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -37,7 +39,9 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
     private TextView myTextStatus;
     private RhythmChart myChart;
     private Scale myScale;
-    private int myIndex;
+
+    private int myScaleIndex;
+    private int myOtherIndex;
 
     public ScaleFragment() {
         // Required empty public constructor
@@ -49,11 +53,12 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
      *
      * @return A new instance of fragment ScaleFragment.
      */
-    static ScaleFragment newInstance(int index) {
+    static ScaleFragment newInstance(int index, int other) {
         ScaleFragment fragment = new ScaleFragment();
 
         Bundle args = new Bundle();
         args.putInt("index", index);
+        args.putInt("other", other);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,7 +71,8 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
         liveScales.observe(this, this);
 
         Bundle args = getArguments();
-        myIndex = args.getInt("index");
+        myScaleIndex = args.getInt("index");
+        myOtherIndex = args.getInt("other");
     }
 
     @Override
@@ -127,11 +133,12 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
 
     @Override
     public void onChanged(List<Scale> scales) {
-        Scale scale = scales.get(myIndex);
+        Scale scale = scales.get(myScaleIndex);
         if (scale == null) {
             clear();
         } else {
-            setScale(scale);
+            Scale other = scales.get(myOtherIndex);
+            setScale(scale, other);
         }
     }
 
@@ -159,7 +166,7 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
         myChart.setNotes(null, 0);
     }
 
-    private void setScale(Scale scale) {
+    private void setScale(Scale scale, Scale other) {
         myScale = scale;
 
         int scaleLength = myScale.getScaleLength();
@@ -169,9 +176,23 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
         myAdapterPeriods.addAll(validPeriods);
         myAdapterPeriods.notifyDataSetChanged();
 
-        int pos = myAdapterPeriods.getPosition(scaleLength);
-        if (pos >= 0) {
-            mySpinnerPeriods.setSelection(pos);
+        // we try to guess what is a good period for the display
+
+        int bestPos = myAdapterPeriods.getPosition(scaleLength);
+        int numberOfPeriodsScale = myScale.getTimes().size() - 1;
+        int numberOfPeriodsOther = other.getTimes().size() - 1;
+
+        if (numberOfPeriodsOther != numberOfPeriodsScale) {
+            int gcd = ArithmeticUtils.gcd(numberOfPeriodsScale, numberOfPeriodsOther);
+            int periodLength = numberOfPeriodsScale / gcd;
+            int periodPos = myAdapterPeriods.getPosition(periodLength);
+            if (periodPos >= 0) {
+                bestPos = periodPos;
+            }
+        }
+
+        if (bestPos >= 0) {
+            mySpinnerPeriods.setSelection(bestPos);
         }
 
         String noteName = Utilities.getNoteName(myScale.getNotes().get(0).code);

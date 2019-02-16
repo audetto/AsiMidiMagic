@@ -114,9 +114,9 @@ class SimpleFragmentPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return ScaleFragment.newInstance(0);
+                return ScaleFragment.newInstance(0, 1);
             case 1:
-                return ScaleFragment.newInstance(1);
+                return ScaleFragment.newInstance(1, 0);
             case 2:
                 return PolyRhythmFragment.newInstance();
             default:
