@@ -21,6 +21,8 @@ public class RhythmChart extends View {
     private Paint myPaintNotes;
     private RectF myRect;
 
+    private int myPosition;
+
     public RhythmChart(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -29,10 +31,12 @@ public class RhythmChart extends View {
 
         int beatColor = getResources().getColor(android.R.color.holo_red_dark);
         int noteColor = getResources().getColor(android.R.color.holo_blue_dark);
+        myPosition = 0;
 
         try {
             beatColor = a.getColor(R.styleable.RhythmChart_beatColor, beatColor);
             noteColor = a.getColor(R.styleable.RhythmChart_noteColor, noteColor);
+            myPosition = a.getInt(R.styleable.RhythmChart_position, myPosition);
         } finally {
             a.recycle();
         }
@@ -67,11 +71,13 @@ public class RhythmChart extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         if (myBeats > 0) {
-            float dx = myRect.width() / myBeats;
             float centerY = myRect.centerY();
+            float endY = myPosition == 0 ? myRect.top : myRect.bottom;
+
+            float dx = myRect.width() / myBeats;
             for (int i = 0; i < myBeats; ++i) {
                 float x = myRect.left + (i + 1) * dx;
-                canvas.drawLine(x, myRect.top, x, centerY, myPaintTarget);
+                canvas.drawLine(x, centerY, x, endY, myPaintTarget);
             }
         }
 
@@ -79,10 +85,12 @@ public class RhythmChart extends View {
             int numberOfNotes = myTimes.size();
             if (numberOfNotes > 0) {
                 float centerY = myRect.centerY();
+                float endY = myPosition == 0 ? myRect.bottom : myRect.top;
+
                 float coefficient = myRect.width() / myTimes.get(numberOfNotes - 1).floatValue();
                 for (int i = 0; i < numberOfNotes; ++i) {
                     float x = myRect.left + myTimes.get(i).floatValue() * coefficient;
-                    canvas.drawLine(x, centerY, x, myRect.bottom, myPaintNotes);
+                    canvas.drawLine(x, centerY, x, endY, myPaintNotes);
                 }
             }
         }

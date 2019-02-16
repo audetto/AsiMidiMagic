@@ -119,6 +119,8 @@ class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
                 return ScaleFragment.newInstance(0);
             case 1:
                 return ScaleFragment.newInstance(1);
+            case 2:
+                return PolyRhythmFragment.newInstance();
             default:
                 return null;
         }
@@ -126,7 +128,7 @@ class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -136,6 +138,8 @@ class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
                 return "Left";
             case 1:
                 return "Right";
+            case 2:
+                return "Polyrhythm";
             default:
                 return null;
         }

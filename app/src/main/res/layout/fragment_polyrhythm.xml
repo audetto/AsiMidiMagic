@@ -5,33 +5,23 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ScaleFragment">
+    tools:context=".PolyRhythmFragment">
 
     <TextView
-        android:id="@+id/text_status"
+        android:id="@+id/text_right"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:text=""
         android:textAlignment="center"
         grid:layout_constraintEnd_toEndOf="parent"
         grid:layout_constraintStart_toStartOf="parent"
         grid:layout_constraintTop_toTopOf="parent" />
 
-    <Spinner
-        android:id="@+id/spinner_periods"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        grid:layout_constraintEnd_toEndOf="parent"
-        grid:layout_constraintStart_toStartOf="parent"
-        grid:layout_constraintTop_toBottomOf="@+id/text_status" />
-
     <inc.andsoft.asimidimagic.views.RhythmChart
-        android:id="@+id/chart"
+        android:id="@+id/chart_right"
         android:layout_width="0dp"
         android:layout_height="120dp"
         android:layout_marginStart="8dp"
@@ -39,22 +29,36 @@
         android:layout_marginEnd="8dp"
         grid:layout_constraintEnd_toEndOf="parent"
         grid:layout_constraintStart_toStartOf="parent"
-        grid:layout_constraintTop_toBottomOf="@+id/spinner_periods"
+        grid:layout_constraintTop_toBottomOf="@+id/text_right"
+        custom:noteColor="@android:color/holo_blue_dark"
+        custom:beatColor="@android:color/holo_red_dark"
+        custom:position="0"/>
+
+    <inc.andsoft.asimidimagic.views.RhythmChart
+        android:id="@+id/chart_left"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        grid:layout_constraintEnd_toEndOf="parent"
+        grid:layout_constraintStart_toStartOf="parent"
+        grid:layout_constraintTop_toBottomOf="@+id/chart_right"
         custom:noteColor="@android:color/holo_blue_dark"
         custom:beatColor="@android:color/holo_red_dark"
         custom:position="1"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_stats"
+    <TextView
+        android:id="@+id/text_left"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        grid:layout_constraintBottom_toBottomOf="parent"
+        android:text=""
+        android:textAlignment="center"
         grid:layout_constraintEnd_toEndOf="parent"
         grid:layout_constraintStart_toStartOf="parent"
-        grid:layout_constraintTop_toBottomOf="@+id/chart" />
+        grid:layout_constraintTop_toBottomOf="@+id/chart_left" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
