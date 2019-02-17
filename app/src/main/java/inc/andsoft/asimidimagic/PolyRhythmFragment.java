@@ -110,8 +110,8 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
             myChartLeft.setNotes(null);
             myChartRight.setNotes(null);
 
-            myTextLeft.setText("Waiting for left scale");
-            myTextRight.setText("Waiting for right scale");
+            myTextLeft.setText(R.string.chart_waiting_left);
+            myTextRight.setText(R.string.chart_waiting_right);
         }
     }
 

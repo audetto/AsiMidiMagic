@@ -25,4 +25,13 @@
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
 
+    <string name="chart_waiting_left">Waiting for left scale</string>
+    <string name="chart_waiting_right">Waiting for right scale</string>
+
+    <string name="delay_on">ON delay is %dms</string>
+    <string name="delay_off">OFF delay is %dms</string>
+
+    <string name="missing_ports">Missing MIDI ports</string>
+    <string name="missing_port">Missing MIDI port</string>
+
 </resources>

@@ -69,7 +69,8 @@ public class DelayActivity extends CommonActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 int delay = seekBar.getProgress();
-                Toast.makeText(DelayActivity.this, "ON Delay is " + delay + "ms", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DelayActivity.this,
+                        getString(R.string.delay_on, delay), Toast.LENGTH_SHORT).show();
                 if (myDelayHandler != null) {
                     myDelayHandler.setOnDelay(delay);
                 }
@@ -89,7 +90,8 @@ public class DelayActivity extends CommonActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 int delay = seekBar.getProgress();
-                Toast.makeText(DelayActivity.this, "OFF Delay is " + delay + "ms", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DelayActivity.this,
+                        getString(R.string.delay_off, delay), Toast.LENGTH_SHORT).show();
                 if (myDelayHandler != null) {
                     myDelayHandler.setOffDelay(delay);
                 }
@@ -162,7 +164,7 @@ public class DelayActivity extends CommonActivity {
                 // myOutputPort -> MidiFramer -> MidiFilter -> DelayHandler -> TimeScheduler ->
                 // MidiCountedOnOff -> myInputPort
             } else {
-                Toast.makeText(DelayActivity.this, "Missing MIDI ports", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DelayActivity.this, getString(R.string.missing_ports), Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
