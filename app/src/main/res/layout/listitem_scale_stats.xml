@@ -23,15 +23,6 @@
         android:text="velocity" />
 
     <TextView
-        android:id="@+id/time"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:gravity="end"
-        android:text="time" />
-
-    <TextView
         android:id="@+id/vol"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -39,6 +30,15 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="end"
         android:text="vol" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="end"
+        android:text="time" />
 
     <TextView
         android:id="@+id/target"

@@ -106,13 +106,17 @@ public class SynthMIDIServer extends MidiDeviceService {
                 increments.addAll(0, listUp);
                 increments.addAll(listDown);
             }
+            increments.add(0, 0);
 
             ThreadLocalRandom random = ThreadLocalRandom.current();
 
-            int note = myStartNote;
             try {
                 Thread.sleep(1000);
-                for (byte i = 0; i < 120; ++i) {
+                int note = myStartNote;
+                for (byte i = 0; i < increments.size(); ++i) {
+                    int increment = increments.get(i);
+                    note += increment;
+
                     int rnd = random.nextInt(-40, 40);
                     Thread.sleep(myPeriod + rnd);
 
@@ -127,9 +131,6 @@ public class SynthMIDIServer extends MidiDeviceService {
                     noteOff(myReceiver, channel, (byte)note, velocity, future);
 
                     Log.d(TAG, "Sent =     " + getTimeStr(now) + ", note = " + note + ", id = " + i);
-
-                    int increment = increments.get(i % increments.size());
-                    note += increment;
                 }
             } catch (IOException | InterruptedException e) {
                 Log.d(TAG, e.toString());
