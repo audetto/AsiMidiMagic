@@ -3,6 +3,7 @@
     <declare-styleable name="RhythmChart">
         <attr name="beatColor" format="color" />
         <attr name="noteColor" format="color" />
+        <attr name="barColor" format="color" />
         <attr name="position" format="integer" />
     </declare-styleable>
 </resources>

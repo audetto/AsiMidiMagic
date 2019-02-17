@@ -149,7 +149,7 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
             myAdapterStats.notifyDataSetChanged();
 
             List<Double> times = stats.stream().map(x -> x.time).collect(Collectors.toList());
-            myChart.setNotes(times, period);
+            myChart.setNotes(times);
         }
     }
 
@@ -163,7 +163,7 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
 
         myTextStatus.setText(null);
 
-        myChart.setNotes(null, 0);
+        myChart.setNotes(null);
     }
 
     private void setScale(Scale scale, Scale other) {

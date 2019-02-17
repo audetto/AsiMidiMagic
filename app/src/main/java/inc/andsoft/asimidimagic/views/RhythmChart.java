@@ -15,10 +15,12 @@ import inc.andsoft.asimidimagic.R;
 public class RhythmChart extends View {
 
     private List<Double> myTimes;
-    private int myBeats;
+    private int myBars;
 
     private Paint myPaintTarget;
     private Paint myPaintNotes;
+    private Paint myPaintBar;
+
     private RectF myRect;
 
     private int myPosition;
@@ -31,33 +33,43 @@ public class RhythmChart extends View {
 
         int beatColor = getResources().getColor(android.R.color.holo_red_dark);
         int noteColor = getResources().getColor(android.R.color.holo_blue_dark);
+        int barColor = getResources().getColor(android.R.color.holo_green_dark);
         myPosition = 0;
 
         try {
             beatColor = a.getColor(R.styleable.RhythmChart_beatColor, beatColor);
             noteColor = a.getColor(R.styleable.RhythmChart_noteColor, noteColor);
+            barColor = a.getColor(R.styleable.RhythmChart_barColor, barColor);
             myPosition = a.getInt(R.styleable.RhythmChart_position, myPosition);
         } finally {
             a.recycle();
         }
 
-        init(beatColor, noteColor);
+        init(beatColor, noteColor, barColor);
     }
 
-    public void setNotes(List<Double> times, int beats) {
+    public void setNotes(List<Double> times) {
         myTimes = times;
-        myBeats = beats;
         invalidate();
     }
 
-    private void init(int beatColor, int noteColor) {
+    public void setBars(int bars) {
+        myBars = bars;
+        invalidate();
+    }
+
+    private void init(int beatColor, int noteColor, int barColor) {
         myPaintTarget = new Paint(Paint.ANTI_ALIAS_FLAG);
         myPaintTarget.setColor(beatColor);
-        myPaintTarget.setStrokeWidth(3);
+        myPaintTarget.setStrokeWidth(4);
 
         myPaintNotes = new Paint(Paint.ANTI_ALIAS_FLAG);
         myPaintNotes.setColor(noteColor);
-        myPaintNotes.setStrokeWidth(3);
+        myPaintNotes.setStrokeWidth(4);
+
+        myPaintBar = new Paint(Paint.ANTI_ALIAS_FLAG);
+        myPaintBar.setColor(barColor);
+        myPaintBar.setStrokeWidth(1);
     }
 
     @Override
@@ -70,14 +82,14 @@ public class RhythmChart extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (myBeats > 0) {
-            float centerY = myRect.centerY();
-            float endY = myPosition == 0 ? myRect.top : myRect.bottom;
+        if (myBars > 0) {
+            float startY = myRect.centerY() - 0.25f * myRect.height();
+            float endY = myRect.centerY() + 0.25f * myRect.height();
 
-            float dx = myRect.width() / myBeats;
-            for (int i = 0; i < myBeats; ++i) {
+            float dx = myRect.width() / myBars;
+            for (int i = 0; i < myBars; ++i) {
                 float x = myRect.left + (i + 1) * dx;
-                canvas.drawLine(x, centerY, x, endY, myPaintTarget);
+                canvas.drawLine(x, startY, x, endY, myPaintBar);
             }
         }
 
@@ -85,12 +97,18 @@ public class RhythmChart extends View {
             int numberOfNotes = myTimes.size();
             if (numberOfNotes > 0) {
                 float centerY = myRect.centerY();
-                float endY = myPosition == 0 ? myRect.bottom : myRect.top;
+                float endNotesY = myPosition == 0 ? myRect.bottom : myRect.top;
+                float endBeatsY = myPosition == 0 ? myRect.top : myRect.bottom;
 
+                float dx = myRect.width() / numberOfNotes;
                 float coefficient = myRect.width() / myTimes.get(numberOfNotes - 1).floatValue();
+
                 for (int i = 0; i < numberOfNotes; ++i) {
-                    float x = myRect.left + myTimes.get(i).floatValue() * coefficient;
-                    canvas.drawLine(x, centerY, x, endY, myPaintNotes);
+                    float note = myRect.left + myTimes.get(i).floatValue() * coefficient;
+                    canvas.drawLine(note, centerY, note, endNotesY, myPaintNotes);
+
+                    float beat = myRect.left + (i + 1) * dx;
+                    canvas.drawLine(beat, centerY, beat, endBeatsY, myPaintTarget);
                 }
             }
         }

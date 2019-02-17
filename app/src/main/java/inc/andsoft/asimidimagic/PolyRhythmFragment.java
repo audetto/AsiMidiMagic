@@ -72,18 +72,20 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
         myTextRight = view.findViewById(R.id.text_right);
     }
 
-    static private void processScale(Scale scale, String name, int gcd, RhythmChart chart, TextView text) {
+    static private int processScale(Scale scale, String name, int gcd, RhythmChart chart, TextView text) {
         int numberOfNotes = scale.getTimes().size();
 
         int period = (numberOfNotes - 1) / gcd;
         List<Scale.Stats> stats = scale.getStatistics(period);
         List<Double> times = stats.stream().map(x -> x.time).collect(Collectors.toList());
-        chart.setNotes(times, period);
+        chart.setNotes(times);
 
         String noteName = Utilities.getNoteName(scale.getNotes().get(0).code);
         String message = String.format(Locale.getDefault(), FORMAT_SCALE, name, noteName,
                 scale.getTimes().size(), period);
         text.setText(message);
+
+        return period;
     }
 
     @Override
@@ -97,12 +99,16 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
 
             int gcd = ArithmeticUtils.gcd(numberOfPeriodsLeft, numberOfPeriodsRight);
 
-            processScale(leftScale, "Left", gcd, myChartLeft, myTextLeft);
-            processScale(rightScale, "Right", gcd, myChartRight, myTextRight);
+            int leftPeriod = processScale(leftScale, "Left", gcd, myChartLeft, myTextLeft);
+            int rightPeriod = processScale(rightScale, "Right", gcd, myChartRight, myTextRight);
+
+            int bars = leftPeriod * rightPeriod;
+            myChartLeft.setBars(bars);
+            myChartRight.setBars(bars);
         } else {
             // otherwise clean
-            myChartLeft.setNotes(null, 0);
-            myChartRight.setNotes(null, 0);
+            myChartLeft.setNotes(null);
+            myChartRight.setNotes(null);
 
             myTextLeft.setText("Waiting for left scale");
             myTextRight.setText("Waiting for right scale");
