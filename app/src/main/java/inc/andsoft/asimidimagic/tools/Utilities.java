@@ -7,7 +7,6 @@ import com.mobileer.miditools.MidiConstants;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 
@@ -57,7 +56,5 @@ public class Utilities {
         }
     }
 
-    public static String getReasonableFormal(double number) {
-        return String.format(Locale.getDefault(), "%d", Math.round(number));
-    }
+
 }

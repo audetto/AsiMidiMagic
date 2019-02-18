@@ -34,4 +34,10 @@
     <string name="missing_ports">Missing MIDI ports</string>
     <string name="missing_port">Missing MIDI port</string>
 
+    <string name="scale_notes">%s scale = %d notes</string>
+
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="polyrhythm_scale">%s: %s (%d) in %d</string>
+
 </resources>

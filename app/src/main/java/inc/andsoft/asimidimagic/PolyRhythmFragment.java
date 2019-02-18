@@ -9,7 +9,6 @@ import android.widget.TextView;
 import org.apache.commons.math3.util.ArithmeticUtils;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
@@ -25,8 +24,6 @@ import inc.andsoft.asimidimagic.views.RhythmChart;
 
 
 public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>> {
-
-    private static final String FORMAT_SCALE = "%s: %s (%d) in %d";
 
     private RhythmChart myChartLeft;
     private RhythmChart myChartRight;
@@ -72,7 +69,7 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
         myTextRight = view.findViewById(R.id.text_right);
     }
 
-    static private int processScale(Scale scale, String name, int gcd, RhythmChart chart, TextView text) {
+    private int processScale(Scale scale, String name, int gcd, RhythmChart chart, TextView text) {
         int numberOfNotes = scale.getTimes().size();
 
         int period = (numberOfNotes - 1) / gcd;
@@ -81,7 +78,7 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
         chart.setNotes(times);
 
         String noteName = Utilities.getNoteName(scale.getNotes().get(0).code);
-        String message = String.format(Locale.getDefault(), FORMAT_SCALE, name, noteName,
+        String message = getString(R.string.polyrhythm_scale, name, noteName,
                 scale.getTimes().size(), period);
         text.setText(message);
 
@@ -99,8 +96,8 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
 
             int gcd = ArithmeticUtils.gcd(numberOfPeriodsLeft, numberOfPeriodsRight);
 
-            int leftPeriod = processScale(leftScale, "Left", gcd, myChartLeft, myTextLeft);
-            int rightPeriod = processScale(rightScale, "Right", gcd, myChartRight, myTextRight);
+            int leftPeriod = processScale(leftScale, getString(R.string.left), gcd, myChartLeft, myTextLeft);
+            int rightPeriod = processScale(rightScale, getString(R.string.right), gcd, myChartRight, myTextRight);
 
             int bars = leftPeriod * rightPeriod;
             myChartLeft.setBars(bars);

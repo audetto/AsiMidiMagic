@@ -27,7 +27,6 @@ import android.widget.TextView;
 import org.apache.commons.math3.util.ArithmeticUtils;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 
@@ -90,16 +89,16 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
                 grade.setText(String.valueOf(1 + position));
 
                 TextView velocity = itemView.findViewById(R.id.velocity);
-                velocity.setText(Utilities.getReasonableFormal(data.velocity));
+                velocity.setText(String.valueOf(data.velocity));
 
                 TextView vol = itemView.findViewById(R.id.vol);
-                vol.setText(Utilities.getReasonableFormal(data.vol * 1000));
+                vol.setText(String.valueOf(Math.round(data.vol * 1000)));
 
                 TextView time = itemView.findViewById(R.id.time);
-                time.setText(Utilities.getReasonableFormal(data.time * 1000));
+                time.setText(String.valueOf(Math.round(data.time * 1000)));
 
                 TextView target = itemView.findViewById(R.id.target);
-                target.setText(Utilities.getReasonableFormal(data.target * 1000));
+                target.setText(String.valueOf(Math.round(data.target * 1000)));
             }
         };
         RecyclerView recyclerViewStats = view.findViewById(R.id.recycler_stats);
@@ -196,8 +195,7 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
         }
 
         String noteName = Utilities.getNoteName(myScale.getNotes().get(0).code);
-        String status = String.format(Locale.getDefault(), "%s scale = %d notes", noteName,
-                myScale.getNotes().size());
+        String status = getString(R.string.scale_notes, noteName, myScale.getNotes().size());
 
         myTextStatus.setText(status);
     }
