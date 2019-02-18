@@ -25,6 +25,9 @@ import inc.andsoft.asimidimagic.views.RhythmChart;
 
 public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>> {
 
+    private int myLeftIndex;
+    private int myRightIndex;
+
     private RhythmChart myChartLeft;
     private RhythmChart myChartRight;
 
@@ -41,8 +44,14 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
      *
      * @return A new instance of fragment ScaleFragment.
      */
-    static PolyRhythmFragment newInstance() {
+    static PolyRhythmFragment newInstance(int left, int right) {
         PolyRhythmFragment fragment = new PolyRhythmFragment();
+        Bundle args = new Bundle();
+
+        args.putInt("left", left);
+        args.putInt("right", right);
+        fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -52,6 +61,10 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
         ScaleModel scaleModel = ViewModelProviders.of(getActivity()).get(ScaleModel.class);
         LiveData<List<Scale>> liveScales = scaleModel.getScales();
         liveScales.observe(this, this);
+
+        Bundle args = getArguments();
+        myLeftIndex = args.getInt("left");
+        myRightIndex = args.getInt("right");
     }
 
     @Override
@@ -87,8 +100,8 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
 
     @Override
     public void onChanged(List<Scale> scales) {
-        Scale leftScale = scales.get(0);
-        Scale rightScale = scales.get(1);
+        Scale leftScale = scales.get(myLeftIndex);
+        Scale rightScale = scales.get(myRightIndex);
 
         if (leftScale != null && rightScale != null) {
             int numberOfPeriodsLeft = leftScale.getTimes().size() - 1;

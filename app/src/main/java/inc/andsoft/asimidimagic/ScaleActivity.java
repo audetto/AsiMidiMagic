@@ -119,7 +119,7 @@ class SimpleFragmentPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return ScaleFragment.newInstance(1, 0);
             case 2:
-                return PolyRhythmFragment.newInstance();
+                return PolyRhythmFragment.newInstance(0, 1);
             default:
                 return null;
         }
