@@ -93,13 +93,13 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
                 velocity.setText(Utilities.getReasonableFormal(data.velocity));
 
                 TextView vol = itemView.findViewById(R.id.vol);
-                vol.setText(Utilities.getReasonableFormal(data.vol * 100));
+                vol.setText(Utilities.getReasonableFormal(data.vol * 1000));
 
                 TextView time = itemView.findViewById(R.id.time);
-                time.setText(Utilities.getReasonableFormal(data.time * 100));
+                time.setText(Utilities.getReasonableFormal(data.time * 1000));
 
                 TextView target = itemView.findViewById(R.id.target);
-                target.setText(Utilities.getReasonableFormal(data.target * 100));
+                target.setText(Utilities.getReasonableFormal(data.target * 1000));
             }
         };
         RecyclerView recyclerViewStats = view.findViewById(R.id.recycler_stats);

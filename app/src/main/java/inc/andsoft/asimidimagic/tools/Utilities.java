@@ -58,6 +58,6 @@ public class Utilities {
     }
 
     public static String getReasonableFormal(double number) {
-        return String.format(Locale.getDefault(), "%5.2f", number);
+        return String.format(Locale.getDefault(), "%d", Math.round(number));
     }
 }
