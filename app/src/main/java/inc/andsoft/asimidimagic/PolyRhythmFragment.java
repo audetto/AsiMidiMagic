@@ -88,6 +88,7 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
         int period = (numberOfNotes - 1) / gcd;
         List<Scale.Stats> stats = scale.getStatistics(period);
         List<Double> times = stats.stream().map(x -> x.time).collect(Collectors.toList());
+        times.add(0, 0.0);
         chart.setNotes(times);
 
         String noteName = Utilities.getNoteName(scale.getNotes().get(0).code);

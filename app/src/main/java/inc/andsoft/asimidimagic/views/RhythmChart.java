@@ -61,20 +61,20 @@ public class RhythmChart extends View {
     private void init(int beatColor, int noteColor, int barColor) {
         myPaintTarget = new Paint(Paint.ANTI_ALIAS_FLAG);
         myPaintTarget.setColor(beatColor);
-        myPaintTarget.setStrokeWidth(4);
+        myPaintTarget.setStrokeWidth(8);
 
         myPaintNotes = new Paint(Paint.ANTI_ALIAS_FLAG);
         myPaintNotes.setColor(noteColor);
-        myPaintNotes.setStrokeWidth(4);
+        myPaintNotes.setStrokeWidth(8);
 
         myPaintBar = new Paint(Paint.ANTI_ALIAS_FLAG);
         myPaintBar.setColor(barColor);
-        myPaintBar.setStrokeWidth(1);
+        myPaintBar.setStrokeWidth(4);
     }
 
     @Override
     protected void onSizeChanged(int width, int height, int oldwidth, int oldheight) {
-        float extra = 2;
+        float extra = 8;
         myRect = new RectF(getPaddingLeft() + extra, getPaddingTop() + extra,
                 width - getPaddingLeft() - getPaddingLeft() - 2 * extra,
                 height - getPaddingTop() - getPaddingBottom() - 2 * extra);
@@ -87,27 +87,28 @@ public class RhythmChart extends View {
             float endY = myRect.centerY() + 0.25f * myRect.height();
 
             float dx = myRect.width() / myBars;
-            for (int i = 0; i < myBars; ++i) {
-                float x = myRect.left + (i + 1) * dx;
+            for (int i = 0; i <= myBars; ++i) {
+                float x = myRect.left + i * dx;
                 canvas.drawLine(x, startY, x, endY, myPaintBar);
             }
         }
 
         if (myTimes != null) {
             int numberOfNotes = myTimes.size();
-            if (numberOfNotes > 0) {
+            if (numberOfNotes > 1) {
                 float centerY = myRect.centerY();
                 float endNotesY = myPosition == 0 ? myRect.bottom : myRect.top;
                 float endBeatsY = myPosition == 0 ? myRect.top : myRect.bottom;
 
-                float dx = myRect.width() / numberOfNotes;
+                // the first note is at 0
+                float dx = myRect.width() / (numberOfNotes - 1);
                 float coefficient = myRect.width() / myTimes.get(numberOfNotes - 1).floatValue();
 
                 for (int i = 0; i < numberOfNotes; ++i) {
                     float note = myRect.left + myTimes.get(i).floatValue() * coefficient;
                     canvas.drawLine(note, centerY, note, endNotesY, myPaintNotes);
 
-                    float beat = myRect.left + (i + 1) * dx;
+                    float beat = myRect.left + i * dx;
                     canvas.drawLine(beat, centerY, beat, endBeatsY, myPaintTarget);
                 }
             }

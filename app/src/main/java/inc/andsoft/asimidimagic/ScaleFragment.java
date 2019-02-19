@@ -148,6 +148,7 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
             myAdapterStats.notifyDataSetChanged();
 
             List<Double> times = stats.stream().map(x -> x.time).collect(Collectors.toList());
+            times.add(0, 0.0);
             myChart.setNotes(times);
         }
     }
