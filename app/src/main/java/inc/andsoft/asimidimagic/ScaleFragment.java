@@ -89,7 +89,7 @@ public class ScaleFragment extends Fragment implements Observer<List<Scale>> {
                 grade.setText(String.valueOf(1 + position));
 
                 TextView velocity = itemView.findViewById(R.id.velocity);
-                velocity.setText(String.valueOf(data.velocity));
+                velocity.setText(String.valueOf(Math.round(data.velocity)));
 
                 TextView vol = itemView.findViewById(R.id.vol);
                 vol.setText(String.valueOf(Math.round(data.vol * 1000)));
