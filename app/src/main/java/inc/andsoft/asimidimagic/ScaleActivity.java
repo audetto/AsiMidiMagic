@@ -51,6 +51,7 @@ public class ScaleActivity extends CommonActivity {
 
             if (myOutputPort != null) {
                 MidiReceiver midiScales = new MidiScales() {
+                    @Override
                     public void onChangeState(@NonNull MidiScales.State state, @NonNull String message) {
                         runOnUiThread(() -> {
                             TextView statusView = findViewById(R.id.text_status);
@@ -61,6 +62,7 @@ public class ScaleActivity extends CommonActivity {
                             }
                         });
                     }
+                    @Override
                     public void complete(Scale leftScale, Scale rightScale) {
                         runOnUiThread(() -> scaleModel.setScales(leftScale, rightScale));
                     }
