@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:grid="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -16,9 +16,9 @@
         android:layout_marginEnd="8dp"
         android:text=""
         android:textAlignment="center"
-        grid:layout_constraintEnd_toEndOf="parent"
-        grid:layout_constraintStart_toStartOf="parent"
-        grid:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <inc.andsoft.asimidimagic.views.RhythmChart
         android:id="@+id/chart_right"
@@ -27,9 +27,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        grid:layout_constraintEnd_toEndOf="parent"
-        grid:layout_constraintStart_toStartOf="parent"
-        grid:layout_constraintTop_toBottomOf="@+id/text_right"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_right"
         custom:noteColor="@android:color/holo_blue_dark"
         custom:beatColor="@android:color/holo_red_dark"
         custom:barColor="@android:color/holo_green_dark"
@@ -42,9 +42,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        grid:layout_constraintEnd_toEndOf="parent"
-        grid:layout_constraintStart_toStartOf="parent"
-        grid:layout_constraintTop_toBottomOf="@+id/chart_right"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chart_right"
         custom:noteColor="@android:color/holo_blue_dark"
         custom:beatColor="@android:color/holo_red_dark"
         custom:barColor="@android:color/holo_green_dark"
@@ -59,8 +59,8 @@
         android:layout_marginEnd="8dp"
         android:text=""
         android:textAlignment="center"
-        grid:layout_constraintEnd_toEndOf="parent"
-        grid:layout_constraintStart_toStartOf="parent"
-        grid:layout_constraintTop_toBottomOf="@+id/chart_left" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chart_left" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
