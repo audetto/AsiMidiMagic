@@ -3,7 +3,6 @@ package inc.andsoft.asimidimagic.tools;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -11,42 +10,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Scale {
-
-    static public class Note {
-        public final int code;
-        public final int velocity;
-
-        public Note(int code, int velocity) {
-            this.code = code;
-            this.velocity = velocity;
-        }
-    }
-
-    private List<Note> myNotes;
-    private List<Double> myTimes;
+public class Scale extends NoteSequence {
 
     public Scale(List<Note> notes, List<Double> times) {
-        myNotes = notes;
-        myTimes = times;
-    }
-
-    public List<Note> getNotes() {
-        return myNotes;
-    }
-
-    public List<Double> getTimes() {
-        return myTimes;
-    }
-
-    public int getLowestNote() {
-        int lowest = myNotes.stream().min(Comparator.comparingInt(x -> x.code)).get().code;
-        return lowest;
-    }
-
-    public int getHighestNote() {
-        int highest = myNotes.stream().max(Comparator.comparingInt(x -> x.code)).get().code;
-        return highest;
+        super(notes, times);
     }
 
     /**

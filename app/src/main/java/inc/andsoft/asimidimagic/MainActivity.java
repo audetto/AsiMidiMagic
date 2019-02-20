@@ -70,6 +70,7 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
 
         arrayAdapter.add(new DataWithLabel<>("ON-OFF Delay", DelayActivity.class));
         arrayAdapter.add(new DataWithLabel<>("Scales", ScaleActivity.class));
+        arrayAdapter.add(new DataWithLabel<>("Sequence", SequenceActivity.class));
         arrayAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         handlerSpinner.setAdapter(arrayAdapter);
 
