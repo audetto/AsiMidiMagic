@@ -70,7 +70,7 @@ public class SequenceChart extends View {
     private void init(int noteColor) {
         myPaintNotes = new Paint(Paint.ANTI_ALIAS_FLAG);
         myPaintNotes.setColor(noteColor);
-        myPaintNotes.setStrokeWidth(8);
+        myPaintNotes.setStrokeWidth(10);
     }
 
     @Override

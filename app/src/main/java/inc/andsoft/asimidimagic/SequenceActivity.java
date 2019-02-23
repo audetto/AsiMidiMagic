@@ -5,6 +5,7 @@ import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
 import android.media.midi.MidiReceiver;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,17 +16,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import inc.andsoft.asimidimagic.dialogs.BarDialog;
 import inc.andsoft.asimidimagic.midi.MidiRecorder;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.NoteSequence;
 import inc.andsoft.asimidimagic.views.SequenceChart;
 
 
-public class SequenceActivity extends CommonActivity {
+public class SequenceActivity extends CommonActivity implements BarDialog.BarDialogListener {
     private MidiOutputPort myOutputPort;
     private MidiFramer myFramer;
 
     private SequenceChart myChart;
+
+    private List<SequenceChart.Bar> myBars = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +48,6 @@ public class SequenceActivity extends CommonActivity {
         MidiManager midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
 
         myChart = findViewById(R.id.chart);
-
-        List<SequenceChart.Bar> bars = new ArrayList<>();
-        bars.add(new SequenceChart.Bar(8, getResources().getColor(android.R.color.holo_blue_dark), 4));
-        bars.add(new SequenceChart.Bar(3, getResources().getColor(android.R.color.holo_green_dark), 2));
-        bars.add(new SequenceChart.Bar(5, getResources().getColor(android.R.color.holo_orange_light), 6));
-        myChart.setBars(bars);
 
         myMidiDeviceOpener.execute(midiManager, (MidiDeviceOpener opener) -> {
             myOutputPort = opener.openOutputPort(output);
@@ -100,5 +98,20 @@ public class SequenceActivity extends CommonActivity {
 
         myFramer = null;
         myOutputPort = null;
+    }
+
+    public void onDialogPositiveClick(int periods, int color, int width) {
+        myBars.add(new SequenceChart.Bar(periods, color, width));
+        myChart.setBars(myBars);
+    }
+
+    public void clearBars(View v) {
+        myBars.clear();
+        myChart.setBars(myBars);
+    }
+
+    public void addBar(View v) {
+        BarDialog bd = new BarDialog();
+        bd.show(getSupportFragmentManager(), "Bar");
     }
 }
