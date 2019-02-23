@@ -101,8 +101,12 @@ public class SequenceActivity extends CommonActivity implements BeatDialog.BeatD
     }
 
     public void onDialogPositiveClick(int count, int color, int width) {
-        myBeats.add(new SequenceChart.Beat(count, color, width));
-        myChart.setBeats(myBeats);
+        if (count > 0 && width > 0) {
+            myBeats.add(new SequenceChart.Beat(count, color, width));
+            myChart.setBeats(myBeats);
+        } else {
+            Toast.makeText(this, getString(R.string.invalid_beat), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void clearBars(View v) {

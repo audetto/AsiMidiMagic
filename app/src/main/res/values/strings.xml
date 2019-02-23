@@ -44,4 +44,6 @@
 
     <string name="add_beat">Add beats</string>
 
+    <string name="invalid_beat">Invalid beat parameters</string>
+
 </resources>
