@@ -16,14 +16,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import inc.andsoft.asimidimagic.R;
 
-public class BarDialog extends DialogFragment {
+public class BeatDialog extends DialogFragment {
 
-    public interface BarDialogListener {
-        void onDialogPositiveClick(int periods, @ColorInt int color, int width);
+    public interface BeatDialogListener {
+        void onDialogPositiveClick(int count, @ColorInt int color, int width);
     }
 
     // Use this instance of the interface to deliver action events
-    private BarDialogListener myListener;
+    private BeatDialogListener myListener;
 
     @NonNull
     @Override
@@ -34,21 +34,21 @@ public class BarDialog extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        View view = inflater.inflate(R.layout.dialog_bar, null);
+        View view = inflater.inflate(R.layout.dialog_beats, null);
         builder.setView(view);
-        builder.setTitle("add bars");
+        builder.setTitle(R.string.add_beat);
 
         builder.setPositiveButton(android.R.string.ok, (DialogInterface dialog, int id) -> {
-            TextView textPeriod = view.findViewById(R.id.text_period);
+            TextView textCount = view.findViewById(R.id.text_count);
             TextView textColor = view.findViewById(R.id.text_color);
             TextView textWidth = view.findViewById(R.id.text_width);
 
             try {
-                int period = Integer.valueOf(textPeriod.getText().toString());
+                int count = Integer.valueOf(textCount.getText().toString());
                 int color = Color.parseColor(textColor.getText().toString());
                 int width = Integer.valueOf(textWidth.getText().toString());
 
-                myListener.onDialogPositiveClick(period, color, width);
+                myListener.onDialogPositiveClick(count, color, width);
             } catch (Exception e) {
                 Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -66,7 +66,7 @@ public class BarDialog extends DialogFragment {
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            myListener = (BarDialogListener) context;
+            myListener = (BeatDialogListener) context;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.toString()

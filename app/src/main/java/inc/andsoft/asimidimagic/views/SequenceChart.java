@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -18,15 +17,14 @@ import inc.andsoft.asimidimagic.R;
 import inc.andsoft.asimidimagic.tools.NoteSequence;
 
 public class SequenceChart extends View {
-    private static final String TAG = "SequenceChart";
 
-    public static class Bar {
-        public final int periods;
+    public static class Beat {
+        public final int count;
         public final @ColorInt int color;
         public final int width;
 
-        public Bar(int periods, @ColorInt int color, int width) {
-            this.periods = periods;
+        public Beat(int count, @ColorInt int color, int width) {
+            this.count = count;
             this.color = color;
             this.width = width;
         }
@@ -35,15 +33,24 @@ public class SequenceChart extends View {
     private NoteSequence mySequence;
     private Paint myPaintNotes;
 
-    private List<Bar> myBars;
-    private List<Paint> myPaintBars = new ArrayList<>();
+    private List<Beat> myBeats;
+    private List<Paint> myPaintBeats = new ArrayList<>();
 
     private RectF myRect;
 
     public SequenceChart(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+        TypedArray a = context.getTheme().obtainStyledAttributes(
+                attrs, R.styleable.SequenceChart, 0, 0);
+
         int noteColor = getResources().getColor(android.R.color.holo_blue_dark);
+
+        try {
+            noteColor = a.getColor(R.styleable.SequenceChart_noteColor, noteColor);
+        } finally {
+            a.recycle();
+        }
 
         init(noteColor);
     }
@@ -53,15 +60,15 @@ public class SequenceChart extends View {
         invalidate();
     }
 
-    public void setBars(@NonNull List<Bar> bars) {
-        myBars = bars;
+    public void setBeats(@NonNull List<Beat> beats) {
+        myBeats = beats;
 
-        myPaintBars.clear();
-        for (Bar bar : myBars) {
+        myPaintBeats.clear();
+        for (Beat beat : myBeats) {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setColor(bar.color);
-            paint.setStrokeWidth(bar.width);
-            myPaintBars.add(paint);
+            paint.setColor(beat.color);
+            paint.setStrokeWidth(beat.width);
+            myPaintBeats.add(paint);
         }
 
         invalidate();
@@ -83,18 +90,18 @@ public class SequenceChart extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int numberOfBars = myPaintBars.size();
+        int numberOfBars = myPaintBeats.size();
         for (int j = 0; j < numberOfBars; ++j) {
             float startY = myRect.centerY() - 0.5f * myRect.height();
             float endY = myRect.centerY() + 0.5f * myRect.height();
 
-            int numberOfPeriods = myBars.get(j).periods;
-            Paint paintBar = myPaintBars.get(j);
+            int numberOfPeriods = myBeats.get(j).count;
+            Paint paintBeat = myPaintBeats.get(j);
 
             float dx = myRect.width() / numberOfPeriods;
             for (int i = 0; i <= numberOfPeriods; ++i) {
                 float x = myRect.left + i * dx;
-                canvas.drawLine(x, startY, x, endY, paintBar);
+                canvas.drawLine(x, startY, x, endY, paintBeat);
             }
         }
 

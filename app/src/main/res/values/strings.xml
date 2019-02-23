@@ -40,4 +40,8 @@
     <string name="right">Right</string>
     <string name="polyrhythm_scale">%s: %s (%d) in %d</string>
 
+    <string name="clear">Clear</string>
+
+    <string name="add_beat">Add beats</string>
+
 </resources>

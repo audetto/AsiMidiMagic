@@ -38,7 +38,8 @@
         android:layout_weight="1"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="end"
-        android:text="time" />
+        android:text="time"
+        android:textColor="@android:color/holo_blue_dark" />
 
     <TextView
         android:id="@+id/target"

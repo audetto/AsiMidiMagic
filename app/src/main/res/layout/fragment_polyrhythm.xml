@@ -30,9 +30,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_right"
+        custom:targetColor="@android:color/holo_red_dark"
         custom:noteColor="@android:color/holo_blue_dark"
-        custom:beatColor="@android:color/holo_red_dark"
-        custom:barColor="@android:color/holo_green_dark"
+        custom:beatColor="@android:color/holo_green_dark"
         custom:position="0"/>
 
     <inc.andsoft.asimidimagic.views.RhythmChart
@@ -45,9 +45,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chart_right"
+        custom:targetColor="@android:color/holo_red_dark"
         custom:noteColor="@android:color/holo_blue_dark"
-        custom:beatColor="@android:color/holo_red_dark"
-        custom:barColor="@android:color/holo_green_dark"
+        custom:beatColor="@android:color/holo_green_dark"
         custom:position="1"/>
 
     <TextView

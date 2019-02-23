@@ -16,20 +16,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import inc.andsoft.asimidimagic.dialogs.BarDialog;
+import inc.andsoft.asimidimagic.dialogs.BeatDialog;
 import inc.andsoft.asimidimagic.midi.MidiRecorder;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.NoteSequence;
 import inc.andsoft.asimidimagic.views.SequenceChart;
 
 
-public class SequenceActivity extends CommonActivity implements BarDialog.BarDialogListener {
+public class SequenceActivity extends CommonActivity implements BeatDialog.BeatDialogListener {
     private MidiOutputPort myOutputPort;
     private MidiFramer myFramer;
 
     private SequenceChart myChart;
 
-    private List<SequenceChart.Bar> myBars = new ArrayList<>();
+    private List<SequenceChart.Beat> myBeats = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,18 +100,18 @@ public class SequenceActivity extends CommonActivity implements BarDialog.BarDia
         myOutputPort = null;
     }
 
-    public void onDialogPositiveClick(int periods, int color, int width) {
-        myBars.add(new SequenceChart.Bar(periods, color, width));
-        myChart.setBars(myBars);
+    public void onDialogPositiveClick(int count, int color, int width) {
+        myBeats.add(new SequenceChart.Beat(count, color, width));
+        myChart.setBeats(myBeats);
     }
 
     public void clearBars(View v) {
-        myBars.clear();
-        myChart.setBars(myBars);
+        myBeats.clear();
+        myChart.setBeats(myBeats);
     }
 
     public void addBar(View v) {
-        BarDialog bd = new BarDialog();
-        bd.show(getSupportFragmentManager(), "Bar");
+        BeatDialog bd = new BeatDialog();
+        bd.show(getSupportFragmentManager(), "Beat");
     }
 }

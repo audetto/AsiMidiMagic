@@ -40,8 +40,8 @@
         grid:layout_constraintEnd_toEndOf="parent"
         grid:layout_constraintStart_toStartOf="parent"
         grid:layout_constraintTop_toBottomOf="@+id/spinner_periods"
+        custom:targetColor="@android:color/holo_red_dark"
         custom:noteColor="@android:color/holo_blue_dark"
-        custom:beatColor="@android:color/holo_red_dark"
         custom:position="1"/>
 
     <androidx.recyclerview.widget.RecyclerView

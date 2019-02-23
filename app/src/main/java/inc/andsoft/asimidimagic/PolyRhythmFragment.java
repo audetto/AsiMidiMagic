@@ -114,8 +114,8 @@ public class PolyRhythmFragment extends Fragment implements Observer<List<Scale>
             int rightPeriod = processScale(rightScale, getString(R.string.right), gcd, myChartRight, myTextRight);
 
             int bars = leftPeriod * rightPeriod;
-            myChartLeft.setBars(bars);
-            myChartRight.setBars(bars);
+            myChartLeft.setBeats(bars);
+            myChartRight.setBeats(bars);
         } else {
             // otherwise clean
             myChartLeft.setNotes(null);

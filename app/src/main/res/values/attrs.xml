@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="RhythmChart">
-        <attr name="beatColor" format="color" />
+
+    <declare-styleable name="SequenceChart">
         <attr name="noteColor" format="color" />
-        <attr name="barColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="RhythmChart" parent="SequenceChart">
+        <attr name="targetColor" format="color" />
+        <attr name="noteColor" />
+        <attr name="beatColor" format="color" />
         <attr name="position" format="integer" />
     </declare-styleable>
+
 </resources>

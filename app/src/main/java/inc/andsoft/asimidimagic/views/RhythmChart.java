@@ -15,11 +15,11 @@ import inc.andsoft.asimidimagic.R;
 public class RhythmChart extends View {
 
     private List<Double> myTimes;
-    private int myBars;
+    private int myBeats;
 
     private Paint myPaintTarget;
     private Paint myPaintNotes;
-    private Paint myPaintBar;
+    private Paint myPaintBeats;
 
     private RectF myRect;
 
@@ -31,21 +31,21 @@ public class RhythmChart extends View {
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.RhythmChart, 0, 0);
 
-        int beatColor = getResources().getColor(android.R.color.holo_red_dark);
+        int targetColor = getResources().getColor(android.R.color.holo_red_dark);
         int noteColor = getResources().getColor(android.R.color.holo_blue_dark);
-        int barColor = getResources().getColor(android.R.color.holo_green_dark);
+        int beatColor = getResources().getColor(android.R.color.holo_green_dark);
         myPosition = 0;
 
         try {
-            beatColor = a.getColor(R.styleable.RhythmChart_beatColor, beatColor);
+            targetColor = a.getColor(R.styleable.RhythmChart_targetColor, targetColor);
             noteColor = a.getColor(R.styleable.RhythmChart_noteColor, noteColor);
-            barColor = a.getColor(R.styleable.RhythmChart_barColor, barColor);
+            beatColor = a.getColor(R.styleable.RhythmChart_beatColor, beatColor);
             myPosition = a.getInt(R.styleable.RhythmChart_position, myPosition);
         } finally {
             a.recycle();
         }
 
-        init(beatColor, noteColor, barColor);
+        init(targetColor, noteColor, beatColor);
     }
 
     public void setNotes(List<Double> times) {
@@ -53,23 +53,23 @@ public class RhythmChart extends View {
         invalidate();
     }
 
-    public void setBars(int bars) {
-        myBars = bars;
+    public void setBeats(int beats) {
+        myBeats = beats;
         invalidate();
     }
 
-    private void init(int beatColor, int noteColor, int barColor) {
+    private void init(int tragetColor, int noteColor, int beatColor) {
         myPaintTarget = new Paint(Paint.ANTI_ALIAS_FLAG);
-        myPaintTarget.setColor(beatColor);
+        myPaintTarget.setColor(tragetColor);
         myPaintTarget.setStrokeWidth(8);
 
         myPaintNotes = new Paint(Paint.ANTI_ALIAS_FLAG);
         myPaintNotes.setColor(noteColor);
         myPaintNotes.setStrokeWidth(8);
 
-        myPaintBar = new Paint(Paint.ANTI_ALIAS_FLAG);
-        myPaintBar.setColor(barColor);
-        myPaintBar.setStrokeWidth(4);
+        myPaintBeats = new Paint(Paint.ANTI_ALIAS_FLAG);
+        myPaintBeats.setColor(beatColor);
+        myPaintBeats.setStrokeWidth(4);
     }
 
     @Override
@@ -82,14 +82,14 @@ public class RhythmChart extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (myBars > 0) {
+        if (myBeats > 0) {
             float startY = myRect.centerY() - 0.25f * myRect.height();
             float endY = myRect.centerY() + 0.25f * myRect.height();
 
-            float dx = myRect.width() / myBars;
-            for (int i = 0; i <= myBars; ++i) {
+            float dx = myRect.width() / myBeats;
+            for (int i = 0; i <= myBeats; ++i) {
                 float x = myRect.left + i * dx;
-                canvas.drawLine(x, startY, x, endY, myPaintBar);
+                canvas.drawLine(x, startY, x, endY, myPaintBeats);
             }
         }
 
