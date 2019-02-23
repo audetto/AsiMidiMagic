@@ -164,7 +164,7 @@ public class DelayActivity extends CommonActivity {
                 // myOutputPort -> MidiFramer -> MidiFilter -> DelayHandler -> TimeScheduler ->
                 // MidiCountedOnOff -> myInputPort
             } else {
-                Toast.makeText(DelayActivity.this, getString(R.string.missing_ports), Toast.LENGTH_SHORT).show();
+                Toast.makeText(DelayActivity.this, R.string.missing_ports, Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

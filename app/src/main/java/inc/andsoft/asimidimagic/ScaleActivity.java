@@ -70,7 +70,7 @@ public class ScaleActivity extends CommonActivity {
                 myFramer = new MidiFramer(midiScales);
                 connect();
             } else {
-                Toast.makeText(ScaleActivity.this, getString(R.string.missing_port),
+                Toast.makeText(ScaleActivity.this, R.string.missing_port,
                         Toast.LENGTH_SHORT).show();
                 finish();
             }

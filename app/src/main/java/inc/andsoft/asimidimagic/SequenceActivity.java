@@ -69,7 +69,7 @@ public class SequenceActivity extends CommonActivity implements BeatDialog.BeatD
                 myFramer = new MidiFramer(midiScales);
                 connect();
             } else {
-                Toast.makeText(SequenceActivity.this, getString(R.string.missing_port),
+                Toast.makeText(SequenceActivity.this, R.string.missing_port,
                         Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -105,7 +105,7 @@ public class SequenceActivity extends CommonActivity implements BeatDialog.BeatD
             myBeats.add(new SequenceChart.Beat(count, color, width));
             myChart.setBeats(myBeats);
         } else {
-            Toast.makeText(this, getString(R.string.invalid_beat), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.invalid_beat, Toast.LENGTH_SHORT).show();
         }
     }
 
