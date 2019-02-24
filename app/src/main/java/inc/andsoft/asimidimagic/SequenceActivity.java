@@ -115,7 +115,7 @@ public class SequenceActivity extends CommonActivity implements BeatDialog.BeatD
         myChart.setBeats(myBeats);
     }
 
-    public void addBar(View v) {
+    public void addPoint(View v) {
         BeatDialog bd = new BeatDialog();
         bd.show(getSupportFragmentManager(), "Beat");
     }

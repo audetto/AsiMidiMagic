@@ -138,6 +138,37 @@ public class SynthMIDIServer extends MidiDeviceService {
         }
     }
 
+    class NotesRunnable implements Runnable {
+        private MidiReceiver myReceiver;
+
+        NotesRunnable(MidiReceiver receiver) {
+            this.myReceiver = receiver;
+        }
+
+        public void run() {
+            try {
+                for (byte i = 0; i < 120; ++i) {
+                    Thread.sleep(1000);
+
+                    byte note = (byte) (60 + (i % 12));
+                    byte velocity = (byte) 100;
+                    byte channel = (byte) 3;
+
+                    long now = System.nanoTime();
+                    noteOn(myReceiver, channel, note, velocity, now);
+
+                    long future = now + 2 * NANOS_PER_SECOND;
+
+                    noteOff(myReceiver, channel, note, velocity, future);
+
+                    Log.d(TAG, "Sent =     " + getTimeStr(now) + ", note = " + note + ", id = " + i);
+                }
+            } catch (IOException | InterruptedException e) {
+                Log.d(TAG, e.toString());
+            }
+        }
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -146,9 +177,11 @@ public class SynthMIDIServer extends MidiDeviceService {
 
         myThreads = new ArrayList<>();
 
-        if (outputs.length > 0) {
+        if (outputs.length == 2) {
             myThreads.add(new Thread(new ScaleRunnable(outputs[0], 44, 300, 2)));
             myThreads.add(new Thread(new ScaleRunnable(outputs[0], 68, 200, 3)));
+
+            myThreads.add(new Thread(new NotesRunnable(outputs[1])));
         }
 
         for (Thread thread : myThreads) {

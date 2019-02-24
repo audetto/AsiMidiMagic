@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import inc.andsoft.asimidimagic.midi.RemapHandler;
 import inc.andsoft.asimidimagic.models.BLEModel;
 import inc.andsoft.asimidimagic.tools.DataWithLabel;
 import inc.andsoft.asimidimagic.tools.RecyclerArrayAdapter;
@@ -71,6 +72,7 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
         arrayAdapter.add(new DataWithLabel<>("ON-OFF Delay", DelayActivity.class));
         arrayAdapter.add(new DataWithLabel<>("Scales", ScaleActivity.class));
         arrayAdapter.add(new DataWithLabel<>("Sequence", SequenceActivity.class));
+        arrayAdapter.add(new DataWithLabel<>("Velocity", VelocityRemapActivity.class));
         arrayAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         handlerSpinner.setAdapter(arrayAdapter);
 

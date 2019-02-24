@@ -1,6 +1,7 @@
 <devices>
     <device manufacturer="AndSoft Inc" product="MidiSynthBasic">
-        <input-port name="input" />
-        <output-port name="output" />
+        <input-port name="sink" />
+        <output-port name="scale source" />
+        <output-port name="notes source" />
     </device>
 </devices>

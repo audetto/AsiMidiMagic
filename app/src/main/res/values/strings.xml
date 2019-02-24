@@ -43,6 +43,8 @@
     <string name="clear">Clear</string>
 
     <string name="add_beat">Add beats</string>
+    <string name="add_point">Add point</string>
+    <string name="process">Process</string>
 
     <string name="invalid_beat">Invalid beat parameters</string>
 
