@@ -13,8 +13,8 @@ import androidx.annotation.NonNull;
  * Created by andrea on 28/01/18.
  */
 
-public abstract class RemapHandler extends StartStopReceiver {
-    private final static String TAG = "RemapHandler";
+public abstract class MidiRemap extends StartStopReceiver {
+    private final static String TAG = "MidiRemap";
 
     private MidiReceiver myReceiver;
     private volatile boolean myRunning = false;
@@ -25,7 +25,7 @@ public abstract class RemapHandler extends StartStopReceiver {
 
     private VelocityRemap myRemapper = null;
 
-    protected RemapHandler(@NonNull MidiReceiver receiver) {
+    protected MidiRemap(@NonNull MidiReceiver receiver) {
         myReceiver = receiver;
     }
 

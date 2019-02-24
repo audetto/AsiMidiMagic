@@ -12,7 +12,7 @@ import java.io.IOException;
  * Created by andrea on 28/01/18.
  */
 
-public abstract class DelayHandler extends StartStopReceiver {
+public abstract class MidiDelay extends StartStopReceiver {
     static private long MILLIS_PER_NANO = 1000000;
 
     private MidiReceiver myReceiver;
@@ -22,7 +22,7 @@ public abstract class DelayHandler extends StartStopReceiver {
     private volatile long myOnDelay = 0;
     private volatile long myOffDelay = 0;
 
-    protected DelayHandler(@NonNull MidiReceiver receiver) {
+    protected MidiDelay(@NonNull MidiReceiver receiver) {
         myReceiver = receiver;
     }
 

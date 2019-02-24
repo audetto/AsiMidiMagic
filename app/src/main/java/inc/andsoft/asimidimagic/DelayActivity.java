@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.media.midi.MidiInputPort;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
-import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +19,7 @@ import com.mobileer.miditools.MidiPortWrapper;
 
 import java.io.IOException;
 
-import inc.andsoft.asimidimagic.midi.DelayHandler;
+import inc.andsoft.asimidimagic.midi.MidiDelay;
 import inc.andsoft.asimidimagic.midi.MidiCountedOnOff;
 import inc.andsoft.asimidimagic.midi.MidiFilter;
 import inc.andsoft.asimidimagic.midi.MidiTimeScheduler;
@@ -35,7 +34,7 @@ public class DelayActivity extends CommonActivity {
     private MidiOutputPort myOutputPort;
 
     private MidiTimeScheduler myTimeScheduler;
-    private DelayHandler myDelayHandler;
+    private MidiDelay myMidiDelay;
     private MidiFramer myFramer;
     private MidiFilter myFilter;
     private MidiCountedOnOff myCounted;
@@ -71,8 +70,8 @@ public class DelayActivity extends CommonActivity {
                 int delay = seekBar.getProgress();
                 Toast.makeText(DelayActivity.this,
                         getString(R.string.delay_on, delay), Toast.LENGTH_SHORT).show();
-                if (myDelayHandler != null) {
-                    myDelayHandler.setOnDelay(delay);
+                if (myMidiDelay != null) {
+                    myMidiDelay.setOnDelay(delay);
                 }
             }
         });
@@ -92,8 +91,8 @@ public class DelayActivity extends CommonActivity {
                 int delay = seekBar.getProgress();
                 Toast.makeText(DelayActivity.this,
                         getString(R.string.delay_off, delay), Toast.LENGTH_SHORT).show();
-                if (myDelayHandler != null) {
-                    myDelayHandler.setOffDelay(delay);
+                if (myMidiDelay != null) {
+                    myMidiDelay.setOffDelay(delay);
                 }
             }
         });
@@ -110,15 +109,15 @@ public class DelayActivity extends CommonActivity {
 
         RadioButton amber = findViewById(R.id.radio_amber);
         amber.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked && myDelayHandler != null) {
-                myDelayHandler.setRunning(false);
+            if (isChecked && myMidiDelay != null) {
+                myMidiDelay.setRunning(false);
             }
         });
 
         RadioButton green = findViewById(R.id.radio_green);
         green.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked && myDelayHandler != null) {
-                myDelayHandler.setRunning(true);
+            if (isChecked && myMidiDelay != null) {
+                myMidiDelay.setRunning(true);
             }
         });
 
@@ -136,7 +135,7 @@ public class DelayActivity extends CommonActivity {
             if (myInputPort != null && myOutputPort != null) {
                 myCounted = new MidiCountedOnOff(myInputPort);
                 myTimeScheduler = new MidiTimeScheduler(myCounted);
-                myDelayHandler = new DelayHandler(myTimeScheduler) {
+                myMidiDelay = new MidiDelay(myTimeScheduler) {
                     @Override
                     public void onPedalChange(boolean value) {
                         runOnUiThread(() ->  {
@@ -156,12 +155,12 @@ public class DelayActivity extends CommonActivity {
                     }
                 };
 
-                myFilter = new MidiFilter(myDelayHandler);
+                myFilter = new MidiFilter(myMidiDelay);
                 myFramer = new MidiFramer(myFilter);
                 connect();
 
                 // the chain is
-                // myOutputPort -> MidiFramer -> MidiFilter -> DelayHandler -> TimeScheduler ->
+                // myOutputPort -> MidiFramer -> MidiFilter -> MidiDelay -> TimeScheduler ->
                 // MidiCountedOnOff -> myInputPort
             } else {
                 Toast.makeText(DelayActivity.this, R.string.missing_ports, Toast.LENGTH_SHORT).show();
@@ -212,7 +211,7 @@ public class DelayActivity extends CommonActivity {
         myFramer = null;
         myInputPort = null;
         myOutputPort = null;
-        myDelayHandler = null;
+        myMidiDelay = null;
         myTimeScheduler = null;
     }
 

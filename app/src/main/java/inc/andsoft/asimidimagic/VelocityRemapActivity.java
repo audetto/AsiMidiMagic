@@ -28,7 +28,7 @@ import java.util.List;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import inc.andsoft.asimidimagic.midi.MidiFilter;
-import inc.andsoft.asimidimagic.midi.RemapHandler;
+import inc.andsoft.asimidimagic.midi.MidiRemap;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.RecyclerPointArrayAdapter;
 import inc.andsoft.asimidimagic.tools.Utilities;
@@ -40,7 +40,7 @@ public class VelocityRemapActivity extends CommonActivity {
     private MidiInputPort myInputPort;
     private MidiOutputPort myOutputPort;
 
-    private RemapHandler myRemapHandler;
+    private MidiRemap myMidiRemap;
     private MidiFramer myFramer;
     private MidiFilter myFilter;
 
@@ -75,15 +75,15 @@ public class VelocityRemapActivity extends CommonActivity {
 
         RadioButton amber = findViewById(R.id.radio_amber);
         amber.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked && myRemapHandler != null) {
-                myRemapHandler.setRunning(false);
+            if (isChecked && myMidiRemap != null) {
+                myMidiRemap.setRunning(false);
             }
         });
 
         RadioButton green = findViewById(R.id.radio_green);
         green.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked && myRemapHandler != null) {
-                myRemapHandler.setRunning(true);
+            if (isChecked && myMidiRemap != null) {
+                myMidiRemap.setRunning(true);
             }
         });
 
@@ -99,7 +99,7 @@ public class VelocityRemapActivity extends CommonActivity {
             myInputPort = opener.openInputPort(input);
 
             if (myInputPort != null && myOutputPort != null) {
-                myRemapHandler = new RemapHandler(myInputPort) {
+                myMidiRemap = new MidiRemap(myInputPort) {
                     @Override
                     public void onPedalChange(boolean value) {
                         runOnUiThread(() ->  {
@@ -119,12 +119,12 @@ public class VelocityRemapActivity extends CommonActivity {
                     }
                 };
 
-                myFilter = new MidiFilter(myRemapHandler);
+                myFilter = new MidiFilter(myMidiRemap);
                 myFramer = new MidiFramer(myFilter);
                 connect();
 
                 // the chain is
-                // myOutputPort -> MidiFramer -> MidiFilter -> DelayHandler -> TimeScheduler ->
+                // myOutputPort -> MidiFramer -> MidiFilter -> MidiDelay -> TimeScheduler ->
                 // MidiCountedOnOff -> myInputPort
             } else {
                 Toast.makeText(VelocityRemapActivity.this, R.string.missing_ports, Toast.LENGTH_SHORT).show();
@@ -176,7 +176,7 @@ public class VelocityRemapActivity extends CommonActivity {
         myFramer = null;
         myInputPort = null;
         myOutputPort = null;
-        myRemapHandler = null;
+        myMidiRemap = null;
     }
 
     private void amberButton() {
@@ -212,12 +212,12 @@ public class VelocityRemapActivity extends CommonActivity {
         try {
             UnivariateFunction f = new LinearInterpolator().interpolate(xs, ys);
 
-            RemapHandler.VelocityRemap remapper = (int note, int channel, int velocity) -> {
+            MidiRemap.VelocityRemap remapper = (int note, int channel, int velocity) -> {
                 long y = Math.round(f.value(velocity));
                 return (int) y;
             };
 
-            myRemapHandler.setRemapper(remapper);
+            myMidiRemap.setRemapper(remapper);
         } catch (Exception e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
         }
