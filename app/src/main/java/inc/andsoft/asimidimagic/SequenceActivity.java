@@ -100,6 +100,7 @@ public class SequenceActivity extends CommonActivity implements BeatDialog.BeatD
         myOutputPort = null;
     }
 
+    @Override
     public void onDialogPositiveClick(int count, int color, int width) {
         if (count > 0 && width > 0) {
             myBeats.add(new SequenceChart.Beat(count, color, width));
