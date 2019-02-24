@@ -63,12 +63,17 @@ public abstract class RemapHandler extends StartStopReceiver {
             if (myRunning && myRemapper != null) {
                 int note = data[offset + 1];
                 int channel = (data[offset] & MidiConstants.STATUS_CHANNEL_MASK);
-                int mapped = myRemapper.map(note, channel, velocity);
 
-                Log.d(TAG, "Remapped " + velocity + " to " + mapped);
+                try {
+                    int mapped = myRemapper.map(note, channel, velocity);
 
-                if (mapped >= 0 && mapped <= 127) {
-                    data[offset + 2] = (byte)mapped;
+                    Log.d(TAG, "Remapped " + velocity + " to " + mapped);
+
+                    if (mapped >= 0 && mapped <= 127) {
+                        data[offset + 2] = (byte) mapped;
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error " + e);
                 }
             }
             myReceiver.send(data, offset, count, timestamp);
