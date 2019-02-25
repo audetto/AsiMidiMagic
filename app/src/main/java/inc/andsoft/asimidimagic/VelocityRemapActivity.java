@@ -6,7 +6,6 @@ import android.media.midi.MidiInputPort;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -20,23 +19,21 @@ import com.mobileer.miditools.MidiPortWrapper;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import inc.andsoft.asimidimagic.midi.MidiFilter;
 import inc.andsoft.asimidimagic.midi.MidiRemap;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.RecyclerPointArrayAdapter;
-import inc.andsoft.asimidimagic.tools.Utilities;
 
 public class VelocityRemapActivity extends CommonActivity {
-
-    private final static String TAG = "VelocityRemapActivity";
-
     private MidiInputPort myInputPort;
     private MidiOutputPort myOutputPort;
 
@@ -51,7 +48,7 @@ public class VelocityRemapActivity extends CommonActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remap);
-        setActionBar();
+        Toolbar toolbar = setActionBar();
 
         Intent intent = getIntent();
         MidiPortWrapper output = intent.getParcelableExtra("output");
@@ -94,6 +91,15 @@ public class VelocityRemapActivity extends CommonActivity {
 
         Switch sticky = findViewById(R.id.switch_sticky);
 
+        MidiToolFragment midiToolFragment = (MidiToolFragment)getSupportFragmentManager().
+                findFragmentById(R.id.fragment_midi);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
         myMidiDeviceOpener.execute(midiManager, (MidiDeviceOpener opener) -> {
             myOutputPort = opener.openOutputPort(output);
             myInputPort = opener.openInputPort(input);
@@ -121,6 +127,9 @@ public class VelocityRemapActivity extends CommonActivity {
 
                 myFilter = new MidiFilter(myMidiRemap);
                 myFramer = new MidiFramer(myFilter);
+
+                midiToolFragment.setReceiver(myInputPort);
+
                 connect();
 
                 // the chain is
@@ -154,15 +163,6 @@ public class VelocityRemapActivity extends CommonActivity {
         if (myOutputPort != null && myFramer != null) {
             // first detach the input port (wrapped in the framer)
             myOutputPort.disconnect(myFramer);
-        }
-
-        if (myInputPort != null) {
-            try {
-                // send a final ALL_NOTES_OFF
-                Utilities.allNotesOff(myInputPort);
-            } catch (IOException e) {
-                Log.e(TAG, e.toString());
-            }
         }
     }
 

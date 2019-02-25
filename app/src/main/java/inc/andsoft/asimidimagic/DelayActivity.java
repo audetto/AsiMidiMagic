@@ -5,7 +5,6 @@ import android.media.midi.MidiInputPort;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -17,19 +16,16 @@ import android.widget.Toast;
 import com.mobileer.miditools.MidiFramer;
 import com.mobileer.miditools.MidiPortWrapper;
 
-import java.io.IOException;
-
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import inc.andsoft.asimidimagic.midi.MidiDelay;
 import inc.andsoft.asimidimagic.midi.MidiCountedOnOff;
 import inc.andsoft.asimidimagic.midi.MidiFilter;
 import inc.andsoft.asimidimagic.midi.MidiTimeScheduler;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
-import inc.andsoft.asimidimagic.tools.Utilities;
 
 public class DelayActivity extends CommonActivity {
-
-    private final static String TAG = "DelayActivity";
-
     private MidiInputPort myInputPort;
     private MidiOutputPort myOutputPort;
 
@@ -43,7 +39,7 @@ public class DelayActivity extends CommonActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delay);
-        setActionBar();
+        Toolbar toolbar = setActionBar();
 
         Intent intent = getIntent();
         MidiPortWrapper output = intent.getParcelableExtra("output");
@@ -128,6 +124,15 @@ public class DelayActivity extends CommonActivity {
 
         Switch sticky = findViewById(R.id.switch_sticky);
 
+        MidiToolFragment midiToolFragment = (MidiToolFragment)getSupportFragmentManager().
+                findFragmentById(R.id.fragment_midi);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
         myMidiDeviceOpener.execute(midiManager, (MidiDeviceOpener opener) -> {
             myOutputPort = opener.openOutputPort(output);
             myInputPort = opener.openInputPort(input);
@@ -157,6 +162,9 @@ public class DelayActivity extends CommonActivity {
 
                 myFilter = new MidiFilter(myMidiDelay);
                 myFramer = new MidiFramer(myFilter);
+
+                midiToolFragment.setReceiver(myInputPort);
+
                 connect();
 
                 // the chain is
@@ -184,15 +192,6 @@ public class DelayActivity extends CommonActivity {
         if (myOutputPort != null && myFramer != null) {
             // first detach the input port (wrapped in the framer)
             myOutputPort.disconnect(myFramer);
-        }
-
-        if (myInputPort != null) {
-            try {
-                // send a final ALL_NOTES_OFF
-                Utilities.allNotesOff(myInputPort);
-            } catch (IOException e) {
-                Log.e(TAG, e.toString());
-            }
         }
     }
 
@@ -223,14 +222,6 @@ public class DelayActivity extends CommonActivity {
     private void greenButton() {
         RadioButton green = findViewById(R.id.radio_green);
         green.toggle();
-    }
-
-    public void notesOff(View v) {
-        try {
-            Utilities.allNotesOff(myInputPort);
-        } catch (IOException e) {
-
-        }
     }
 
     public void counters(View v) {

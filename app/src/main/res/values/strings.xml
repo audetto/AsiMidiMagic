@@ -7,6 +7,9 @@
     <string name="button_start">Start</string>
     <string name="button_disconnect">Disconnect</string>
 
+    <string name="button_notes_off">All Notes Off</string>
+    <string name="button_local_control">Local Control</string>
+
     <string name="radio_red">Stopped</string>
     <string name="radio_amber">Paused</string>
     <string name="radio_green">Running</string>
@@ -47,5 +50,8 @@
     <string name="process">Process</string>
 
     <string name="invalid_beat">Invalid beat parameters</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

@@ -32,6 +32,10 @@ public class Utilities {
         }
     }
 
+    public static void localControl(@NonNull MidiReceiver receiver, boolean value) throws IOException {
+
+    }
+
     /**
      *
      * @param note MIDI note number

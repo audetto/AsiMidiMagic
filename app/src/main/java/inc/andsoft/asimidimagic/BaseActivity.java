@@ -5,9 +5,10 @@ import androidx.appcompat.widget.Toolbar;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    protected void setActionBar() {
+    protected Toolbar setActionBar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        return toolbar;
     }
 
 }
