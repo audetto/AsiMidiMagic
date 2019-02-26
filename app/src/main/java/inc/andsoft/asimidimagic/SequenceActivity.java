@@ -11,13 +11,15 @@ import java.util.List;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import inc.andsoft.asimidimagic.activities.CommonMidiSinkActivity;
+import inc.andsoft.asimidimagic.activities.ReceiverStateAdapter;
 import inc.andsoft.asimidimagic.dialogs.BeatDialog;
 import inc.andsoft.asimidimagic.midi.MidiRecorder;
 import inc.andsoft.asimidimagic.tools.NoteSequence;
 import inc.andsoft.asimidimagic.views.SequenceChart;
 
 
-public class SequenceActivity extends CommonMidiSinkActivity<MidiRecorder> implements BeatDialog.BeatDialogListener {
+public class SequenceActivity extends CommonMidiSinkActivity<ReceiverStateAdapter<MidiRecorder>>
+        implements BeatDialog.BeatDialogListener {
     private SequenceChart myChart;
 
     private List<SequenceChart.Beat> myBeats = new ArrayList<>();
@@ -30,7 +32,7 @@ public class SequenceActivity extends CommonMidiSinkActivity<MidiRecorder> imple
     }
 
     @Override
-    protected MidiRecorder getReceiver() {
+    protected ReceiverStateAdapter<MidiRecorder> getReceiverState() {
         MidiRecorder midiScales = new MidiRecorder() {
             @Override
             public void onSequence(NoteSequence sequence) {
@@ -44,7 +46,7 @@ public class SequenceActivity extends CommonMidiSinkActivity<MidiRecorder> imple
                 });
             }
         };
-        return midiScales;
+        return new ReceiverStateAdapter<>(midiScales);
     }
 
     @Override

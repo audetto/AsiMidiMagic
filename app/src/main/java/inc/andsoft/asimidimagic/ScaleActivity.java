@@ -14,11 +14,12 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import inc.andsoft.asimidimagic.activities.CommonMidiSinkActivity;
+import inc.andsoft.asimidimagic.activities.ReceiverStateAdapter;
 import inc.andsoft.asimidimagic.midi.MidiScales;
 import inc.andsoft.asimidimagic.models.ScaleModel;
 import inc.andsoft.asimidimagic.tools.Scale;
 
-public class ScaleActivity extends CommonMidiSinkActivity<MidiScales> {
+public class ScaleActivity extends CommonMidiSinkActivity<ReceiverStateAdapter<MidiScales>> {
     private ScaleModel myScaleModel;
 
     @Override
@@ -35,7 +36,7 @@ public class ScaleActivity extends CommonMidiSinkActivity<MidiScales> {
     }
 
     @Override
-    protected MidiScales getReceiver() {
+    protected ReceiverStateAdapter<MidiScales> getReceiverState() {
         MidiScales midiScales = new MidiScales() {
             @Override
             public void onChangeState(@NonNull MidiScales.State state, @NonNull String message) {
@@ -54,12 +55,11 @@ public class ScaleActivity extends CommonMidiSinkActivity<MidiScales> {
                 runOnUiThread(() -> myScaleModel.setScales(leftScale, rightScale));
             }
         };
-        return midiScales;
+        return new ReceiverStateAdapter<>(midiScales);
     }
 
     @Override
-    protected @LayoutRes
-    int getLayoutID() {
+    protected @LayoutRes int getLayoutID() {
         return R.layout.activity_scale;
     }
 

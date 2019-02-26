@@ -1,46 +1,51 @@
 package inc.andsoft.asimidimagic;
 
-import android.content.Intent;
 import android.graphics.Point;
-import android.media.midi.MidiInputPort;
-import android.media.midi.MidiManager;
-import android.media.midi.MidiOutputPort;
+import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.mobileer.miditools.MidiFramer;
-import com.mobileer.miditools.MidiPortWrapper;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.annotation.LayoutRes;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import inc.andsoft.asimidimagic.activities.CommonMidiActivity;
+import inc.andsoft.asimidimagic.activities.CommonMidiPassActivity;
+import inc.andsoft.asimidimagic.activities.ReceiverState;
 import inc.andsoft.asimidimagic.midi.MidiFilter;
 import inc.andsoft.asimidimagic.midi.MidiRemap;
-import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.RecyclerPointArrayAdapter;
 
-public class VelocityRemapActivity extends CommonMidiActivity {
-    private MidiInputPort myInputPort;
-    private MidiOutputPort myOutputPort;
 
-    private MidiRemap myMidiRemap;
-    private MidiFramer myFramer;
-    private MidiFilter myFilter;
+class VelocityRemapReceiverState implements ReceiverState {
+    MidiRemap myMidiRemap;
+    MidiFilter myFilter;
+
+    @Override
+    public MidiReceiver getReceiver() {
+        return myFilter;
+    }
+
+    @Override
+    public void close() throws IOException {
+    }
+}
+
+
+public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapReceiverState> {
+    private Switch mySticky;
+    private RadioButton myAmberButton;
+    private RadioButton myGreenButton;
 
     private RecyclerPointArrayAdapter myAdapterPoints;
     private List<Point> myPoints = new ArrayList<>();
@@ -48,22 +53,10 @@ public class VelocityRemapActivity extends CommonMidiActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_remap);
-        Toolbar toolbar = setActionBar();
 
-        Intent intent = getIntent();
-        MidiPortWrapper output = intent.getParcelableExtra("output");
-        MidiPortWrapper input = intent.getParcelableExtra("input");
+        RadioButton redButton = findViewById(R.id.radio_red);
 
-        TextView outputText = findViewById(R.id.output_name);
-        outputText.setText(output.toString());
-
-        TextView inputText = findViewById(R.id.input_name);
-        inputText.setText(input.toString());
-
-        RadioButton red = findViewById(R.id.radio_red);
-
-        red.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+        redButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked) {
                 disconnect();
             } else {
@@ -71,76 +64,21 @@ public class VelocityRemapActivity extends CommonMidiActivity {
             }
         });
 
-        RadioButton amber = findViewById(R.id.radio_amber);
-        amber.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked && myMidiRemap != null) {
-                myMidiRemap.setRunning(false);
+        myAmberButton = findViewById(R.id.radio_amber);
+        myAmberButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked && myReceiverState.myMidiRemap != null) {
+                myReceiverState.myMidiRemap.setRunning(false);
             }
         });
 
-        RadioButton green = findViewById(R.id.radio_green);
-        green.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked && myMidiRemap != null) {
-                myMidiRemap.setRunning(true);
+        myGreenButton = findViewById(R.id.radio_green);
+        myGreenButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked && myReceiverState.myMidiRemap != null) {
+                myReceiverState.myMidiRemap.setRunning(true);
             }
         });
 
-        myMidiDeviceOpener.queueDevice(output);
-        myMidiDeviceOpener.queueDevice(input);
-
-        MidiManager midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
-
-        Switch sticky = findViewById(R.id.switch_sticky);
-
-        MidiToolFragment midiToolFragment = (MidiToolFragment)getSupportFragmentManager().
-                findFragmentById(R.id.fragment_midi);
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        myMidiDeviceOpener.execute(midiManager, (MidiDeviceOpener opener) -> {
-            myOutputPort = opener.openOutputPort(output);
-            myInputPort = opener.openInputPort(input);
-
-            if (myInputPort != null && myOutputPort != null) {
-                myMidiRemap = new MidiRemap(myInputPort) {
-                    @Override
-                    public void onPedalChange(boolean value) {
-                        runOnUiThread(() ->  {
-                            // we only change if it is non sticky or if the pedal goes down
-                            if (!sticky.isChecked() || value) {
-                                // the 'else' is really important
-                                // as otherwise amber becomes true and green is triggered again
-                                if (green.isChecked()) {
-                                    amberButton();
-                                } else {
-                                    if (amber.isChecked()) {
-                                        greenButton();
-                                    }
-                                }
-                            }
-                        });
-                    }
-                };
-
-                myFilter = new MidiFilter(myMidiRemap);
-                myFramer = new MidiFramer(myFilter);
-
-                midiToolFragment.setReceiver(myInputPort);
-
-                connect();
-
-                // the chain is
-                // myOutputPort -> MidiFramer -> MidiFilter -> MidiDelay -> TimeScheduler ->
-                // MidiCountedOnOff -> myInputPort
-            } else {
-                Toast.makeText(VelocityRemapActivity.this, R.string.missing_ports, Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
+        mySticky = findViewById(R.id.switch_sticky);
 
         myAdapterPoints = new RecyclerPointArrayAdapter(R.layout.listitem_point);
 
@@ -154,30 +92,37 @@ public class VelocityRemapActivity extends CommonMidiActivity {
         amberButton();
     }
 
-    void connect() {
-        if (myOutputPort != null && myFramer != null) {
-            myOutputPort.connect(myFramer);
-        }
-    }
+    @Override
+    protected VelocityRemapReceiverState getReceiverState() {
+        VelocityRemapReceiverState state = new VelocityRemapReceiverState();
 
-    void disconnect() {
-        if (myOutputPort != null && myFramer != null) {
-            // first detach the input port (wrapped in the framer)
-            myOutputPort.disconnect(myFramer);
-        }
+        state.myMidiRemap = new MidiRemap(myInputPort) {
+            @Override
+            public void onPedalChange(boolean value) {
+                runOnUiThread(() ->  {
+                    // we only change if it is non sticky or if the pedal goes down
+                    if (!mySticky.isChecked() || value) {
+                        // the 'else' is really important
+                        // as otherwise amber becomes true and green is triggered again
+                        if (myGreenButton.isChecked()) {
+                            amberButton();
+                        } else {
+                            if (myAmberButton.isChecked()) {
+                                greenButton();
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
+        state.myFilter = new MidiFilter(state.myMidiRemap);
+        return state;
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        disconnect();
-
-        myFilter = null;
-        myFramer = null;
-        myInputPort = null;
-        myOutputPort = null;
-        myMidiRemap = null;
+    protected @LayoutRes int getLayoutID() {
+        return R.layout.activity_remap;
     }
 
     private void amberButton() {
@@ -218,7 +163,7 @@ public class VelocityRemapActivity extends CommonMidiActivity {
                 return (int) y;
             };
 
-            myMidiRemap.setRemapper(remapper);
+            myReceiverState.myMidiRemap.setRemapper(remapper);
         } catch (Exception e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
         }
