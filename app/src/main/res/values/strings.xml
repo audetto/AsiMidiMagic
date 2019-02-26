@@ -54,4 +54,22 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="pref_title_auto_local_control">Auto local control</string>
+    <string name="pref_description_auto_local_control">Switch on/off local control automatically
+    </string>
+
+    <string name="pref_title_list_piano">Digital piano</string>
+    <string-array name="pref_list_piano_titles">
+        <item>Other</item>
+        <item>CA78</item>
+        <item>CA98</item>
+        <item>KDP90</item>
+    </string-array>
+    <string-array name="pref_list_piano_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
 </resources>

@@ -31,6 +31,10 @@
         </activity>
 
         <activity
+            android:name=".SettingsActivity">
+        </activity>
+
+        <activity
             android:name=".DelayActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
