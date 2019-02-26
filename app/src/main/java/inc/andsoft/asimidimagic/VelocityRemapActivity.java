@@ -33,7 +33,7 @@ import inc.andsoft.asimidimagic.midi.MidiRemap;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.RecyclerPointArrayAdapter;
 
-public class VelocityRemapActivity extends CommonActivity {
+public class VelocityRemapActivity extends CommonMidiActivity {
     private MidiInputPort myInputPort;
     private MidiOutputPort myOutputPort;
 

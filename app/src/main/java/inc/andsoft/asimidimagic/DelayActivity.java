@@ -25,7 +25,7 @@ import inc.andsoft.asimidimagic.midi.MidiFilter;
 import inc.andsoft.asimidimagic.midi.MidiTimeScheduler;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 
-public class DelayActivity extends CommonActivity {
+public class DelayActivity extends CommonMidiActivity {
     private MidiInputPort myInputPort;
     private MidiOutputPort myOutputPort;
 
