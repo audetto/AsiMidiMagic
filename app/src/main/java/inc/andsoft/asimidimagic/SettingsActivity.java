@@ -4,15 +4,16 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
+import inc.andsoft.asimidimagic.activities.BaseActivity;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
@@ -44,9 +45,14 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new GeneralPreferenceFragment()).commit();
-        ActionBar tb = getSupportActionBar();
-        tb.setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_settings);
+        setActionBar();
+
+        Fragment preferences = new GeneralPreferenceFragment();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, preferences).commit();
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -71,7 +77,7 @@ public class SettingsActivity extends AppCompatActivity {
                         .getString(preference.getKey(), ""));
     }
 
-    static class GeneralPreferenceFragment extends PreferenceFragmentCompat {
+    public static class GeneralPreferenceFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.pref_general, rootKey);
