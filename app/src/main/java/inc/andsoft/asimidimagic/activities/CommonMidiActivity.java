@@ -1,4 +1,4 @@
-package inc.andsoft.asimidimagic;
+package inc.andsoft.asimidimagic.activities;
 
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 

@@ -28,6 +28,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import inc.andsoft.asimidimagic.activities.CommonMidiActivity;
 import inc.andsoft.asimidimagic.midi.MidiFilter;
 import inc.andsoft.asimidimagic.midi.MidiRemap;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;

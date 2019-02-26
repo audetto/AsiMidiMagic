@@ -1,18 +1,16 @@
 package inc.andsoft.asimidimagic;
 
-import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.mobileer.miditools.MidiFramer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import inc.andsoft.asimidimagic.activities.CommonMidiSinkActivity;
 import inc.andsoft.asimidimagic.dialogs.BeatDialog;
 import inc.andsoft.asimidimagic.midi.MidiRecorder;
 import inc.andsoft.asimidimagic.tools.NoteSequence;

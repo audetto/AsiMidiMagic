@@ -1,4 +1,4 @@
-package inc.andsoft.asimidimagic;
+package inc.andsoft.asimidimagic.activities;
 
 import android.content.Intent;
 import android.media.midi.MidiManager;
@@ -12,6 +12,7 @@ import com.mobileer.miditools.MidiFramer;
 import com.mobileer.miditools.MidiPortWrapper;
 
 import androidx.annotation.LayoutRes;
+import inc.andsoft.asimidimagic.R;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 
 public abstract class CommonMidiSinkActivity<M extends MidiReceiver> extends CommonMidiActivity {

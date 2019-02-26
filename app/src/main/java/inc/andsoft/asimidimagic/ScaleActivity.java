@@ -1,11 +1,9 @@
 package inc.andsoft.asimidimagic;
 
-import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
-import com.mobileer.miditools.MidiFramer;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -15,6 +13,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import inc.andsoft.asimidimagic.activities.CommonMidiSinkActivity;
 import inc.andsoft.asimidimagic.midi.MidiScales;
 import inc.andsoft.asimidimagic.models.ScaleModel;
 import inc.andsoft.asimidimagic.tools.Scale;

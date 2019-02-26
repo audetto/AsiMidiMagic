@@ -19,6 +19,7 @@ import com.mobileer.miditools.MidiPortWrapper;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import inc.andsoft.asimidimagic.activities.CommonMidiActivity;
 import inc.andsoft.asimidimagic.midi.MidiDelay;
 import inc.andsoft.asimidimagic.midi.MidiCountedOnOff;
 import inc.andsoft.asimidimagic.midi.MidiFilter;

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import inc.andsoft.asimidimagic.activities.BaseActivity;
 import inc.andsoft.asimidimagic.models.BLEModel;
 import inc.andsoft.asimidimagic.tools.DataWithLabel;
 import inc.andsoft.asimidimagic.tools.RecyclerArrayAdapter;
