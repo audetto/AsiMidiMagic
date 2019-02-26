@@ -31,32 +31,38 @@
         </activity>
 
         <activity
-            android:name=".SettingsActivity">
-        </activity>
-
-        <activity
-            android:name=".DelayActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
-        <activity
-            android:name=".ScaleActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
-        <activity
-            android:name=".SequenceActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
-        <activity
-            android:name=".VelocityRemapActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".SettingsActivity"
+            android:label="@string/title_setting_activity">
         </activity>
 
         <activity
             android:name=".ScanActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_scan_activity">
+        </activity>
+
+        <activity
+            android:name=".DelayActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_delay_activity">
+        </activity>
+
+        <activity
+            android:name=".ScaleActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_scale_activity">
+        </activity>
+
+        <activity
+            android:name=".SequenceActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_sequence_activity">
+        </activity>
+
+        <activity
+            android:name=".VelocityRemapActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_remap_activity">
         </activity>
 
         <service
