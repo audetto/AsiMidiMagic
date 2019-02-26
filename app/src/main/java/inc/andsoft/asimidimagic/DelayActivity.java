@@ -3,10 +3,7 @@ package inc.andsoft.asimidimagic;
 import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,9 +37,6 @@ class DelayReceiverState implements ReceiverState {
 
 
 public class DelayActivity extends CommonMidiPassActivity<DelayReceiverState> {
-    private Switch mySticky;
-    private RadioButton myAmberButton;
-    private RadioButton myGreenButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,37 +83,6 @@ public class DelayActivity extends CommonMidiPassActivity<DelayReceiverState> {
                 }
             }
         });
-
-        RadioButton redButton = findViewById(R.id.radio_red);
-
-        redButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked) {
-                disconnect();
-            } else {
-                connect();
-            }
-        });
-
-        myAmberButton = findViewById(R.id.radio_amber);
-        myAmberButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked && myReceiverState.myMidiDelay != null) {
-                myReceiverState.myMidiDelay.setRunning(false);
-            }
-        });
-
-        myGreenButton = findViewById(R.id.radio_green);
-        myGreenButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked && myReceiverState.myMidiDelay != null) {
-                myReceiverState.myMidiDelay.setRunning(true);
-            }
-        });
-
-        mySticky = findViewById(R.id.switch_sticky);
-
-        // it should really be red until the callback above is called
-        // but we can avoid a red -> amber transition is we set to amber now
-        // anyway, if the port opening fails, the activity goes altogether
-        amberButton();
     }
 
     @Override
@@ -131,20 +94,7 @@ public class DelayActivity extends CommonMidiPassActivity<DelayReceiverState> {
         state.myMidiDelay = new MidiDelay(state.myTimeScheduler) {
             @Override
             public void onPedalChange(boolean value) {
-                runOnUiThread(() ->  {
-                    // we only change if it is non sticky or if the pedal goes down
-                    if (!mySticky.isChecked() || value) {
-                        // the 'else' is really important
-                        // as otherwise amber becomes true and green is triggered again
-                        if (myGreenButton.isChecked()) {
-                            amberButton();
-                        } else {
-                            if (myAmberButton.isChecked()) {
-                                greenButton();
-                            }
-                        }
-                    }
-                });
+                runOnUiThread(() ->  DelayActivity.this.onPedalChange(value));
             }
         };
 
@@ -158,14 +108,11 @@ public class DelayActivity extends CommonMidiPassActivity<DelayReceiverState> {
         return R.layout.activity_delay;
     }
 
-    private void amberButton() {
-        RadioButton amber = findViewById(R.id.radio_amber);
-        amber.toggle();
-    }
-
-    private void greenButton() {
-        RadioButton green = findViewById(R.id.radio_green);
-        green.toggle();
+    @Override
+    protected void setRunning(boolean value) {
+        if (myReceiverState.myMidiDelay != null) {
+            myReceiverState.myMidiDelay.setRunning(value);
+        }
     }
 
     public void counters(View v) {
@@ -182,4 +129,5 @@ public class DelayActivity extends CommonMidiPassActivity<DelayReceiverState> {
         TextView text = findViewById(R.id.text_counters);
         text.setText(builder.toString());
     }
+
 }

@@ -4,9 +4,6 @@ import android.graphics.Point;
 import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -43,9 +40,6 @@ class VelocityRemapReceiverState implements ReceiverState {
 
 
 public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapReceiverState> {
-    private Switch mySticky;
-    private RadioButton myAmberButton;
-    private RadioButton myGreenButton;
 
     private RecyclerPointArrayAdapter myAdapterPoints;
     private List<Point> myPoints = new ArrayList<>();
@@ -54,42 +48,11 @@ public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        RadioButton redButton = findViewById(R.id.radio_red);
-
-        redButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked) {
-                disconnect();
-            } else {
-                connect();
-            }
-        });
-
-        myAmberButton = findViewById(R.id.radio_amber);
-        myAmberButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked && myReceiverState.myMidiRemap != null) {
-                myReceiverState.myMidiRemap.setRunning(false);
-            }
-        });
-
-        myGreenButton = findViewById(R.id.radio_green);
-        myGreenButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked && myReceiverState.myMidiRemap != null) {
-                myReceiverState.myMidiRemap.setRunning(true);
-            }
-        });
-
-        mySticky = findViewById(R.id.switch_sticky);
-
         myAdapterPoints = new RecyclerPointArrayAdapter(R.layout.listitem_point);
 
         RecyclerView recyclerPoints = findViewById(R.id.recycler_remap);
         recyclerPoints.setLayoutManager(new LinearLayoutManager(this));
         recyclerPoints.setAdapter(myAdapterPoints);
-
-        // it should really be red until the callback above is called
-        // but we can avoid a red -> amber transition is we set to amber now
-        // anyway, if the port opening fails, the activity goes altogether
-        amberButton();
     }
 
     @Override
@@ -99,20 +62,7 @@ public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapR
         state.myMidiRemap = new MidiRemap(myInputPort) {
             @Override
             public void onPedalChange(boolean value) {
-                runOnUiThread(() ->  {
-                    // we only change if it is non sticky or if the pedal goes down
-                    if (!mySticky.isChecked() || value) {
-                        // the 'else' is really important
-                        // as otherwise amber becomes true and green is triggered again
-                        if (myGreenButton.isChecked()) {
-                            amberButton();
-                        } else {
-                            if (myAmberButton.isChecked()) {
-                                greenButton();
-                            }
-                        }
-                    }
-                });
+                runOnUiThread(() ->  VelocityRemapActivity.this.onPedalChange(value));
             }
         };
 
@@ -125,14 +75,11 @@ public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapR
         return R.layout.activity_remap;
     }
 
-    private void amberButton() {
-        RadioButton amber = findViewById(R.id.radio_amber);
-        amber.toggle();
-    }
-
-    private void greenButton() {
-        RadioButton green = findViewById(R.id.radio_green);
-        green.toggle();
+    @Override
+    protected void setRunning(boolean value) {
+        if (myReceiverState.myMidiRemap != null) {
+            myReceiverState.myMidiRemap.setRunning(value);
+        }
     }
 
     public void clearPoints(View v) {
@@ -168,4 +115,5 @@ public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapR
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
         }
     }
+
 }

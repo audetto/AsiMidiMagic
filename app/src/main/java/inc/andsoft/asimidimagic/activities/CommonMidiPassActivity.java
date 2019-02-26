@@ -5,6 +5,9 @@ import android.media.midi.MidiInputPort;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
 import android.os.Bundle;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +23,7 @@ import inc.andsoft.asimidimagic.R;
 import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
 import inc.andsoft.asimidimagic.tools.Utilities;
 
+
 public abstract class CommonMidiPassActivity<S extends ReceiverState> extends CommonMidiActivity {
 
     protected MidiOutputPort myOutputPort;
@@ -27,8 +31,13 @@ public abstract class CommonMidiPassActivity<S extends ReceiverState> extends Co
     protected MidiFramer myFramer;
     protected S myReceiverState;
 
+    protected Switch mySticky;
+    protected RadioButton myAmberButton;
+    protected RadioButton myGreenButton;
+
     protected abstract S getReceiverState();
     protected abstract @LayoutRes int getLayoutID();
+    protected abstract void setRunning(boolean value);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +89,37 @@ public abstract class CommonMidiPassActivity<S extends ReceiverState> extends Co
                 finish();
             }
         });
+
+        RadioButton redButton = findViewById(R.id.radio_red);
+
+        redButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked) {
+                disconnect();
+            } else {
+                connect();
+            }
+        });
+
+        myAmberButton = findViewById(R.id.radio_amber);
+        myAmberButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked) {
+                setRunning(false);
+            }
+        });
+
+        myGreenButton = findViewById(R.id.radio_green);
+        myGreenButton.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked) {
+                setRunning(true);
+            }
+        });
+
+        mySticky = findViewById(R.id.switch_sticky);
+
+        // it should really be red until the callback above is called
+        // but we can avoid a red -> amber transition is we set to amber now
+        // anyway, if the port opening fails, the activity goes altogether
+        amberButton();
     }
 
     @Override
@@ -108,6 +148,31 @@ public abstract class CommonMidiPassActivity<S extends ReceiverState> extends Co
         if (myOutputPort != null && myFramer != null) {
             // first detach the input port (wrapped in the framer)
             myOutputPort.disconnect(myFramer);
+        }
+    }
+
+    protected void amberButton() {
+        RadioButton amber = findViewById(R.id.radio_amber);
+        amber.toggle();
+    }
+
+    protected void greenButton() {
+        RadioButton green = findViewById(R.id.radio_green);
+        green.toggle();
+    }
+
+    protected void onPedalChange(boolean value) {
+        // we only change if it is non sticky or if the pedal goes down
+        if (!mySticky.isChecked() || value) {
+            // the 'else' is really important
+            // as otherwise amber becomes true and green is triggered again
+            if (myGreenButton.isChecked()) {
+                amberButton();
+            } else {
+                if (myAmberButton.isChecked()) {
+                    greenButton();
+                }
+            }
         }
     }
 

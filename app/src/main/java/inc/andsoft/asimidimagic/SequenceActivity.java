@@ -54,7 +54,6 @@ public class SequenceActivity extends CommonMidiSinkActivity<ReceiverStateAdapte
         return R.layout.activity_sequence;
     }
 
-
     @Override
     public void onDialogPositiveClick(int count, int color, int width) {
         if (count > 0 && width > 0) {
