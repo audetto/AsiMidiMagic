@@ -25,12 +25,24 @@ abstract public class MidiRecorder extends StartStopReceiver {
     private List<Long> myTimes = new ArrayList<>();
     private List<NoteSequence.Note> myNotes = new ArrayList<>();
 
+    private static final String MSG_FIRST_NOTE = "Waiting for first note";
     private static final String RECORDING = "Recording: %d notes";
     private static final String SEQUENCE = "Sequence: %d notes";
 
     abstract public void onSequence(NoteSequence sequence);
 
     abstract public void onChangeState(@NonNull State state, @NonNull String message);
+
+    protected MidiRecorder() {
+        initialise();
+    }
+
+    private void initialise() {
+        onChangeState(State.RECORDING, MSG_FIRST_NOTE);
+        myRecording = true;
+        myTimes.clear();
+        myNotes.clear();
+    }
 
     @Override
     public void onPedalChange(boolean value)
@@ -54,10 +66,7 @@ abstract public class MidiRecorder extends StartStopReceiver {
                     onSequence(notes);
                 }
             } else {
-                onChangeState(State.RECORDING, "Recording");
-                myRecording = true;
-                myTimes.clear();
-                myNotes.clear();
+                initialise();
             }
         }
     }
