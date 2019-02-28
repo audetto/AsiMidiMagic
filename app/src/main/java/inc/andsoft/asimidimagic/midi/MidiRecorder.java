@@ -35,28 +35,30 @@ abstract public class MidiRecorder extends StartStopReceiver {
     @Override
     public void onPedalChange(boolean value)
     {
-        if (myRecording) {
-            myRecording = false;
+        if (value) {
+            if (myRecording) {
+                myRecording = false;
 
-            if (!myTimes.isEmpty()) {
-                long startTime = myTimes.get(0);
-                long NANOS_PER_SECOND = 1000000000L;
+                if (!myTimes.isEmpty()) {
+                    long startTime = myTimes.get(0);
+                    long NANOS_PER_SECOND = 1000000000L;
 
-                List<Double> times = myTimes.stream()
-                        .map(x -> (double) (x - startTime) / NANOS_PER_SECOND)
-                        .collect(Collectors.toList());
+                    List<Double> times = myTimes.stream()
+                            .map(x -> (double) (x - startTime) / NANOS_PER_SECOND)
+                            .collect(Collectors.toList());
 
-                String message = String.format(Locale.getDefault(), SEQUENCE, myNotes.size());
-                onChangeState(State.COMPLETE, message);
+                    String message = String.format(Locale.getDefault(), SEQUENCE, myNotes.size());
+                    onChangeState(State.COMPLETE, message);
 
-                NoteSequence notes = new NoteSequence(myNotes, times);
-                onSequence(notes);
+                    NoteSequence notes = new NoteSequence(myNotes, times);
+                    onSequence(notes);
+                }
+            } else {
+                onChangeState(State.RECORDING, "Recording");
+                myRecording = true;
+                myTimes.clear();
+                myNotes.clear();
             }
-        } else {
-            onChangeState(State.RECORDING, "Recording");
-            myRecording = true;
-            myTimes.clear();
-            myNotes.clear();
         }
     }
 
@@ -69,10 +71,6 @@ abstract public class MidiRecorder extends StartStopReceiver {
             myNotes.add(new NoteSequence.Note(note, velocity));
             String message = String.format(Locale.getDefault(), RECORDING, myNotes.size());
             onChangeState(State.RECORDING, message);
-
-            if (myNotes.size() == 20) {
-                onPedalChange(true);
-            }
         }
     }
 

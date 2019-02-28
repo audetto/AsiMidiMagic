@@ -41,6 +41,9 @@ public class SequenceActivity extends CommonMidiSinkActivity<ReceiverStateAdapte
             @Override
             public void onChangeState(@NonNull State state, @NonNull String message) {
                 runOnUiThread(() -> {
+                    if (state == State.RECORDING) {
+                        myChart.setNotes(null);
+                    }
                     TextView statusView = findViewById(R.id.text_status);
                     statusView.setText(message);
                 });
