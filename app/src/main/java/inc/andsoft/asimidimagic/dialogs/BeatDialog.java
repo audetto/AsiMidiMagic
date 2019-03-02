@@ -38,11 +38,20 @@ public class BeatDialog extends DialogFragment {
         builder.setView(view);
         builder.setTitle(R.string.add_beat);
 
-        builder.setPositiveButton(android.R.string.ok, (DialogInterface dialog, int id) -> {
-            TextView textCount = view.findViewById(R.id.text_count);
-            TextView textColor = view.findViewById(R.id.text_color);
-            TextView textWidth = view.findViewById(R.id.text_width);
+        TextView textCount = view.findViewById(R.id.text_count);
+        TextView textColor = view.findViewById(R.id.text_color);
+        TextView textWidth = view.findViewById(R.id.text_width);
 
+        Bundle args = getArguments();
+        if (args != null) {
+            String suggested_color = args.getString("color");
+            textColor.setText(suggested_color);
+
+            int suggested_width = args.getInt("width");
+            textWidth.setText(String.valueOf(suggested_width));
+        }
+
+        builder.setPositiveButton(android.R.string.ok, (DialogInterface dialog, int id) -> {
             try {
                 int count = Integer.valueOf(textCount.getText().toString());
                 int color = Color.parseColor(textColor.getText().toString());
@@ -52,7 +61,6 @@ public class BeatDialog extends DialogFragment {
             } catch (Exception e) {
                 Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
             }
-
         });
         builder.setNegativeButton(android.R.string.cancel, null);
 

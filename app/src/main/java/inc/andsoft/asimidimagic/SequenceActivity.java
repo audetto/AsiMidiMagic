@@ -95,7 +95,17 @@ public class SequenceActivity extends CommonMidiSinkActivity<ReceiverStateAdapte
     }
 
     public void addBeat(View v) {
+        String[] colors = getResources().getStringArray(R.array.beat_colors);
+        int index = Math.min(myBeats.size(), colors.length - 1);
+        String suggested_color = colors[index];
+
         BeatDialog bd = new BeatDialog();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("color", suggested_color);
+        bundle.putInt("width", 8);
+        bd.setArguments(bundle);
+
         bd.show(getSupportFragmentManager(), "Beat");
     }
 }

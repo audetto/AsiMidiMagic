@@ -99,4 +99,11 @@
         <item>16</item>
     </string-array>
 
+    <string-array name="beat_colors">
+        <item>blue</item>
+        <item>red</item>
+        <item>black</item>
+        <item>green</item>
+    </string-array>
+
 </resources>
