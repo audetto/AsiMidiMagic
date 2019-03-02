@@ -110,7 +110,7 @@ public class DelayActivity extends CommonMidiPassActivity<DelayReceiverState> {
 
     @Override
     protected void setRunning(boolean value) {
-        if (myReceiverState.myMidiDelay != null) {
+        if (myReceiverState != null && myReceiverState.myMidiDelay != null) {
             myReceiverState.myMidiDelay.setRunning(value);
         }
     }

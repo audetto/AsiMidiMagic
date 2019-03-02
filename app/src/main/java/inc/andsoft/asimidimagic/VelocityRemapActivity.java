@@ -42,7 +42,9 @@ class VelocityRemapReceiverState implements ReceiverState {
 public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapReceiverState> {
 
     private RecyclerPointArrayAdapter myAdapterPoints;
-    private List<Point> myPoints = new ArrayList<>();
+    private ArrayList<Point> myPoints = new ArrayList<>();
+
+    private static final String POINTS_KEY = "points";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,26 @@ public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapR
         RecyclerView recyclerPoints = findViewById(R.id.recycler_remap);
         recyclerPoints.setLayoutManager(new LinearLayoutManager(this));
         recyclerPoints.setAdapter(myAdapterPoints);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList(POINTS_KEY, myPoints);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        myPoints.clear();
+        ArrayList<Point> points = savedInstanceState.getParcelableArrayList(POINTS_KEY);
+        if (points != null) {
+            myPoints = points;
+            myAdapterPoints.setItems(myPoints);
+            myAdapterPoints.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -77,7 +99,7 @@ public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapR
 
     @Override
     protected void setRunning(boolean value) {
-        if (myReceiverState.myMidiRemap != null) {
+        if (myReceiverState != null && myReceiverState.myMidiRemap != null) {
             myReceiverState.myMidiRemap.setRunning(value);
         }
     }

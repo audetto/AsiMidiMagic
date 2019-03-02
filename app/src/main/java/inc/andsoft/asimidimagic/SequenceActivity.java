@@ -1,6 +1,7 @@
 package inc.andsoft.asimidimagic;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,13 +23,34 @@ public class SequenceActivity extends CommonMidiSinkActivity<ReceiverStateAdapte
         implements BeatDialog.BeatDialogListener {
     private SequenceChart myChart;
 
-    private List<SequenceChart.Beat> myBeats = new ArrayList<>();
+    private static final String SEQUENCE_KEY = "sequence";
+
+    private ArrayList<SequenceChart.Beat> myBeats = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         myChart = findViewById(R.id.chart);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList(SEQUENCE_KEY, myBeats);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        myBeats.clear();
+        ArrayList<SequenceChart.Beat> beats = savedInstanceState.getParcelableArrayList(SEQUENCE_KEY);
+        if (beats != null) {
+            myBeats = beats;
+            myChart.setBeats(myBeats);
+        }
     }
 
     @Override

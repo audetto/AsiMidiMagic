@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="SequenceChart">
+    <declare-styleable name="BaseChart">
         <attr name="noteColor" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="RhythmChart" parent="SequenceChart">
-        <attr name="targetColor" format="color" />
+    <declare-styleable name="SequenceChart" parent="BaseChart">
         <attr name="noteColor" />
+        <attr name="noteRadius" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="RhythmChart" parent="BaseChart">
+        <attr name="noteColor" />
+        <attr name="targetColor" format="color" />
         <attr name="beatColor" format="color" />
         <attr name="position" format="integer" />
     </declare-styleable>
