@@ -138,9 +138,6 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_settings:
-                startSettingsActivity();
-                break;
             case R.id.action_bluetooth:
                 startBLEActivity();
                 break;
@@ -183,11 +180,6 @@ public class MainActivity extends BaseActivity implements Observer<Map<Bluetooth
     private void startBLEActivity() {
         Intent bleIntent = new Intent(this, ScanActivity.class);
         startActivityForResult(bleIntent, REQUEST_BLUETOOTH_SCAN);
-    }
-
-    private void startSettingsActivity() {
-        Intent settingIntent = new Intent(this, SettingsActivity.class);
-        startActivity(settingIntent);
     }
 
     public void clickButton(View view) {

@@ -18,7 +18,7 @@
     <MultiSelectListPreference
         android:enabled="true"
         android:entries="@array/pref_list_midi_channel_titles"
-        android:entryValues="@array/pref_list_midi_channel_titles"
+        android:entryValues="@array/pref_list_midi_channel_values"
         android:key="list_channels"
         android:title="@string/pref_title_midi_channels" />
 
