@@ -46,11 +46,7 @@ public class MidiToolFragment extends Fragment {
         allNotesOff.setOnClickListener(v -> {
             if (myReceiver != null) {
                 List<Integer> channels = getSelectedChannels();
-                try {
-                    MidiCommands.allNotesOff(myReceiver, channels);
-                } catch (Exception e) {
-
-                }
+                MidiCommands.allNotesOff(myReceiver, channels);
             }
         });
 
@@ -58,44 +54,28 @@ public class MidiToolFragment extends Fragment {
         localControl.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (myReceiver != null) {
                 List<Integer> channels = getSelectedChannels();
-                try {
-                    MidiCommands.localControl(myReceiver, channels, isChecked);
-                } catch (Exception e) {
-
-                }
+                MidiCommands.localControl(myReceiver, channels, isChecked);
             }
         });
 
         RadioButton multiTimbreOff = view.findViewById(R.id.radio_multi_off);
         multiTimbreOff.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked) {
-                try {
-                    MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.OFF);
-                } catch (Exception e) {
-
-                }
+                MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.OFF);
             }
         });
 
         RadioButton multiTimbreOn1 = view.findViewById(R.id.radio_multi_on1);
         multiTimbreOn1.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked) {
-                try {
-                    MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.ON1);
-                } catch (Exception e) {
-
-                }
+                MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.ON1);
             }
         });
 
         RadioButton multiTimbreOn2 = view.findViewById(R.id.radio_multi_on2);
         multiTimbreOn2.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             if (isChecked) {
-                try {
-                    MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.ON2);
-                } catch (Exception e) {
-
-                }
+                MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.ON2);
             }
         });
 
@@ -104,11 +84,7 @@ public class MidiToolFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 List<Integer> channels = getSelectedChannels();
-                try {
-                    MidiCommands.sustainPedal(myReceiver, channels, (byte)progress);
-                } catch (Exception e) {
-
-                }
+                MidiCommands.sustainPedal(myReceiver, channels, (byte)progress);
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
