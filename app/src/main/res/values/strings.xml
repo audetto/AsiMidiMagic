@@ -16,6 +16,9 @@
 
     <string name="button_notes_off">All Notes Off</string>
     <string name="button_local_control">Local Control</string>
+    <string name="radio_multi_off">Multi Timbre Off</string>
+    <string name="radio_multi_on1">Multi Timbre On1</string>
+    <string name="radio_multi_on2">Multi Timbre On2</string>
 
     <string name="radio_red">Stopped</string>
     <string name="radio_amber">Paused</string>

@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.Switch;
 
 import java.util.ArrayList;
@@ -57,6 +59,39 @@ public class MidiToolFragment extends Fragment {
                 List<Integer> channels = getSelectedChannels();
                 try {
                     MidiCommands.localControl(myReceiver, channels, isChecked);
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        RadioButton multiTimbreOff = view.findViewById(R.id.radio_multi_off);
+        multiTimbreOff.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked) {
+                try {
+                    MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.OFF);
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        RadioButton multiTimbreOn1 = view.findViewById(R.id.radio_multi_on1);
+        multiTimbreOn1.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked) {
+                try {
+                    MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.ON1);
+                } catch (Exception e) {
+
+                }
+            }
+        });
+
+        RadioButton multiTimbreOn2 = view.findViewById(R.id.radio_multi_on2);
+        multiTimbreOn2.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            if (isChecked) {
+                try {
+                    MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.ON2);
                 } catch (Exception e) {
 
                 }
