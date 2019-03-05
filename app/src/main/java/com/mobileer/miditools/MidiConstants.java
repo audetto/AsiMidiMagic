@@ -60,6 +60,12 @@ public class MidiConstants {
 
     public final static int MAX_CHANNELS = 16;
 
+    public final static byte CC_SOSTENUTO = (byte) 66;
+    public final static byte CC_SUSTAIN = (byte) 64;
+    public static final byte ALL_NOTES_OFF = (byte) 123;
+    public static final byte LOCAL_CONTROL = (byte) 122;
+
+
     /**
      * MIDI messages, except for SysEx, are 1,2 or 3 bytes long.
      * You can tell how long a MIDI message is from the first status byte.

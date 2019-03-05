@@ -14,8 +14,6 @@ abstract public class StartStopReceiver extends MidiReceiver {
 
     private boolean myPedalPressed = false;
 
-    private static final byte CC_SOSTENUTO = (byte) 66;
-
     @Override
     public void onSend(byte[] data, int offset, int count, long timestamp)
             throws IOException {
@@ -24,7 +22,7 @@ abstract public class StartStopReceiver extends MidiReceiver {
         switch (command) {
             case MidiConstants.STATUS_CONTROL_CHANGE: {
                 byte control = data[offset + 1];
-                if (control == CC_SOSTENUTO) {
+                if (control == MidiConstants.CC_SOSTENUTO) {
                     byte value = data[offset + 2];
                     sostenutoPedal(value);
                 }

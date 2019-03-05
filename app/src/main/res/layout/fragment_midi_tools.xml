@@ -33,6 +33,7 @@
         app:layout_constraintTop_toBottomOf="@+id/button_all_notes_off" />
 
     <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -40,7 +41,7 @@
         android:layout_marginEnd="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch_local_control" >
+        app:layout_constraintTop_toBottomOf="@+id/switch_local_control">
 
         <RadioButton
             android:id="@+id/radio_multi_off"
@@ -64,5 +65,29 @@
             android:layout_weight="1"
             android:text="@string/radio_multi_on2" />
     </RadioGroup>
+
+    <TextView
+        android:id="@+id/label_sustain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="Sustain Pedel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+    <SeekBar
+        android:id="@+id/seek_sustain"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="32dp"
+        android:max="127"
+        android:progress="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/label_sustain"
+        app:layout_constraintTop_toBottomOf="@+id/label_sustain" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

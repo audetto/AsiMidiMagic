@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.Switch;
 
 import java.util.ArrayList;
@@ -97,6 +98,27 @@ public class MidiToolFragment extends Fragment {
                 }
             }
         });
+
+        SeekBar sustainBar = view.findViewById(R.id.seek_sustain);
+        sustainBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                List<Integer> channels = getSelectedChannels();
+                try {
+                    MidiCommands.sustainPedal(myReceiver, channels, (byte)progress);
+                } catch (Exception e) {
+
+                }
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
 
         return view;
     }

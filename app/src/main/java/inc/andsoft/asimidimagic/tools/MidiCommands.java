@@ -10,8 +10,6 @@ import java.util.List;
 import androidx.annotation.NonNull;
 
 public class MidiCommands {
-    private static final byte ALL_NOTES_OFF = (byte) 123;
-    private static final byte LOCAL_CONTROL = (byte) 122;
 
     public static void allNotesOff(@NonNull MidiReceiver receiver, List<Integer> channels) throws IOException {
         for (int channel : channels) {
@@ -22,7 +20,7 @@ public class MidiCommands {
     public static void allNotesOff(@NonNull MidiReceiver receiver, int channel) throws IOException {
         byte[] buffer = new byte[3];
         buffer[0] = (byte) (MidiConstants.STATUS_CONTROL_CHANGE + channel);
-        buffer[1] = ALL_NOTES_OFF;
+        buffer[1] = MidiConstants.ALL_NOTES_OFF;
         buffer[2] = 0;
         receiver.send(buffer, 0, buffer.length);
     }
@@ -36,14 +34,28 @@ public class MidiCommands {
     public static void localControl(@NonNull MidiReceiver receiver, int channel, boolean value) throws IOException {
         byte[] buffer = new byte[3];
         buffer[0] = (byte) (MidiConstants.STATUS_CONTROL_CHANGE + channel);
-        buffer[1] = LOCAL_CONTROL;
+        buffer[1] = MidiConstants.LOCAL_CONTROL;
         buffer[2] = value ? (byte)127 : 0;
+        receiver.send(buffer, 0, buffer.length);
+    }
+
+    public static void sustainPedal(@NonNull MidiReceiver receiver, List<Integer> channels, byte value) throws IOException {
+        for (int channel : channels) {
+            sustainPedal(receiver, channel, value);
+        }
+    }
+
+    public static void sustainPedal(@NonNull MidiReceiver receiver, int channel, byte value) throws IOException {
+        byte[] buffer = new byte[3];
+        buffer[0] = (byte) (MidiConstants.STATUS_CONTROL_CHANGE + channel);
+        buffer[1] = MidiConstants.CC_SUSTAIN;
+        buffer[2] = value;
         receiver.send(buffer, 0, buffer.length);
     }
 
     public enum MultiTimbre {
         OFF, ON1, ON2
-    };
+    }
 
     private static byte[] KawayCA7898SysEx(byte b4, byte d1, byte d2, byte d3) {
         byte[] buffer = {(byte)0xF0, (byte)0x40, 0, b4, (byte)0x04, (byte)0x02, d1, d2, d3, (byte)0xF7};
