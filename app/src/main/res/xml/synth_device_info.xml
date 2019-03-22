@@ -3,5 +3,6 @@
         <input-port name="sink" />
         <output-port name="scale source" />
         <output-port name="notes source" />
+        <output-port name="silent source" />
     </device>
 </devices>

@@ -148,7 +148,7 @@ public class SynthMIDIServer extends MidiDeviceService {
         public void run() {
             try {
                 for (byte i = 0; i < 120; ++i) {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
 
                     byte note = (byte) (60 + (i % 12));
                     byte velocity = (byte) 100;
@@ -177,7 +177,7 @@ public class SynthMIDIServer extends MidiDeviceService {
 
         myThreads = new ArrayList<>();
 
-        if (outputs.length == 2) {
+        if (outputs.length >= 2) {
             myThreads.add(new Thread(new ScaleRunnable(outputs[0], 44, 300, 2)));
             myThreads.add(new Thread(new ScaleRunnable(outputs[0], 68, 200, 3)));
 
