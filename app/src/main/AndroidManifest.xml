@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -62,6 +63,12 @@
 
         <activity
             android:name=".VelocityRemapActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_remap_activity">
+        </activity>
+
+        <activity
+            android:name=".CommandActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_remap_activity">
         </activity>
