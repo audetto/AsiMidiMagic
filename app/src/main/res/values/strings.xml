@@ -8,6 +8,7 @@
     <string name="title_sequence_activity">Sequence analysis</string>
     <string name="title_remap_activity">Velocity remap</string>
     <string name="title_command_activity">MIDI Commands</string>
+    <string name="title_analyser_activity">Analyser Commands</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_bluetooth">Bluetooth</string>
@@ -30,6 +31,13 @@
     <string name="why_btle_location">
         Location permission is needed to scan for nearby Bluetooth devices.
     </string>
+    <string name="error_bluetooth_not_enabled">Bluetooth not enabled</string>
+    <string name="error_bluetooth_advertising_not_supported">BLE Advertising not supported</string>
+
+    <string name="status_no_le_adv">LE Advertising is not available. Please pair with a device to be
+        discoverable.
+    </string>
+
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
     <string name="ble_not_supported">BLE is not supported</string>
     <string name="unknown_device">Unknown device</string>
@@ -63,6 +71,18 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="label_advertisingStatus">Advertising Status</string>
+    <string name="status_advertising">Advertising (Keep Screen On)</string>
+    <string name="status_notAdvertising">Not Advertising</string>
+    <string name="status_advDataTooLarge">Not Advertising. Advertisement is larger than 31 bytes.</string>
+    <string name="status_advFeatureUnsupported">Not Advertising. Advertising not supported.</string>
+    <string name="status_advInternalError">Not Advertising. Internal error occurred.</string>
+    <string name="status_advTooManyAdvertisers">Not Advertising. No advertising instance is available.</string>
+
+    <string name="label_connectionStatus">Connection Status</string>
+    <string name="status_devicesConnected">Devices Connected:</string>
+    <string name="status_errorWhenConnecting">An error occurred when connecting to a device. Error Code</string>
 
     <string name="pref_title_auto_local_control">Auto local control</string>
     <string name="pref_description_auto_local_control">Switch on/off local control automatically

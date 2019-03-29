@@ -107,4 +107,16 @@ public class MidiConstants {
         return (goodBytes == 0);
     }
 
+    // Returns true if this command can be used for running status
+    public static boolean allowRunningStatus(byte command) {
+        // only Channel Voice and Channel Mode commands can use running status
+        return (command >= STATUS_NOTE_OFF && command < STATUS_SYSTEM_EXCLUSIVE);
+    }
+
+    // Returns true if this command cancels running status
+    public static boolean cancelsRunningStatus(byte command) {
+        // System Common messages cancel running status
+        return (command >= STATUS_SYSTEM_EXCLUSIVE && command <= STATUS_END_SYSEX);
+    }
+
 }

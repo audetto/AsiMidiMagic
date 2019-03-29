@@ -70,7 +70,13 @@
         <activity
             android:name=".CommandActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/title_remap_activity">
+            android:label="@string/title_command_activity">
+        </activity>
+
+        <activity
+            android:name=".BluetoothAnalyserActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_analyser_activity">
         </activity>
 
         <service
