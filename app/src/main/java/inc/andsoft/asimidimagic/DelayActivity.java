@@ -1,5 +1,6 @@
 package inc.andsoft.asimidimagic;
 
+import android.media.midi.MidiInputPort;
 import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.view.View;
@@ -86,10 +87,10 @@ public class DelayActivity extends CommonMidiPassActivity<DelayReceiverState> {
     }
 
     @Override
-    protected DelayReceiverState getReceiverState() {
+    protected DelayReceiverState getReceiverState(MidiInputPort inputPort) {
         DelayReceiverState state = new DelayReceiverState();
 
-        state.myCounted = new MidiCountedOnOff(myInputPort);
+        state.myCounted = new MidiCountedOnOff(inputPort);
         state.myTimeScheduler = new MidiTimeScheduler(state.myCounted);
         state.myMidiDelay = new MidiDelay(state.myTimeScheduler) {
             @Override

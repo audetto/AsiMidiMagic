@@ -26,16 +26,16 @@ import inc.andsoft.asimidimagic.tools.Utilities;
 
 public abstract class CommonMidiPassActivity<S extends ReceiverState> extends CommonMidiActivity {
 
-    protected MidiOutputPort myOutputPort;
-    protected MidiInputPort myInputPort;
-    protected MidiFramer myFramer;
+    private MidiOutputPort myOutputPort;
+    private MidiInputPort myInputPort;
+    private MidiFramer myFramer;
     protected S myReceiverState;
 
     protected Switch mySticky;
     protected RadioButton myAmberButton;
     protected RadioButton myGreenButton;
 
-    protected abstract S getReceiverState();
+    protected abstract S getReceiverState(MidiInputPort inputPort);
     protected abstract @LayoutRes int getLayoutID();
     protected abstract void setRunning(boolean value);
 
@@ -74,7 +74,7 @@ public abstract class CommonMidiPassActivity<S extends ReceiverState> extends Co
             myInputPort = opener.openInputPort(input);
 
             if (myInputPort != null && myOutputPort != null) {
-                myReceiverState = getReceiverState();
+                myReceiverState = getReceiverState(myInputPort);
                 myFramer = new MidiFramer(myReceiverState.getReceiver());
 
                 midiToolFragment.setReceiver(myInputPort);

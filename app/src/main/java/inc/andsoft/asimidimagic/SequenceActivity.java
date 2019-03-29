@@ -1,5 +1,6 @@
 package inc.andsoft.asimidimagic;
 
+import android.media.midi.MidiInputPort;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;

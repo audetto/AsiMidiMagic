@@ -2,6 +2,7 @@ package inc.andsoft.asimidimagic;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.media.midi.MidiInputPort;
 import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.os.Environment;
@@ -10,8 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.mobileer.miditools.MidiFramer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,6 +25,7 @@ import inc.andsoft.asimidimagic.activities.ReceiverState;
 
 class CommandReceiverState implements ReceiverState {
     MidiReceiver myReceiver;
+    MidiReceiver myInputPort;
 
     @Override
     public MidiReceiver getReceiver() {
@@ -83,10 +83,10 @@ public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState
     }
 
     @Override
-    protected CommandReceiverState getReceiverState() {
+    protected CommandReceiverState getReceiverState(MidiInputPort inputPort) {
         CommandReceiverState state = new CommandReceiverState();
 
-        MidiReceiver logger = new MidiReceiver() {
+        state.myReceiver = new MidiReceiver() {
             @Override
             public void onSend(byte[] data, int offset, int count, long timestamp) throws IOException {
                 if (myRunning) {
@@ -103,7 +103,7 @@ public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState
                 }
             }
         };
-        state.myReceiver = new MidiFramer(logger);
+        state.myInputPort = inputPort;
 
         return state;
     }
@@ -131,7 +131,7 @@ public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState
                 buffer[i] = (byte) v;
             }
 
-            myInputPort.send(buffer, 0, buffer.length);
+            myReceiverState.myInputPort.send(buffer, 0, buffer.length);
             myTextLog.append(command);
             myTextLog.append("\n");
         } catch (Exception e) {

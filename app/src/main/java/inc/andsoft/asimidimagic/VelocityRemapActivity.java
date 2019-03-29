@@ -1,6 +1,7 @@
 package inc.andsoft.asimidimagic;
 
 import android.graphics.Point;
+import android.media.midi.MidiInputPort;
 import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.view.View;
@@ -78,10 +79,10 @@ public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapR
     }
 
     @Override
-    protected VelocityRemapReceiverState getReceiverState() {
+    protected VelocityRemapReceiverState getReceiverState(MidiInputPort inputPort) {
         VelocityRemapReceiverState state = new VelocityRemapReceiverState();
 
-        state.myMidiRemap = new MidiRemap(myInputPort) {
+        state.myMidiRemap = new MidiRemap(inputPort) {
             @Override
             public void onPedalChange(boolean value) {
                 runOnUiThread(() ->  VelocityRemapActivity.this.onPedalChange(value));
