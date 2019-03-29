@@ -70,7 +70,8 @@
         <activity
             android:name=".CommandActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/title_remap_activity">
+            android:label="@string/title_command_activity"
+            android:windowSoftInputMode="stateHidden">
         </activity>
 
         <service

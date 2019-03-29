@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mobileer.miditools.MidiFramer;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,6 +39,7 @@ class CommandReceiverState implements ReceiverState {
 
 public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState> {
     TextView myTextLog;
+    boolean myRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,31 +86,24 @@ public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState
     protected CommandReceiverState getReceiverState() {
         CommandReceiverState state = new CommandReceiverState();
 
-        state.myReceiver = new MidiReceiver() {
-            private boolean myOpen = false;
-
+        MidiReceiver logger = new MidiReceiver() {
             @Override
             public void onSend(byte[] data, int offset, int count, long timestamp) throws IOException {
-                StringBuilder sb = new StringBuilder();
+                if (myRunning) {
+                    StringBuilder sb = new StringBuilder();
 
-                for (int i = 0; i < count; i++) {
-                    byte b = data[offset + i];
-                    if (b == (byte)0xF0) {
-                        myOpen = true;
+                    for (int i = 0; i < count; i++) {
+                        byte b = data[offset + i];
+                        sb.append(String.format("%02X ", b));
                     }
-                    sb.append(String.format(" %02X", b));
-                    if (b == (byte)0xF7) {
-                        myOpen = false;
-                    }
-                }
-                if (!myOpen) {
                     sb.append("\n");
-                }
 
-                String text = sb.toString();
-                log(text);
+                    String text = sb.toString();
+                    runOnUiThread(() -> myTextLog.append(text));
+                }
             }
         };
+        state.myReceiver = new MidiFramer(logger);
 
         return state;
     }
@@ -119,10 +115,7 @@ public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState
 
     @Override
     protected void setRunning(boolean value) {
-    }
-
-    private void log(String text) {
-        runOnUiThread(() -> myTextLog.append(text));
+        myRunning = value;
     }
 
     private void sendMessage(String command) {
@@ -139,6 +132,8 @@ public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState
             }
 
             myInputPort.send(buffer, 0, buffer.length);
+            myTextLog.append(command);
+            myTextLog.append("\n");
         } catch (Exception e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
         }
