@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,7 +13,7 @@
 
         <include layout="@layout/merge_pass" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/text_command"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -22,8 +21,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
             android:fontFamily="monospace"
-            android:hint="MIDI Command"
-            android:text="F0 40 00 02 08 02 50 7F 7F F7"
+            android:hint="@string/hint_midi_command"
             android:digits="0123456789ABCDEF. "
             android:inputType="textCapCharacters"
             app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
-            android:text="Send"
+            android:text="@string/button_send"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_command" />
 
@@ -49,6 +47,7 @@
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
             android:scrollbars="vertical"
+            android:fontFamily="monospace"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
-            android:text="Clear"
+            android:text="@string/button_clear"
             app:layout_constraintStart_toEndOf="@+id/button_send"
             app:layout_constraintTop_toBottomOf="@+id/text_command" />
 
@@ -70,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
-            android:text="Save"
+            android:text="@string/button_save"
             app:layout_constraintStart_toEndOf="@+id/button_clear"
             app:layout_constraintTop_toBottomOf="@+id/text_command" />
 

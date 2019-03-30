@@ -7,8 +7,9 @@ import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.method.ScrollingMovementMethod;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,8 +46,12 @@ public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        AutoCompleteTextView text = findViewById(R.id.text_command);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.sysex_messages, android.R.layout.simple_dropdown_item_1line);
+        text.setAdapter(adapter);
+
         Button send = findViewById(R.id.button_send);
-        EditText text = findViewById(R.id.text_command);
         send.setOnClickListener(v -> sendMessage(text.getText().toString()));
 
         Button clear = findViewById(R.id.button_clear);
@@ -92,6 +97,7 @@ public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState
                 if (myRunning) {
                     StringBuilder sb = new StringBuilder();
 
+                    sb.append("In:  ");
                     for (int i = 0; i < count; i++) {
                         byte b = data[offset + i];
                         sb.append(String.format("%02X ", b));
@@ -132,6 +138,7 @@ public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState
             }
 
             myReceiverState.myInputPort.send(buffer, 0, buffer.length);
+            myTextLog.append("Out: ");
             myTextLog.append(command);
             myTextLog.append("\n");
         } catch (Exception e) {

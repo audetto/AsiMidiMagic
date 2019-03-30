@@ -14,6 +14,9 @@
 
     <string name="button_start">Start</string>
     <string name="button_disconnect">Disconnect</string>
+    <string name="button_send">Send</string>
+    <string name="button_clear">Clear</string>
+    <string name="button_save">Save</string>
 
     <string name="button_notes_off">All Notes Off</string>
     <string name="button_local_control">Local Control</string>
@@ -26,6 +29,8 @@
     <string name="radio_green">Running</string>
 
     <string name="switch_sticky">Sticky</string>
+
+    <string name="hint_midi_command">MIDI Command</string>
 
     <string name="why_btle_location">
         Location permission is needed to scan for nearby Bluetooth devices.
@@ -127,6 +132,10 @@
         <item>red</item>
         <item>black</item>
         <item>green</item>
+    </string-array>
+
+    <string-array name="sysex_messages">
+        <item>F0 40 00 02 08 02 50 7F 7F F7</item>
     </string-array>
 
 </resources>
