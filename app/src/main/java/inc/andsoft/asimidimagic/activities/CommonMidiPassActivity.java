@@ -35,9 +35,12 @@ public abstract class CommonMidiPassActivity<S extends ReceiverState> extends Co
     protected RadioButton myAmberButton;
     protected RadioButton myGreenButton;
 
+    private MidiToolFragment myMidiToolFragment;
+
     protected abstract S getReceiverState(MidiInputPort inputPort);
     protected abstract @LayoutRes int getLayoutID();
     protected abstract void setRunning(boolean value);
+    protected abstract boolean isLocalControlNeeded();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,7 @@ public abstract class CommonMidiPassActivity<S extends ReceiverState> extends Co
 
         MidiManager midiManager = (MidiManager) getSystemService(MIDI_SERVICE);
 
-        MidiToolFragment midiToolFragment = (MidiToolFragment)getSupportFragmentManager().
+        myMidiToolFragment = (MidiToolFragment)getSupportFragmentManager().
                 findFragmentById(R.id.fragment_midi);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -77,8 +80,7 @@ public abstract class CommonMidiPassActivity<S extends ReceiverState> extends Co
                 myReceiverState = getReceiverState(myInputPort);
                 myFramer = new MidiFramer(myReceiverState.getReceiver());
 
-                midiToolFragment.setReceiver(myInputPort);
-
+                myMidiToolFragment.setReceiver(myInputPort);
                 connect();
 
                 // the chain is
@@ -140,6 +142,7 @@ public abstract class CommonMidiPassActivity<S extends ReceiverState> extends Co
 
     protected void connect() {
         if (myOutputPort != null && myFramer != null) {
+            myMidiToolFragment.setLocalControl(isLocalControlNeeded());
             myOutputPort.connect(myFramer);
         }
     }
@@ -147,6 +150,7 @@ public abstract class CommonMidiPassActivity<S extends ReceiverState> extends Co
     protected void disconnect() {
         if (myOutputPort != null && myFramer != null) {
             // first detach the input port (wrapped in the framer)
+            myMidiToolFragment.setLocalControl(true);
             myOutputPort.disconnect(myFramer);
         }
     }

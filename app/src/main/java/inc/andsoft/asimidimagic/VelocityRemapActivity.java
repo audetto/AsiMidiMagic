@@ -94,6 +94,11 @@ public class VelocityRemapActivity extends CommonMidiPassActivity<VelocityRemapR
     }
 
     @Override
+    protected boolean isLocalControlNeeded() {
+        return false;
+    }
+
+    @Override
     protected @LayoutRes int getLayoutID() {
         return R.layout.activity_remap;
     }

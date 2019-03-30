@@ -115,6 +115,11 @@ public class CommandActivity extends CommonMidiPassActivity<CommandReceiverState
     }
 
     @Override
+    protected boolean isLocalControlNeeded() {
+        return true;
+    }
+
+    @Override
     protected @LayoutRes int getLayoutID() {
         return R.layout.activity_command;
     }

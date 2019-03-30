@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 import android.media.midi.MidiReceiver;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import inc.andsoft.asimidimagic.tools.MidiCommands;
@@ -12,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 public class MidiToolFragment extends Fragment {
 
     private MidiReceiver myReceiver;
+    private SharedPreferences myPreferences;
+    private Switch myLocalControl;
 
     public MidiToolFragment() {
         // Required empty public constructor
@@ -37,8 +40,10 @@ public class MidiToolFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        myPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_midi_tools, container, false);
 
@@ -50,8 +55,8 @@ public class MidiToolFragment extends Fragment {
             }
         });
 
-        Switch localControl = view.findViewById(R.id.switch_local_control);
-        localControl.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        myLocalControl = view.findViewById(R.id.switch_local_control);
+        myLocalControl.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (myReceiver != null) {
                 List<Integer> channels = getSelectedChannels();
                 MidiCommands.localControl(myReceiver, channels, isChecked);
@@ -59,22 +64,22 @@ public class MidiToolFragment extends Fragment {
         });
 
         RadioButton multiTimbreOff = view.findViewById(R.id.radio_multi_off);
-        multiTimbreOff.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked) {
+        multiTimbreOff.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked && (myReceiver != null)) {
                 MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.OFF);
             }
         });
 
         RadioButton multiTimbreOn1 = view.findViewById(R.id.radio_multi_on1);
-        multiTimbreOn1.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked) {
+        multiTimbreOn1.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked && (myReceiver != null)) {
                 MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.ON1);
             }
         });
 
         RadioButton multiTimbreOn2 = view.findViewById(R.id.radio_multi_on2);
-        multiTimbreOn2.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
-            if (isChecked) {
+        multiTimbreOn2.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        if (isChecked && (myReceiver != null)) {
                 MidiCommands.multiTimbre(myReceiver, MidiCommands.MultiTimbre.ON2);
             }
         });
@@ -103,9 +108,12 @@ public class MidiToolFragment extends Fragment {
         myReceiver = receiver;
     }
 
+    public void setLocalControl(boolean enable) {
+        myLocalControl.setChecked(enable);
+    }
+
     private List<Integer> getSelectedChannels() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        Set<String> values = preferences.getStringSet("list_channels", null);
+        Set<String> values = myPreferences.getStringSet("list_channels", null);
 
         List<Integer> channels;
         if (values != null) {
@@ -113,6 +121,7 @@ public class MidiToolFragment extends Fragment {
         } else {
             channels = new ArrayList<>();
         }
+
         return channels;
     }
 

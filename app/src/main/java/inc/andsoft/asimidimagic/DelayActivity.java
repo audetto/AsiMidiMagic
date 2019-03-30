@@ -105,6 +105,11 @@ public class DelayActivity extends CommonMidiPassActivity<DelayReceiverState> {
     }
 
     @Override
+    protected boolean isLocalControlNeeded() {
+        return false;
+    }
+
+    @Override
     protected @LayoutRes int getLayoutID() {
         return R.layout.activity_delay;
     }
