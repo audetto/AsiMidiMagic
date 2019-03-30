@@ -147,8 +147,9 @@ public class SynthMIDIServer extends MidiDeviceService {
 
         public void run() {
             try {
-                for (byte i = 0; i < 120; ++i) {
-                    Thread.sleep(100);
+                int i = 0;
+                while (true) {
+                    Thread.sleep(200);
 
                     byte note = (byte) (60 + (i % 12));
                     byte velocity = (byte) 100;
@@ -162,6 +163,7 @@ public class SynthMIDIServer extends MidiDeviceService {
                     noteOff(myReceiver, channel, note, velocity, future);
 
                     Log.d(TAG, "Sent =     " + getTimeStr(now) + ", note = " + note + ", id = " + i);
+                    ++i;
                 }
             } catch (IOException | InterruptedException e) {
                 Log.d(TAG, e.toString());
