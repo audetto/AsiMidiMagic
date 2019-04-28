@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
-import inc.andsoft.asimidimagic.tools.MidiCommands;
+import inc.andsoft.support.tools.MidiCommands;
 
 import android.view.LayoutInflater;
 import android.view.View;

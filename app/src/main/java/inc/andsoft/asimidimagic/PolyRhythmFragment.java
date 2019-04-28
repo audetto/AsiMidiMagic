@@ -19,7 +19,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import inc.andsoft.asimidimagic.models.ScaleModel;
 import inc.andsoft.asimidimagic.tools.Scale;
-import inc.andsoft.asimidimagic.tools.Utilities;
+import inc.andsoft.support.tools.Utilities;
 import inc.andsoft.asimidimagic.views.RhythmChart;
 
 

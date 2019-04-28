@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import inc.andsoft.asimidimagic.tools.Utilities;
+import inc.andsoft.support.tools.Utilities;
 
 import static android.content.Context.MIDI_SERVICE;
 

@@ -3,7 +3,7 @@ package inc.andsoft.asimidimagic.activities;
 import android.view.Menu;
 
 import inc.andsoft.asimidimagic.R;
-import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
+import inc.andsoft.support.tools.MidiDeviceOpener;
 
 public abstract class CommonMidiActivity extends BaseActivity {
 

@@ -1,4 +1,4 @@
-package inc.andsoft.asimidimagic.tools;
+package inc.andsoft.support.tools;
 
 import android.media.midi.MidiReceiver;
 import android.util.Log;

@@ -1,9 +1,6 @@
-package inc.andsoft.asimidimagic.tools;
+package inc.andsoft.support.tools;
 
-import android.media.midi.MidiReceiver;
 import android.util.Log;
-
-import com.mobileer.miditools.MidiConstants;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -24,7 +21,7 @@ public class Utilities {
     public static String getNoteName(int note) {
         int octave = note / 12 - 1;
         int grade = note % 12;
-        return NOTE_NAMES[grade] + String.valueOf(octave);
+        return NOTE_NAMES[grade] + octave;
     }
 
     /**

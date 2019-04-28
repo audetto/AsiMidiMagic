@@ -12,7 +12,7 @@ import com.mobileer.miditools.MidiPortWrapper;
 
 import androidx.annotation.LayoutRes;
 import inc.andsoft.asimidimagic.R;
-import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
+import inc.andsoft.support.tools.MidiDeviceOpener;
 
 
 public abstract class CommonMidiSinkActivity<S extends ReceiverState> extends CommonMidiActivity {

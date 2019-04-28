@@ -20,8 +20,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import inc.andsoft.asimidimagic.MidiToolFragment;
 import inc.andsoft.asimidimagic.R;
-import inc.andsoft.asimidimagic.tools.MidiDeviceOpener;
-import inc.andsoft.asimidimagic.tools.Utilities;
+import inc.andsoft.support.tools.MidiDeviceOpener;
+import inc.andsoft.support.tools.Utilities;
 
 
 public abstract class CommonMidiPassActivity<S extends ReceiverState> extends CommonMidiActivity {

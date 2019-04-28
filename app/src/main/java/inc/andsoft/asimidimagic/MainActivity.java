@@ -37,7 +37,7 @@ import inc.andsoft.asimidimagic.activities.BaseActivity;
 import inc.andsoft.asimidimagic.models.BLEModel;
 import inc.andsoft.asimidimagic.tools.DataWithLabel;
 import inc.andsoft.asimidimagic.tools.RecyclerArrayAdapter;
-import inc.andsoft.asimidimagic.tools.Utilities;
+import inc.andsoft.support.tools.Utilities;
 
 public class MainActivity extends BaseActivity implements Observer<Map<BluetoothDevice, MidiDevice>> {
     private static final int REQUEST_BLUETOOTH_SCAN = 1;

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import inc.andsoft.asimidimagic.tools.Scale;
-import inc.andsoft.asimidimagic.tools.Utilities;
+import inc.andsoft.support.tools.Utilities;
 
 
 class ScaleStorage {

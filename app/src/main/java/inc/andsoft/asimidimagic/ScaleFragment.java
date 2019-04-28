@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import inc.andsoft.asimidimagic.models.ScaleModel;
 import inc.andsoft.asimidimagic.tools.RecyclerArrayAdapter;
 import inc.andsoft.asimidimagic.tools.Scale;
-import inc.andsoft.asimidimagic.tools.Utilities;
+import inc.andsoft.support.tools.Utilities;
 import inc.andsoft.asimidimagic.views.RhythmChart;
 
 import android.view.LayoutInflater;

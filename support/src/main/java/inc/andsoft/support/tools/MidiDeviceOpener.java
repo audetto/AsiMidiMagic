@@ -1,4 +1,4 @@
-package inc.andsoft.asimidimagic.tools;
+package inc.andsoft.support.tools;
 
 import android.media.midi.MidiDevice;
 import android.media.midi.MidiDeviceInfo;
