@@ -1,14 +1,11 @@
 package inc.andsoft.asimidimagic;
 
-import android.media.midi.MidiInputPort;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
