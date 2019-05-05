@@ -1,5 +1,7 @@
 package inc.andsoft.asimidimagic.midi;
 
+import android.util.Log;
+
 import com.mobileer.miditools.MidiConstants;
 
 import java.io.IOException;
@@ -14,6 +16,8 @@ import inc.andsoft.support.tools.Utilities;
 
 
 class ScaleStorage {
+    private final static String TAG = "ScaleStorage";
+
     int myFirstNote;
     int myLastNote;
     int myValidSign;
@@ -21,6 +25,8 @@ class ScaleStorage {
     private List<Long> myTimes = new ArrayList<>();
 
     void addNote(int code, int velocity, long timestamp) {
+        Log.d(TAG, "Add " + code + " @ " + timestamp + " # " + this);
+
         myValidSign = 0;
         myLastNote = code;
         myNotes.add(new Scale.Note(code, velocity));
@@ -85,6 +91,7 @@ abstract public class MidiScales extends StartStopReceiver {
         initialise();
     }
 
+    @Override
     public void onPedalChange(boolean value)
     {
         if (value) {
@@ -113,8 +120,8 @@ abstract public class MidiScales extends StartStopReceiver {
 
     /**
      *
-     * @param leftScale
-     * @param rightScale
+     * @param leftScale the left scale
+     * @param rightScale the right scale
      */
     abstract public void complete(Scale leftScale, Scale rightScale);
 
